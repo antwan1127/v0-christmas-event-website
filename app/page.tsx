@@ -657,43 +657,43 @@ export default function HollyJollyPage() {
                       required
                     >
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="church1" id="church1" />
+                        <RadioGroupItem value="مارمرقس م.الجديده مدارس احد" id="church1" />
                         <Label htmlFor="church1" className="font-normal cursor-pointer text-gray-800">
                           مارمرقس م.الجديده مدارس احد
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="church2" id="church2" />
+                        <RadioGroupItem value="مارمرقس م.الجديده اجتماع" id="church2" />
                         <Label htmlFor="church2" className="font-normal cursor-pointer text-gray-800">
                           مارمرقس م.الجديده اجتماع
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="church3" id="church3" />
+                        <RadioGroupItem value="العذارء ارض الجولف" id="church3" />
                         <Label htmlFor="church3" className="font-normal cursor-pointer text-gray-800">
                           العذارء ارض الجولف
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="church4" id="church4" />
+                        <RadioGroupItem value="الكاروز التجمع" id="church4" />
                         <Label htmlFor="church4" className="font-normal cursor-pointer text-gray-800">
                           الكاروز التجمع
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="church5" id="church5" />
+                        <RadioGroupItem value="العذارء و الانبا بيشوي التجمع" id="church5" />
                         <Label htmlFor="church5" className="font-normal cursor-pointer text-gray-800">
                           العذارء و الانبا بيشوي التجمع
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="church6" id="church6" />
+                        <RadioGroupItem value="العذارء الرحاب" id="church6" />
                         <Label htmlFor="church6" className="font-normal cursor-pointer text-gray-800">
                           العذارء الرحاب
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="church7" id="church7" />
+                        <RadioGroupItem value="العذارء و مارجرجس مدينتي" id="church7" />
                         <Label htmlFor="church7" className="font-normal cursor-pointer text-gray-800">
                           العذارء و مارجرجس مدينتي
                         </Label>
