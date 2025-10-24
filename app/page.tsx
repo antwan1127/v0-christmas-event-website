@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -19,6 +19,20 @@ export default function HollyJollyPage() {
   const [showValidationModal, setShowValidationModal] = useState(false)
   const [validationMessage, setValidationMessage] = useState("")
   const [assignedInstapayUser, setAssignedInstapayUser] = useState("")
+  
+  // Generate stable background ornaments that don't change on re-render
+  const backgroundOrnaments = useMemo(() => {
+    return Array.from({ length: 50 }, (_, i) => ({
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      animationDuration: Math.random() * 2 + 3,
+      animationDelay: Math.random() * 2,
+      width: Math.random() * 40 + 30,
+      height: Math.random() * 40 + 30,
+    }))
+  }, [])
+  
+  
   const [formData, setFormData] = useState({
     eventType: "",
     gender: "",
@@ -82,6 +96,14 @@ export default function HollyJollyPage() {
           return
         }
         setFormData({ ...formData, [name]: value })
+      }
+    }
+    // For Instapay reference number, only allow numbers and limit to 12 digits
+    else if (name === 'instapayDetails') {
+      if (value === '' || /^\d+$/.test(value)) {
+        if (value.length <= 12) {
+          setFormData({ ...formData, [name]: value })
+        }
       }
     } 
     // For name fields (fullName, email, phone), only allow Arabic characters
@@ -181,6 +203,10 @@ export default function HollyJollyPage() {
       showValidationError("يرجى إدخال رقم المعاملة")
       return false
     }
+    if (formData.paymentMethod === "instapay" && formData.instapayDetails && formData.instapayDetails.length !== 12) {
+      showValidationError("❌ خطأ في رقم المعاملة\n\nرقم المعاملة يجب أن يكون 12 رقم بالضبط\nمثال: 123456789012")
+      return false
+    }
     if (formData.paymentMethod === "cash" && !formData.cashPickupTime) {
       showValidationError("يرجى اختيار وقت استلام النقود")
       return false
@@ -216,12 +242,12 @@ export default function HollyJollyPage() {
 
     try {
       const GOOGLE_SHEETS_URL =
-        "https://script.google.com/macros/s/AKfycbyfV85RggMUGUjmG8L3l1aRbH6vbiI4aPCWK3oxb62zhxm9OEUgm4snNVwEF_mf1kaD/exec"
+        "https://script.google.com/macros/s/AKfycbyYMvQrXbVlVqCxsOmdUslNFN_9qsi2eBm6dRimnCfbTQa6IrG4M_4p3j_3nRlieqAx/exec"
 
       // Prepare the payment info
       let paymentInfo = ""
       if (formData.paymentMethod === "instapay") {
-        paymentInfo = `Instapay - ${assignedInstapayUser} - ${formData.instapayDetails}`
+        paymentInfo = `Instapay - ${assignedInstapayUser}`
       } else {
         paymentInfo = `Cash - ${formData.cashPickupTime}`
       }
@@ -242,7 +268,8 @@ export default function HollyJollyPage() {
           question7: formData.dietaryRestrictions || "None",
           question8: formData.emergencyContact,
           question9: paymentInfo,
-          question10: `${parseInt(formData.emergencyContact) * 200} EGP`,
+          question10: parseInt(formData.emergencyContact) * 200,
+          question11: formData.paymentMethod === "instapay" ? formData.instapayDetails : "",
         }),
       })
 
@@ -424,17 +451,17 @@ export default function HollyJollyPage() {
 
 
       <div className="fixed inset-0 pointer-events-none z-10">
-        {[...Array(50)].map((_, i) => (
+        {backgroundOrnaments.map((ornament, i) => (
           <div
             key={`ornament-${i}`}
             className="absolute animate-bounce"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDuration: `${Math.random() * 2 + 3}s`,
-              animationDelay: `${Math.random() * 2}s`,
-              width: `${Math.random() * 40 + 30}px`,
-              height: `${Math.random() * 40 + 30}px`,
+              left: `${ornament.left}%`,
+              top: `${ornament.top}%`,
+              animationDuration: `${ornament.animationDuration}s`,
+              animationDelay: `${ornament.animationDelay}s`,
+              width: `${ornament.width}px`,
+              height: `${ornament.height}px`,
             }}
           >
             <Image
@@ -915,6 +942,7 @@ export default function HollyJollyPage() {
                             required={formData.paymentMethod === "instapay"}
                             className="text-lg text-gray-800"
                             placeholder=""
+                            maxLength={12}
                           />
                         </div>
                       </div>
