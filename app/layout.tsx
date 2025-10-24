@@ -8,6 +8,11 @@ export const metadata: Metadata = {
   title: 'Holly Jolly Christmas Event',
   description: 'Join us for a magical Christmas celebration! Register now for Holly Jolly - an unforgettable holiday experience.',
   generator: 'v0.app',
+  icons: {
+    icon: '/images/design-mode/tree.png',
+    shortcut: '/images/design-mode/tree.png',
+    apple: '/images/design-mode/tree.png',
+  },
 }
 
 export default function RootLayout({
