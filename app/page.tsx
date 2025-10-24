@@ -3,8 +3,6 @@
 import type React from "react"
 
 import { useState, useEffect, useRef } from "react"
-import { Canvas } from "@react-three/fiber"
-import { OrbitControls, Environment, Float } from "@react-three/drei"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -13,81 +11,13 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Volume2, VolumeX } from "lucide-react"
 import Image from "next/image"
 
-function ChristmasTree() {
-  return (
-    <Float speed={1.5} rotationIntensity={0.5} floatIntensity={0.5}>
-      <group position={[0, -1, 0]}>
-        {/* Tree cone layers */}
-        <mesh position={[0, 0, 0]}>
-          <coneGeometry args={[1.5, 2, 8]} />
-          <meshStandardMaterial color="#1a4d1a" />
-        </mesh>
-        <mesh position={[0, 1.2, 0]}>
-          <coneGeometry args={[1.2, 1.8, 8]} />
-          <meshStandardMaterial color="#1f5c1f" />
-        </mesh>
-        <mesh position={[0, 2.2, 0]}>
-          <coneGeometry args={[0.9, 1.5, 8]} />
-          <meshStandardMaterial color="#267326" />
-        </mesh>
-        {/* Tree trunk */}
-        <mesh position={[0, -1.2, 0]}>
-          <cylinderGeometry args={[0.3, 0.3, 0.8]} />
-          <meshStandardMaterial color="#3d2817" />
-        </mesh>
-        {/* Star on top */}
-        <mesh position={[0, 3.5, 0]}>
-          <sphereGeometry args={[0.2, 16, 16]} />
-          <meshStandardMaterial color="#ffd700" emissive="#ffd700" emissiveIntensity={2} />
-        </mesh>
-        {[...Array(15)].map((_, i) => (
-          <mesh
-            key={i}
-            position={[Math.sin(i * 0.6) * (1.3 - i * 0.08), i * 0.3 - 0.5, Math.cos(i * 0.6) * (1.3 - i * 0.08)]}
-          >
-            <sphereGeometry args={[0.12, 16, 16]} />
-            <meshStandardMaterial
-              color={i % 3 === 0 ? "#dc2626" : i % 3 === 1 ? "#ffd700" : "#ffffff"}
-              metalness={0.8}
-              roughness={0.2}
-            />
-          </mesh>
-        ))}
-        {[...Array(20)].map((_, i) => (
-          <mesh
-            key={`light-${i}`}
-            position={[Math.sin(i * 0.5) * (1.1 - i * 0.05), i * 0.25, Math.cos(i * 0.5) * (1.1 - i * 0.05)]}
-          >
-            <sphereGeometry args={[0.08, 8, 8]} />
-            <meshStandardMaterial
-              color={i % 2 === 0 ? "#ffff00" : "#ffffff"}
-              emissive={i % 2 === 0 ? "#ffff00" : "#ffffff"}
-              emissiveIntensity={1.5}
-            />
-          </mesh>
-        ))}
-      </group>
-    </Float>
-  )
-}
-
-function Snowflakes() {
-  return (
-    <>
-      {[...Array(50)].map((_, i) => (
-        <mesh key={i} position={[(Math.random() - 0.5) * 20, Math.random() * 10, (Math.random() - 0.5) * 20]}>
-          <sphereGeometry args={[0.05, 8, 8]} />
-          <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={0.5} />
-        </mesh>
-      ))}
-    </>
-  )
-}
 
 export default function HollyJollyPage() {
   const [isMusicPlaying, setIsMusicPlaying] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
+  const [showValidationModal, setShowValidationModal] = useState(false)
+  const [validationMessage, setValidationMessage] = useState("")
   const [assignedInstapayUser, setAssignedInstapayUser] = useState("")
   const [formData, setFormData] = useState({
     eventType: "",
@@ -147,6 +77,17 @@ export default function HollyJollyPage() {
     if (name === 'age' || name === 'dietaryRestrictions' || name === 'emergencyContact') {
       // Only allow numbers and empty string
       if (value === '' || /^\d+$/.test(value)) {
+        // For phone number (age), limit to 11 digits
+        if (name === 'age' && value.length > 11) {
+          return
+        }
+        setFormData({ ...formData, [name]: value })
+      }
+    } 
+    // For name fields (fullName, email, phone), only allow Arabic characters
+    else if (name === 'fullName' || name === 'email' || name === 'phone') {
+      // Only allow Arabic letters, spaces, and common Arabic punctuation
+      if (value === '' || /^[\u0600-\u06FF\s\u064B-\u0652\u0670\u0640]*$/.test(value)) {
         setFormData({ ...formData, [name]: value })
       }
     } else {
@@ -159,56 +100,89 @@ export default function HollyJollyPage() {
     return words.length === 3
   }
 
+  const validateArabicOnly = (text: string) => {
+    // Check if text contains only Arabic letters, spaces, and common Arabic punctuation
+    const arabicRegex = /^[\u0600-\u06FF\s\u064B-\u0652\u0670\u0640]+$/
+    return arabicRegex.test(text)
+  }
+
+  const showValidationError = (message: string) => {
+    setValidationMessage(message)
+    setShowValidationModal(true)
+  }
+
   const validateForm = () => {
     // Check required fields
     if (!formData.eventType) {
-      alert("يرجى اختيار اسم الكنيسة")
+      showValidationError("يرجى اختيار اسم الكنيسة")
       return false
     }
     if (!formData.gender) {
-      alert("يرجى اختيار جنس الطفل")
+      showValidationError("يرجى اختيار جنس الطفل")
       return false
     }
     if (!formData.paymentMethod) {
-      alert("يرجى اختيار طريقة الدفع")
+      showValidationError("يرجى اختيار طريقة الدفع")
       return false
     }
     
-    // Check if questions 3, 4, 5 have exactly 3 words
+    // Check if questions 3, 4, 5 have exactly 3 words and are Arabic only
+    if (!validateArabicOnly(formData.fullName)) {
+      showValidationError("❌ خطأ في اسم الطفل\n\nاسم الطفل يجب أن يحتوي على أحرف عربية فقط (بدون أرقام أو أحرف إنجليزية)\nمثال: أحمد محمد علي")
+      return false
+    }
     if (!validateThreeWords(formData.fullName)) {
-      alert("اسم الطفل يجب أن يكون ثلاثي (3 كلمات)")
+      showValidationError("❌ خطأ في اسم الطفل\n\nاسم الطفل يجب أن يكون ثلاثي (3 كلمات بالضبط)\nمثال: أحمد محمد علي")
+      return false
+    }
+    
+    if (!validateArabicOnly(formData.email)) {
+      showValidationError("❌ خطأ في اسم الأب\n\nاسم الأب يجب أن يحتوي على أحرف عربية فقط (بدون أرقام أو أحرف إنجليزية)\nمثال: محمد أحمد حسن")
       return false
     }
     if (!validateThreeWords(formData.email)) {
-      alert("اسم الاب يجب أن يكون ثلاثي (3 كلمات)")
+      showValidationError("❌ خطأ في اسم الأب\n\nاسم الأب يجب أن يكون ثلاثي (3 كلمات بالضبط)\nمثال: محمد أحمد حسن")
+      return false
+    }
+    
+    if (!validateArabicOnly(formData.phone)) {
+      showValidationError("❌ خطأ في اسم الأم\n\nاسم الأم يجب أن يحتوي على أحرف عربية فقط (بدون أرقام أو أحرف إنجليزية)\nمثال: فاطمة أحمد محمد")
       return false
     }
     if (!validateThreeWords(formData.phone)) {
-      alert("اسم الام يجب أن يكون ثلاثي (3 كلمات)")
+      showValidationError("❌ خطأ في اسم الأم\n\nاسم الأم يجب أن يكون ثلاثي (3 كلمات بالضبط)\nمثال: فاطمة أحمد محمد")
       return false
     }
     
     // Check if numeric fields are not empty
     if (!formData.age || formData.age === '') {
-      alert("رقم تليفون الاب/الام مطلوب")
+      showValidationError("رقم تليفون الاب/الام مطلوب")
+      return false
+    }
+    if (formData.age && formData.age.length !== 11) {
+      showValidationError("❌ خطأ في رقم التليفون\n\nرقم التليفون يجب أن يكون 11 رقم بالضبط\nمثال: 01234567890")
       return false
     }
     if (!formData.dietaryRestrictions || formData.dietaryRestrictions === '') {
-      alert("عدد الاخوات مطلوب")
+      showValidationError("عدد الاخوات مطلوب")
       return false
     }
     if (!formData.emergencyContact || formData.emergencyContact === '') {
-      alert("عدد التذاكر المطلوبة مطلوب")
+      showValidationError("عدد التذاكر المطلوبة مطلوب")
+      return false
+    }
+    if (formData.emergencyContact && parseInt(formData.emergencyContact) <= 0) {
+      showValidationError("❌ خطأ في عدد التذاكر\n\nعدد التذاكر يجب أن يكون أكبر من صفر\nمثال: 1، 2، 3...")
       return false
     }
     
     // Check payment method specific fields
     if (formData.paymentMethod === "instapay" && !formData.instapayDetails) {
-      alert("يرجى إدخال رقم المعاملة")
+      showValidationError("يرجى إدخال رقم المعاملة")
       return false
     }
     if (formData.paymentMethod === "cash" && !formData.cashPickupTime) {
-      alert("يرجى اختيار وقت استلام النقود")
+      showValidationError("يرجى اختيار وقت استلام النقود")
       return false
     }
     
@@ -268,6 +242,7 @@ export default function HollyJollyPage() {
           question7: formData.dietaryRestrictions || "None",
           question8: formData.emergencyContact,
           question9: paymentInfo,
+          question10: `${parseInt(formData.emergencyContact) * 200} EGP`,
         }),
       })
 
@@ -334,57 +309,95 @@ export default function HollyJollyPage() {
         <div className="absolute top-3 left-3 right-3 bottom-3 border border-amber-200 opacity-60"></div>
         
         {/* Decorative images hovering over the border */}
-        {/* Top side decorations */}
-        <div className="absolute top-1 left-1/4 transform -translate-x-1/2 -translate-y-1/2 animate-bounce" style={{ animationDuration: '3s' }}>
-          <Image src="/images/design-mode/star.png" alt="Star decoration" width={24} height={24} className="opacity-80" />
-        </div>
-        <div className="absolute top-1 left-1/2 transform -translate-x-1/2 -translate-y-1/2 animate-pulse" style={{ animationDelay: '1s' }}>
-          <Image src="/images/design-mode/tree.png" alt="Tree decoration" width={28} height={28} className="opacity-80" />
-        </div>
-        <div className="absolute top-1 left-3/4 transform -translate-x-1/2 -translate-y-1/2 animate-bounce" style={{ animationDuration: '2.5s', animationDelay: '0.5s' }}>
-          <Image src="/images/design-mode/star.png" alt="Star decoration" width={22} height={22} className="opacity-80" />
-        </div>
         
         {/* Right side decorations */}
-        <div className="absolute right-1 top-1/4 transform translate-x-1/2 -translate-y-1/2 animate-pulse" style={{ animationDelay: '2s' }}>
+        <div className="absolute right-1 top-1/8 transform translate-x-1/2 -translate-y-1/2 animate-pulse" style={{ animationDelay: '2s' }}>
           <Image src="/images/design-mode/cone.png" alt="Cone decoration" width={26} height={26} className="opacity-80" />
+        </div>
+        <div className="absolute right-1 top-1/6 transform translate-x-1/2 -translate-y-1/2 animate-bounce" style={{ animationDuration: '2.5s', animationDelay: '0.3s' }}>
+          <Image src="/images/design-mode/star.png" alt="Star decoration" width={24} height={24} className="opacity-80" />
+        </div>
+        <div className="absolute right-1 top-1/4 transform translate-x-1/2 -translate-y-1/2 animate-pulse" style={{ animationDelay: '1.1s' }}>
+          <Image src="/images/design-mode/tree.png" alt="Tree decoration" width={28} height={28} className="opacity-80" />
+        </div>
+        <div className="absolute right-1 top-1/3 transform translate-x-1/2 -translate-y-1/2 animate-bounce" style={{ animationDuration: '2.7s', animationDelay: '0.8s' }}>
+          <Image src="/images/design-mode/hood.png" alt="Hood decoration" width={25} height={25} className="opacity-80" />
         </div>
         <div className="absolute right-1 top-1/2 transform translate-x-1/2 -translate-y-1/2 animate-bounce" style={{ animationDuration: '2.8s', animationDelay: '1.5s' }}>
           <Image src="/images/design-mode/boy.png" alt="Boy decoration" width={30} height={30} className="opacity-80" />
         </div>
-        <div className="absolute right-1 top-3/4 transform translate-x-1/2 -translate-y-1/2 animate-pulse" style={{ animationDelay: '0.8s' }}>
+        <div className="absolute right-1 top-2/3 transform translate-x-1/2 -translate-y-1/2 animate-pulse" style={{ animationDelay: '0.8s' }}>
+          <Image src="/images/design-mode/tree.png" alt="Tree decoration" width={26} height={26} className="opacity-80" />
+        </div>
+        <div className="absolute right-1 top-3/4 transform translate-x-1/2 -translate-y-1/2 animate-bounce" style={{ animationDuration: '2.4s', animationDelay: '1.9s' }}>
+          <Image src="/images/design-mode/star.png" alt="Star decoration" width={23} height={23} className="opacity-80" />
+        </div>
+        <div className="absolute right-1 top-5/6 transform translate-x-1/2 -translate-y-1/2 animate-bounce" style={{ animationDuration: '3.2s', animationDelay: '1.2s' }}>
           <Image src="/images/design-mode/hood.png" alt="Hood decoration" width={24} height={24} className="opacity-80" />
+        </div>
+        <div className="absolute right-1 top-7/8 transform translate-x-1/2 -translate-y-1/2 animate-pulse" style={{ animationDelay: '2.3s' }}>
+          <Image src="/images/design-mode/cone.png" alt="Cone decoration" width={27} height={27} className="opacity-80" />
         </div>
         
         {/* Bottom side decorations */}
-        <div className="absolute bottom-1 left-1/4 transform -translate-x-1/2 translate-y-1/2 animate-bounce" style={{ animationDuration: '3.2s', animationDelay: '1.2s' }}>
+        <div className="absolute bottom-1 left-1/8 transform -translate-x-1/2 translate-y-1/2 animate-bounce" style={{ animationDuration: '3.2s', animationDelay: '1.2s' }}>
           <Image src="/images/design-mode/tree.png" alt="Tree decoration" width={26} height={26} className="opacity-80" />
         </div>
-        <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 translate-y-1/2 animate-pulse" style={{ animationDelay: '2.5s' }}>
-          <Image src="/images/design-mode/star.png" alt="Star decoration" width={20} height={20} className="opacity-80" />
+        <div className="absolute bottom-1 left-1/6 transform -translate-x-1/2 translate-y-1/2 animate-pulse" style={{ animationDelay: '0.4s' }}>
+          <Image src="/images/design-mode/star.png" alt="Star decoration" width={22} height={22} className="opacity-80" />
         </div>
-        <div className="absolute bottom-1 left-3/4 transform -translate-x-1/2 translate-y-1/2 animate-bounce" style={{ animationDuration: '2.7s', animationDelay: '0.3s' }}>
-          <Image src="/images/design-mode/cone.png" alt="Cone decoration" width={28} height={28} className="opacity-80" />
+        <div className="absolute bottom-1 left-1/4 transform -translate-x-1/2 translate-y-1/2 animate-bounce" style={{ animationDuration: '2.6s', animationDelay: '1.7s' }}>
+          <Image src="/images/design-mode/cone.png" alt="Cone decoration" width={25} height={25} className="opacity-80" />
+        </div>
+        <div className="absolute bottom-1 left-1/3 transform -translate-x-1/2 translate-y-1/2 animate-pulse" style={{ animationDelay: '0.9s' }}>
+          <Image src="/images/design-mode/hood.png" alt="Hood decoration" width={24} height={24} className="opacity-80" />
+        </div>
+        <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 translate-y-1/2 animate-bounce" style={{ animationDuration: '2.8s', animationDelay: '2.5s' }}>
+          <Image src="/images/design-mode/cone.png" alt="Cone decoration" width={24} height={24} className="opacity-80" />
+        </div>
+        <div className="absolute bottom-1 left-2/3 transform -translate-x-1/2 translate-y-1/2 animate-pulse" style={{ animationDelay: '1.8s' }}>
+          <Image src="/images/design-mode/boy.png" alt="Boy decoration" width={28} height={28} className="opacity-80" />
+        </div>
+        <div className="absolute bottom-1 left-3/4 transform -translate-x-1/2 translate-y-1/2 animate-bounce" style={{ animationDuration: '2.9s', animationDelay: '0.6s' }}>
+          <Image src="/images/design-mode/star.png" alt="Star decoration" width={23} height={23} className="opacity-80" />
+        </div>
+        <div className="absolute bottom-1 left-5/6 transform -translate-x-1/2 translate-y-1/2 animate-bounce" style={{ animationDuration: '2.7s', animationDelay: '0.3s' }}>
+          <Image src="/images/design-mode/hood.png" alt="Hood decoration" width={26} height={26} className="opacity-80" />
+        </div>
+        <div className="absolute bottom-1 left-7/8 transform -translate-x-1/2 translate-y-1/2 animate-pulse" style={{ animationDelay: '2.1s' }}>
+          <Image src="/images/design-mode/tree.png" alt="Tree decoration" width={27} height={27} className="opacity-80" />
         </div>
         
         {/* Left side decorations */}
-        <div className="absolute left-1 top-1/4 transform -translate-x-1/2 -translate-y-1/2 animate-pulse" style={{ animationDelay: '1.8s' }}>
+        <div className="absolute left-1 top-1/8 transform -translate-x-1/2 -translate-y-1/2 animate-pulse" style={{ animationDelay: '1.8s' }}>
           <Image src="/images/design-mode/hood.png" alt="Hood decoration" width={26} height={26} className="opacity-80" />
+        </div>
+        <div className="absolute left-1 top-1/6 transform -translate-x-1/2 -translate-y-1/2 animate-bounce" style={{ animationDuration: '2.6s', animationDelay: '0.2s' }}>
+          <Image src="/images/design-mode/star.png" alt="Star decoration" width={24} height={24} className="opacity-80" />
+        </div>
+        <div className="absolute left-1 top-1/4 transform -translate-x-1/2 -translate-y-1/2 animate-pulse" style={{ animationDelay: '1.3s' }}>
+          <Image src="/images/design-mode/tree.png" alt="Tree decoration" width={27} height={27} className="opacity-80" />
+        </div>
+        <div className="absolute left-1 top-1/3 transform -translate-x-1/2 -translate-y-1/2 animate-bounce" style={{ animationDuration: '2.4s', animationDelay: '0.9s' }}>
+          <Image src="/images/design-mode/cone.png" alt="Cone decoration" width={25} height={25} className="opacity-80" />
         </div>
         <div className="absolute left-1 top-1/2 transform -translate-x-1/2 -translate-y-1/2 animate-bounce" style={{ animationDuration: '3.5s', animationDelay: '0.7s' }}>
           <Image src="/images/design-mode/boy.png" alt="Boy decoration" width={32} height={32} className="opacity-80" />
         </div>
-        <div className="absolute left-1 top-3/4 transform -translate-x-1/2 -translate-y-1/2 animate-pulse" style={{ animationDelay: '2.2s' }}>
-          <Image src="/images/design-mode/star.png" alt="Star decoration" width={24} height={24} className="opacity-80" />
+        <div className="absolute left-1 top-2/3 transform -translate-x-1/2 -translate-y-1/2 animate-pulse" style={{ animationDelay: '2.2s' }}>
+          <Image src="/images/design-mode/tree.png" alt="Tree decoration" width={28} height={28} className="opacity-80" />
+        </div>
+        <div className="absolute left-1 top-3/4 transform -translate-x-1/2 -translate-y-1/2 animate-bounce" style={{ animationDuration: '2.8s', animationDelay: '1.6s' }}>
+          <Image src="/images/design-mode/star.png" alt="Star decoration" width={23} height={23} className="opacity-80" />
+        </div>
+        <div className="absolute left-1 top-5/6 transform -translate-x-1/2 -translate-y-1/2 animate-bounce" style={{ animationDuration: '2.9s', animationDelay: '1.1s' }}>
+          <Image src="/images/design-mode/cone.png" alt="Cone decoration" width={26} height={26} className="opacity-80" />
+        </div>
+        <div className="absolute left-1 top-7/8 transform -translate-x-1/2 -translate-y-1/2 animate-pulse" style={{ animationDelay: '2.5s' }}>
+          <Image src="/images/design-mode/hood.png" alt="Hood decoration" width={24} height={24} className="opacity-80" />
         </div>
         
         {/* Corner decorations */}
-        <div className="absolute top-0 left-0 transform -translate-x-1/2 -translate-y-1/2 animate-bounce" style={{ animationDuration: '2.3s', animationDelay: '0.9s' }}>
-          <Image src="/images/design-mode/tree.png" alt="Tree decoration" width={20} height={20} className="opacity-70" />
-        </div>
-        <div className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 animate-pulse" style={{ animationDelay: '1.6s' }}>
-          <Image src="/images/design-mode/star.png" alt="Star decoration" width={18} height={18} className="opacity-70" />
-        </div>
         <div className="absolute bottom-0 left-0 transform -translate-x-1/2 translate-y-1/2 animate-bounce" style={{ animationDuration: '2.9s', animationDelay: '1.4s' }}>
           <Image src="/images/design-mode/cone.png" alt="Cone decoration" width={22} height={22} className="opacity-70" />
         </div>
@@ -409,25 +422,9 @@ export default function HollyJollyPage() {
       </button>
 
 
-      <div className="fixed inset-0 pointer-events-none z-10">
-        {[...Array(100)].map((_, i) => (
-          <div
-            key={i}
-            className="snowflake absolute text-white text-2xl"
-            style={{
-              left: `${Math.random() * 100}%`,
-              animationDuration: `${Math.random() * 3 + 5}s`,
-              animationDelay: `${Math.random() * 5}s`,
-              fontSize: `${Math.random() * 10 + 10}px`,
-            }}
-          >
-            ❄
-          </div>
-        ))}
-      </div>
 
       <div className="fixed inset-0 pointer-events-none z-10">
-        {[...Array(15)].map((_, i) => (
+        {[...Array(50)].map((_, i) => (
           <div
             key={`ornament-${i}`}
             className="absolute animate-bounce"
@@ -441,7 +438,7 @@ export default function HollyJollyPage() {
             }}
           >
             <Image
-              src={i % 3 === 0 ? "/images/design-mode/tree.png" : i % 3 === 1 ? "/images/design-mode/cone.png" : "/images/design-mode/star.png"}
+              src={i % 4 === 0 ? "/images/design-mode/tree.png" : i % 4 === 1 ? "/images/design-mode/cone.png" : i % 4 === 2 ? "/images/design-mode/star.png" : "/images/design-mode/hood.png"}
               alt="Christmas decoration"
               width={60}
               height={60}
@@ -508,18 +505,16 @@ export default function HollyJollyPage() {
         ))}
       </div>
 
-      {/* Hero Section with 3D Scene */}
+      {/* Hero Section with Tree Image */}
       <section className="relative h-screen flex items-center justify-center pt-4 pb-4 pl-4 pr-4">
-        <div className="absolute inset-0 z-0">
-          <Canvas camera={{ position: [0, 2, 8], fov: 50 }}>
-            <ambientLight intensity={0.5} />
-            <pointLight position={[10, 10, 10]} intensity={1} />
-            <spotLight position={[0, 10, 0]} angle={0.3} penumbra={1} intensity={1} />
-            <ChristmasTree />
-            <Snowflakes />
-            <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.5} />
-            <Environment preset="sunset" />
-          </Canvas>
+        <div className="absolute inset-0 z-0 flex items-center justify-center">
+          <Image
+            src="/images/design-mode/tree.png"
+            alt="Christmas Tree"
+            width={400}
+            height={600}
+            className="object-contain"
+          />
         </div>
 
         <div className="relative z-20 text-center px-4">
@@ -607,7 +602,7 @@ export default function HollyJollyPage() {
                     <div className="text-center mb-4">
                       <h3 className="text-2xl font-bold text-primary mb-2">🎄 Holly Jolly 🎄</h3>
                       <p className="text-lg text-gray-700 font-semibold">يوم رياضي لأطفال ابتدائي وأسرهم</p>
-                    </div>
+                      </div>
                     
                     <div className="space-y-3 text-sm text-gray-700">
                       <div className="flex items-start space-x-2">
@@ -624,7 +619,7 @@ export default function HollyJollyPage() {
                         <span className="text-primary font-bold">📅</span>
                         <span>الجمعة ٢٦ من ديسمبر ٢٠٢٥</span>
                       </div>
-                    </div>
+                      </div>
                     
                     <div className="mt-4 p-4 bg-white/80 rounded-lg border border-primary/30">
                       <h4 className="text-lg font-bold text-primary mb-3 text-center">الشروط والأحكام</h4>
@@ -632,6 +627,14 @@ export default function HollyJollyPage() {
                         <li className="flex items-start space-x-2">
                           <span className="text-red-500 font-bold">•</span>
                           <span>آخر ميعاد للحجز واسترداد الفلوس ٢١ ديسمبر</span>
+                        </li>
+                        <li className="flex items-start space-x-2">
+                          <span className="text-blue-500 font-bold">•</span>
+                          <span>سعر التذكرة الواحدة لكل فرد في العائلة ٢٠٠ جنيه ليوم ١٤ ديسمبر</span>
+                        </li>
+                        <li className="flex items-start space-x-2">
+                          <span className="text-blue-500 font-bold">•</span>
+                          <span>ابتداء من ١٥ ل ٢١ ديسمبر سعر التذكرة الواحدة لكل فرد ٢٥٠ جنيه</span>
                         </li>
                         <li className="flex items-start space-x-2">
                           <span className="text-red-500 font-bold">•</span>
@@ -646,7 +649,7 @@ export default function HollyJollyPage() {
                           <span>نعتذر لا يوجد تذاكر يوم الحفلة على الباب</span>
                         </li>
                       </ul>
-                    </div>
+                      </div>
                   </div>
 
                   <div className="space-y-3">
@@ -779,6 +782,7 @@ export default function HollyJollyPage() {
                       required
                       className="text-lg text-gray-800"
                       placeholder=""
+                      maxLength={11}
                     />
                   </div>
 
@@ -812,6 +816,19 @@ export default function HollyJollyPage() {
                       className="text-lg text-gray-800"
                       placeholder=""
                     />
+                    {formData.emergencyContact && parseInt(formData.emergencyContact) > 0 && (
+                      <div className="mt-3 p-4 bg-gradient-to-r from-green-50 to-blue-50 border-2 border-green-200 rounded-lg">
+                        <div className="text-center">
+                          <p className="text-sm text-gray-600 mb-1">Total Cost:</p>
+                          <p className="text-2xl font-bold text-green-600">
+                            {parseInt(formData.emergencyContact) * 200} جنيه
+                          </p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            {formData.emergencyContact} ticket(s) × 200 جنيه each
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-3">
@@ -861,7 +878,7 @@ export default function HollyJollyPage() {
                               htmlFor="sunday"
                               className="font-normal cursor-pointer text-black text-sm leading-relaxed"
                             >
-                              الاحد من ٥ م ل ٢ م في المبني الجديد +بين الفليتين في الكنيسة الرئيسية
+                              الاحد من ٦ م ل ٨ م في المبني الجديد +بين الفليتين في الكنيسة الرئيسية
                             </Label>
                           </div>
                         </RadioGroup>
@@ -968,13 +985,46 @@ export default function HollyJollyPage() {
               </div>
               <h2 className="text-3xl font-bold text-primary mb-2">🎉 تم التسجيل بنجاح! 🎉</h2>
               <p className="text-lg text-gray-700 mb-4">Thank you for registering for Holly Jolly!</p>
-              <p className="text-sm text-gray-600">Your registration has been saved successfully.</p>
+              <p className="text-sm text-gray-600 mb-4">Your registration has been saved successfully.</p>
+              <div className="bg-gradient-to-r from-pink-50 to-purple-50 p-4 rounded-lg border border-pink-200">
+                <p className="text-sm text-gray-700 font-semibold mb-2">📸 Follow us on Instagram:</p>
+                <p className="text-lg font-bold text-pink-600">@Abssportsteam</p>
+              </div>
             </div>
             
             <div className="flex space-x-4">
               <button
                 onClick={() => setShowSuccessModal(false)}
                 className="flex-1 bg-primary text-white py-3 px-6 rounded-lg font-semibold hover:bg-primary/90 transition-colors"
+              >
+                إغلاق
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Validation Error Modal */}
+      {showValidationModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 animate-fadeIn">
+          <div className="bg-white rounded-2xl p-8 max-w-md mx-4 text-center shadow-2xl animate-bounceIn">
+            <div className="mb-6">
+              <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
+                <svg className="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </div>
+              <div className="text-left">
+                <pre className="whitespace-pre-wrap text-sm text-gray-700 font-medium">
+                  {validationMessage}
+                </pre>
+              </div>
+            </div>
+            
+            <div className="flex space-x-4">
+              <button
+                onClick={() => setShowValidationModal(false)}
+                className="flex-1 bg-red-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-red-600 transition-colors"
               >
                 إغلاق
               </button>
