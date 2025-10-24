@@ -89,10 +89,18 @@ export default function HollyJollyPage() {
     
     // For numeric fields (age, dietaryRestrictions, emergencyContact), only allow numbers
     if (name === 'age' || name === 'dietaryRestrictions' || name === 'emergencyContact') {
-      // Only allow numbers and empty string
+      // Only allow numbers and empty string - block all letters and special characters
       if (value === '' || /^\d+$/.test(value)) {
         // For phone number (age), limit to 11 digits
         if (name === 'age' && value.length > 11) {
+          return
+        }
+        // For brothers count (dietaryRestrictions), allow 0 or more
+        if (name === 'dietaryRestrictions' && value !== '' && parseInt(value) < 0) {
+          return
+        }
+        // For tickets count (emergencyContact), must be at least 1
+        if (name === 'emergencyContact' && value !== '' && parseInt(value) < 1) {
           return
         }
         setFormData({ ...formData, [name]: value })
@@ -804,6 +812,7 @@ export default function HollyJollyPage() {
                       id="age"
                       name="age"
                       type="tel"
+                      inputMode="numeric"
                       value={formData.age}
                       onChange={handleInputChange}
                       required
@@ -821,6 +830,9 @@ export default function HollyJollyPage() {
                       id="dietaryRestrictions"
                       name="dietaryRestrictions"
                       type="number"
+                      inputMode="numeric"
+                      min="0"
+                      step="1"
                       value={formData.dietaryRestrictions}
                       onChange={handleInputChange}
                       required
@@ -837,6 +849,9 @@ export default function HollyJollyPage() {
                       id="emergencyContact"
                       name="emergencyContact"
                       type="number"
+                      inputMode="numeric"
+                      min="1"
+                      step="1"
                       value={formData.emergencyContact}
                       onChange={handleInputChange}
                       required
@@ -937,6 +952,8 @@ export default function HollyJollyPage() {
                           <Input
                             id="instapayDetails"
                             name="instapayDetails"
+                            type="number"
+                            inputMode="numeric"
                             value={formData.instapayDetails}
                             onChange={handleInputChange}
                             required={formData.paymentMethod === "instapay"}
