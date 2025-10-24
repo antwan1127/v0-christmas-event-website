@@ -19,6 +19,7 @@ export default function HollyJollyPage() {
   const [showValidationModal, setShowValidationModal] = useState(false)
   const [validationMessage, setValidationMessage] = useState("")
   const [assignedInstapayUser, setAssignedInstapayUser] = useState("")
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
   
   // Generate stable background ornaments that don't change on re-render - Reduced for better performance
   const backgroundOrnaments = useMemo(() => {
@@ -60,6 +61,35 @@ export default function HollyJollyPage() {
   useEffect(() => {
     const randomIndex = Math.floor(Math.random() * instapayUsers.length)
     setAssignedInstapayUser(instapayUsers[randomIndex])
+  }, [])
+
+  // Live countdown timer
+  useEffect(() => {
+    const targetDate = new Date('2025-12-26T00:00:00').getTime()
+    
+    const updateCountdown = () => {
+      const now = new Date().getTime()
+      const difference = targetDate - now
+      
+      if (difference > 0) {
+        const days = Math.floor(difference / (1000 * 60 * 60 * 24))
+        const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60))
+        const seconds = Math.floor((difference % (1000 * 60)) / 1000)
+        
+        setTimeLeft({ days, hours, minutes, seconds })
+      } else {
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 })
+      }
+    }
+    
+    // Update immediately
+    updateCountdown()
+    
+    // Update every second
+    const interval = setInterval(updateCountdown, 1000)
+    
+    return () => clearInterval(interval)
   }, [])
 
   useEffect(() => {
@@ -448,6 +478,30 @@ export default function HollyJollyPage() {
             <br />
             Holly Jolly!
           </h1>
+          
+          {/* Live Countdown Timer */}
+          <div className="bg-gradient-to-r from-red-50 to-green-50 rounded-2xl p-6 mb-8 border-2 border-primary/20 shadow-lg">
+            <h3 className="text-2xl font-bold text-primary mb-4 font-english">🎄 Event Countdown 🎄</h3>
+            <div className="flex justify-center space-x-4 text-center">
+              <div className="bg-white rounded-lg p-3 shadow-md min-w-[80px]">
+                <div className="text-3xl font-bold text-red-600 font-english">{timeLeft.days}</div>
+                <div className="text-sm text-gray-600 font-english">Days</div>
+              </div>
+              <div className="bg-white rounded-lg p-3 shadow-md min-w-[80px]">
+                <div className="text-3xl font-bold text-green-600 font-english">{timeLeft.hours}</div>
+                <div className="text-sm text-gray-600 font-english">Hours</div>
+              </div>
+              <div className="bg-white rounded-lg p-3 shadow-md min-w-[80px]">
+                <div className="text-3xl font-bold text-blue-600 font-english">{timeLeft.minutes}</div>
+                <div className="text-sm text-gray-600 font-english">Minutes</div>
+              </div>
+              <div className="bg-white rounded-lg p-3 shadow-md min-w-[80px]">
+                <div className="text-3xl font-bold text-purple-600 font-english">{timeLeft.seconds}</div>
+                <div className="text-sm text-gray-600 font-english">Seconds</div>
+              </div>
+            </div>
+            <p className="text-sm text-gray-600 mt-4 font-english">Until the magical celebration begins!</p>
+          </div>
         </div>
       </section>
 

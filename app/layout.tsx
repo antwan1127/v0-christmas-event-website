@@ -22,7 +22,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
+      <head>
+        <link rel="preload" href="/fonts/TIDO-B.otf" as="font" type="font/otf" crossOrigin="anonymous" />
+        <link rel="preload" href="/fonts/Balbaleo.otf" as="font" type="font/otf" crossOrigin="anonymous" />
+      </head>
+      <body className={`${GeistSans.variable} ${GeistMono.variable}`}>
         {children}
         <Analytics />
       </body>
