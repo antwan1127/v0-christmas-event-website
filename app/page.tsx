@@ -450,10 +450,10 @@ export default function HollyJollyPage() {
       {/* Music control button */}
       <button
         onClick={toggleMusic}
-        className="fixed top-6 right-6 z-50 bg-primary text-primary-foreground p-4 rounded-full shadow-lg hover:scale-110 transition-transform"
+        className="fixed top-4 right-4 sm:top-6 sm:right-6 z-50 bg-primary text-primary-foreground p-3 sm:p-4 rounded-full shadow-lg hover:scale-110 transition-transform min-h-[48px] min-w-[48px] sm:min-h-[56px] sm:min-w-[56px]"
         aria-label="Toggle music"
       >
-        {isMusicPlaying ? <Volume2 size={24} /> : <VolumeX size={24} />}
+        {isMusicPlaying ? <Volume2 size={20} className="sm:w-6 sm:h-6" /> : <VolumeX size={20} className="sm:w-6 sm:h-6" />}
       </button>
 
 
@@ -541,29 +541,29 @@ export default function HollyJollyPage() {
       </div>
 
       {/* Hero Section with Tree Image */}
-      <section className="relative h-screen flex items-center justify-center pt-4 pb-4 pl-4 pr-4">
+      <section className="relative h-screen flex items-center justify-center pt-4 pb-4 px-4">
         <div className="absolute inset-0 z-0 flex items-center justify-center">
           <Image
             src="/images/design-mode/tree.png"
             alt="Christmas Tree"
             width={400}
             height={600}
-            className="object-contain"
+            className="object-contain w-48 sm:w-64 md:w-80 lg:w-96 xl:w-[400px] h-auto"
           />
         </div>
 
         <div className="relative z-20 text-center px-4">
-          <div className="mb-8 float-animation">
+          <div className="mb-4 sm:mb-6 md:mb-8 float-animation">
             <Image
               src="/images/design-mode/final-logo-01.png"
               alt="Holly Jolly Logo"
               width={400}
               height={400}
-              className="mx-auto drop-shadow-2xl"
+              className="mx-auto drop-shadow-2xl w-48 sm:w-64 md:w-80 lg:w-96 xl:w-[400px] h-auto"
               priority
             />
           </div>
-          <h1 className="text-6xl md:text-8xl font-bold text-red-600 mb-12 drop-shadow-lg leading-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-8xl font-bold text-red-600 mb-6 sm:mb-8 md:mb-12 drop-shadow-lg leading-tight">
             Welcome to
             <br />
             Holly Jolly!
@@ -571,20 +571,22 @@ export default function HollyJollyPage() {
         </div>
       </section>
 
-      <section className="py-24 px-4 relative">
-        <div className="max-w-7xl mx-auto text-center">
-          <h2 className="text-5xl md:text-7xl font-bold text-primary mb-8 leading-tight">
-            A Magical
-            <br />
-            Christmas Celebration
-          </h2>
-          <p className="text-2xl text-gray-700">Join us for an unforgettable holiday experience!</p>
+      <section className="py-12 sm:py-16 md:py-20 lg:py-24 px-4 relative z-20">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="bg-gradient-to-r from-red-50 to-green-50 rounded-2xl p-8 sm:p-12 border-2 border-primary/20 shadow-lg relative z-30">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-primary mb-6 leading-tight">
+              A Magical Christmas Celebration
+            </h2>
+            <p className="text-lg sm:text-xl text-gray-700 font-medium">
+              Join us for an unforgettable holiday experience!
+            </p>
+          </div>
         </div>
       </section>
 
-      <section id="gallery" className="py-20 px-4 relative">
+      <section id="gallery" className="py-20 px-4 relative z-20">
         {/* Logo watermark background */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none">
+        <div className="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none z-0">
           <Image
             src="/images/design-mode/final-logo-01.png"
             alt="Holly Jolly Logo Background"
@@ -594,17 +596,21 @@ export default function HollyJollyPage() {
           />
         </div>
 
-        <div className="max-w-7xl mx-auto relative z-10">
-          <h2 className="text-5xl md:text-7xl font-bold text-center text-primary mb-6">Memories from Last Year</h2>
-          <p className="text-center text-2xl text-gray-700 mb-12">
-            Relive the joy and magic of our previous celebration!
-          </p>
+        <div className="max-w-7xl mx-auto relative z-30">
+          <div className="bg-gradient-to-r from-red-50 to-green-50 rounded-2xl p-8 sm:p-12 border-2 border-primary/20 shadow-lg mb-12">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-center text-primary mb-4 sm:mb-6">
+              Memories from Last Year
+            </h2>
+            <p className="text-center text-lg sm:text-xl text-gray-700 font-medium">
+              Relive the joy and magic of our previous celebration!
+            </p>
+          </div>
 
-          <div className="flex flex-wrap justify-center gap-4 mb-16 max-w-6xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-16">
             {eventImages.slice(0, 6).map((src, index) => (
               <Card
                 key={index}
-                className="overflow-hidden hover:scale-105 transition-transform duration-300 slide-in-up shadow-lg bg-white/90 backdrop-blur-sm border-2 border-primary/20 w-80"
+                className="overflow-hidden hover:scale-105 transition-transform duration-300 slide-in-up shadow-lg bg-white/90 backdrop-blur-sm border-2 border-primary/20"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <CardContent className="p-0">
@@ -624,19 +630,19 @@ export default function HollyJollyPage() {
           <div className="mb-16">
             <Card className="shadow-2xl border-4 border-primary bg-white">
               <CardContent className="p-8 md:p-12">
-                <div className="text-center mb-8">
-                  <h2 className="text-5xl font-bold text-primary mb-4">Register Now!</h2>
-                  <p className="text-xl text-gray-700">
+                <div className="text-center mb-6 sm:mb-8">
+                  <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary mb-3 sm:mb-4">Register Now!</h2>
+                  <p className="text-lg sm:text-xl text-gray-700">
                     Secure your spot at this year's Holly Jolly celebration
                   </p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
                   {/* Event Information */}
-                  <div className="bg-gradient-to-r from-red-50 to-green-50 border-2 border-primary/20 rounded-lg p-6 mb-6">
-                    <div className="text-center mb-4">
-                      <h3 className="text-2xl font-bold text-primary mb-2">🎄 Holly Jolly 🎄</h3>
-                      <p className="text-lg text-gray-700 font-semibold">يوم رياضي لأطفال ابتدائي وأسرهم</p>
+                  <div className="bg-gradient-to-r from-red-50 to-green-50 border-2 border-primary/20 rounded-lg p-4 sm:p-6 mb-4 sm:mb-6">
+                    <div className="text-center mb-3 sm:mb-4">
+                      <h3 className="text-xl sm:text-2xl font-bold text-primary mb-2">🎄 Holly Jolly 🎄</h3>
+                      <p className="text-base sm:text-lg text-gray-700 font-semibold">يوم رياضي لأطفال ابتدائي وأسرهم</p>
                       </div>
                     
                     <div className="space-y-3 text-sm text-gray-700">
@@ -688,7 +694,7 @@ export default function HollyJollyPage() {
                   </div>
 
                   <div className="space-y-3">
-                    <Label className="text-lg font-semibold text-gray-800">1. اسم الكنيسة *</Label>
+                    <Label className="text-base sm:text-lg font-semibold text-gray-800">1. اسم الكنيسة *</Label>
                     <RadioGroup
                       value={formData.eventType}
                       onValueChange={(value) => handleRadioChange("eventType", value)}
@@ -740,7 +746,7 @@ export default function HollyJollyPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="fullName" className="text-lg font-semibold text-gray-800">
+                    <Label htmlFor="fullName" className="text-base sm:text-lg font-semibold text-gray-800">
                       2. اسم الطفل (في المرحله الابتدائية ) ثلاثي بالعربي *
                     </Label>
                     <Input
@@ -755,7 +761,7 @@ export default function HollyJollyPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="gender" className="text-lg font-semibold text-gray-800">
+                    <Label htmlFor="gender" className="text-base sm:text-lg font-semibold text-gray-800">
                       3. Gender *
                     </Label>
                     <select
@@ -773,7 +779,7 @@ export default function HollyJollyPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="text-lg font-semibold text-gray-800">
+                    <Label htmlFor="email" className="text-base sm:text-lg font-semibold text-gray-800">
                       4. اسم الاب ثلاثي بالعربي*
                     </Label>
                     <Input
@@ -789,7 +795,7 @@ export default function HollyJollyPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="phone" className="text-lg font-semibold text-gray-800">
+                    <Label htmlFor="phone" className="text-base sm:text-lg font-semibold text-gray-800">
                       5. اسم الام ثلاثي بالعربي*
                     </Label>
                     <Input
@@ -805,7 +811,7 @@ export default function HollyJollyPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="age" className="text-lg font-semibold text-gray-800">
+                    <Label htmlFor="age" className="text-base sm:text-lg font-semibold text-gray-800">
                       6. رقم تليفون الاب/الام *
                     </Label>
                     <Input
@@ -823,7 +829,7 @@ export default function HollyJollyPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="dietaryRestrictions" className="text-lg font-semibold text-gray-800">
+                    <Label htmlFor="dietaryRestrictions" className="text-base sm:text-lg font-semibold text-gray-800">
                       7. عدد الاخوات *
                     </Label>
                     <Input
@@ -842,7 +848,7 @@ export default function HollyJollyPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="emergencyContact" className="text-lg font-semibold text-gray-800">
+                    <Label htmlFor="emergencyContact" className="text-base sm:text-lg font-semibold text-gray-800">
                       8. عدد التذاكر المطلوبة *
                     </Label>
                     <Input
@@ -874,7 +880,7 @@ export default function HollyJollyPage() {
                   </div>
 
                   <div className="space-y-3">
-                    <Label className="text-lg font-semibold text-gray-800">9. Payment Method *</Label>
+                    <Label className="text-base sm:text-lg font-semibold text-gray-800">9. Payment Method *</Label>
                     <RadioGroup
                       value={formData.paymentMethod}
                       onValueChange={(value) => handleRadioChange("paymentMethod", value)}
@@ -957,7 +963,7 @@ export default function HollyJollyPage() {
                             value={formData.instapayDetails}
                             onChange={handleInputChange}
                             required={formData.paymentMethod === "instapay"}
-                            className="text-lg text-gray-800"
+                            className="text-base sm:text-lg text-gray-800"
                             placeholder=""
                             maxLength={12}
                           />
@@ -970,7 +976,7 @@ export default function HollyJollyPage() {
                     type="submit"
                     size="lg"
                     disabled={isSubmitting}
-                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-xl py-6 rounded-full shadow-xl hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg sm:text-xl py-4 sm:py-6 rounded-full shadow-xl hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px] sm:min-h-[56px]"
                   >
                     {isSubmitting ? "Submitting..." : "Submit Registration 🎄"}
                   </Button>
