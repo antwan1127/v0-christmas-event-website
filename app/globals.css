@@ -3,6 +3,10 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Custom Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Balabeloo:wght@400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Tido+Bold:wght@400&display=swap');
+
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -124,6 +128,15 @@
   }
   input, textarea, select {
     @apply text-gray-800;
+  }
+  
+  /* Custom font classes */
+  .font-arabic {
+    font-family: 'Tido Bold', sans-serif;
+  }
+  
+  .font-english {
+    font-family: 'Balabeloo', sans-serif;
   }
 }
 

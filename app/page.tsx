@@ -20,15 +20,15 @@ export default function HollyJollyPage() {
   const [validationMessage, setValidationMessage] = useState("")
   const [assignedInstapayUser, setAssignedInstapayUser] = useState("")
   
-  // Generate stable background ornaments that don't change on re-render
+  // Generate stable background ornaments that don't change on re-render - Reduced for better performance
   const backgroundOrnaments = useMemo(() => {
-    return Array.from({ length: 50 }, (_, i) => ({
+    return Array.from({ length: 15 }, (_, i) => ({
       left: Math.random() * 100,
       top: Math.random() * 100,
-      animationDuration: Math.random() * 2 + 3,
-      animationDelay: Math.random() * 2,
-      width: Math.random() * 40 + 30,
-      height: Math.random() * 40 + 30,
+      animationDuration: Math.random() * 1 + 4, // Slower animations
+      animationDelay: Math.random() * 3, // More spread out delays
+      width: Math.random() * 20 + 25, // Smaller elements
+      height: Math.random() * 20 + 25,
     }))
   }, [])
   
@@ -158,29 +158,29 @@ export default function HollyJollyPage() {
     
     // Check if questions 3, 4, 5 have exactly 3 words and are Arabic only
     if (!validateArabicOnly(formData.fullName)) {
-      showValidationError("❌ خطأ في اسم الطفل\n\nاسم الطفل يجب أن يحتوي على أحرف عربية فقط (بدون أرقام أو أحرف إنجليزية)\nمثال: أحمد محمد علي")
+      showValidationError("❌ خطأ في اسم الطفل\n\nاسم الطفل يجب أن يحتوي على أحرف عربية فقط (بدون أرقام أو أحرف إنجليزية)")
       return false
     }
     if (!validateThreeWords(formData.fullName)) {
-      showValidationError("❌ خطأ في اسم الطفل\n\nاسم الطفل يجب أن يكون ثلاثي (3 كلمات بالضبط)\nمثال: أحمد محمد علي")
+      showValidationError("❌ خطأ في اسم الطفل\n\nاسم الطفل يجب أن يكون ثلاثي (3 كلمات بالضبط)")
       return false
     }
     
     if (!validateArabicOnly(formData.email)) {
-      showValidationError("❌ خطأ في اسم الأب\n\nاسم الأب يجب أن يحتوي على أحرف عربية فقط (بدون أرقام أو أحرف إنجليزية)\nمثال: محمد أحمد حسن")
+      showValidationError("❌ خطأ في اسم الأب\n\nاسم الأب يجب أن يحتوي على أحرف عربية فقط (بدون أرقام أو أحرف إنجليزية)")
       return false
     }
     if (!validateThreeWords(formData.email)) {
-      showValidationError("❌ خطأ في اسم الأب\n\nاسم الأب يجب أن يكون ثلاثي (3 كلمات بالضبط)\nمثال: محمد أحمد حسن")
+      showValidationError("❌ خطأ في اسم الأب\n\nاسم الأب يجب أن يكون ثلاثي (3 كلمات بالضبط)")
       return false
     }
     
     if (!validateArabicOnly(formData.phone)) {
-      showValidationError("❌ خطأ في اسم الأم\n\nاسم الأم يجب أن يحتوي على أحرف عربية فقط (بدون أرقام أو أحرف إنجليزية)\nمثال: فاطمة أحمد محمد")
+      showValidationError("❌ خطأ في اسم الأم\n\nاسم الأم يجب أن يحتوي على أحرف عربية فقط (بدون أرقام أو أحرف إنجليزية)")
       return false
     }
     if (!validateThreeWords(formData.phone)) {
-      showValidationError("❌ خطأ في اسم الأم\n\nاسم الأم يجب أن يكون ثلاثي (3 كلمات بالضبط)\nمثال: فاطمة أحمد محمد")
+      showValidationError("❌ خطأ في اسم الأم\n\nاسم الأم يجب أن يكون ثلاثي (3 كلمات بالضبط)")
       return false
     }
     
@@ -190,7 +190,7 @@ export default function HollyJollyPage() {
       return false
     }
     if (formData.age && formData.age.length !== 11) {
-      showValidationError("❌ خطأ في رقم التليفون\n\nرقم التليفون يجب أن يكون 11 رقم بالضبط\nمثال: 01234567890")
+      showValidationError("❌ خطأ في رقم التليفون\n\nرقم التليفون يجب أن يكون 11 رقم بالضبط")
       return false
     }
     if (!formData.dietaryRestrictions || formData.dietaryRestrictions === '') {
@@ -202,7 +202,7 @@ export default function HollyJollyPage() {
       return false
     }
     if (formData.emergencyContact && parseInt(formData.emergencyContact) <= 0) {
-      showValidationError("❌ خطأ في عدد التذاكر\n\nعدد التذاكر يجب أن يكون أكبر من صفر\nمثال: 1، 2، 3...")
+      showValidationError("❌ خطأ في عدد التذاكر\n\nعدد التذاكر يجب أن يكون أكبر من صفر")
       return false
     }
     
@@ -212,7 +212,7 @@ export default function HollyJollyPage() {
       return false
     }
     if (formData.paymentMethod === "instapay" && formData.instapayDetails && formData.instapayDetails.length !== 12) {
-      showValidationError("❌ خطأ في رقم المعاملة\n\nرقم المعاملة يجب أن يكون 12 رقم بالضبط\nمثال: 123456789012")
+      showValidationError("❌ خطأ في رقم المعاملة\n\nرقم المعاملة يجب أن يكون 12 رقم بالضبط")
       return false
     }
     if (formData.paymentMethod === "cash" && !formData.cashPickupTime) {
@@ -320,125 +320,10 @@ export default function HollyJollyPage() {
 
   return (
     <div className="min-h-screen bg-white overflow-hidden relative">
-      {/* Elegant Wooden Frame */}
+      {/* Elegant Wooden Frame - Removed yellow borders */}
       <div className="fixed inset-0 pointer-events-none z-30">
-        {/* Top border */}
-        <div className="absolute top-0 left-0 right-0 h-3 bg-gradient-to-r from-amber-300 via-amber-400 to-amber-300 shadow-sm"></div>
         
-        {/* Bottom border */}
-        <div className="absolute bottom-0 left-0 right-0 h-3 bg-gradient-to-r from-amber-300 via-amber-400 to-amber-300 shadow-sm"></div>
-        
-        {/* Left border */}
-        <div className="absolute top-0 bottom-0 left-0 w-3 bg-gradient-to-b from-amber-300 via-amber-400 to-amber-300 shadow-sm"></div>
-        
-        {/* Right border */}
-        <div className="absolute top-0 bottom-0 right-0 w-3 bg-gradient-to-b from-amber-300 via-amber-400 to-amber-300 shadow-sm"></div>
-        
-        {/* Corner accents */}
-        <div className="absolute top-4 left-4 w-3 h-3 border-2 border-amber-500 rounded-sm"></div>
-        <div className="absolute top-4 right-4 w-3 h-3 border-2 border-amber-500 rounded-sm"></div>
-        <div className="absolute bottom-4 left-4 w-3 h-3 border-2 border-amber-500 rounded-sm"></div>
-        <div className="absolute bottom-4 right-4 w-3 h-3 border-2 border-amber-500 rounded-sm"></div>
-        
-        {/* Subtle inner shadow */}
-        <div className="absolute top-3 left-3 right-3 bottom-3 border border-amber-200 opacity-60"></div>
-        
-        {/* Decorative images hovering over the border */}
-        
-        {/* Right side decorations */}
-        <div className="absolute right-1 top-1/8 transform translate-x-1/2 -translate-y-1/2 animate-pulse" style={{ animationDelay: '2s' }}>
-          <Image src="/images/design-mode/cone.png" alt="Cone decoration" width={26} height={26} className="opacity-80" />
-        </div>
-        <div className="absolute right-1 top-1/6 transform translate-x-1/2 -translate-y-1/2 animate-bounce" style={{ animationDuration: '2.5s', animationDelay: '0.3s' }}>
-          <Image src="/images/design-mode/star.png" alt="Star decoration" width={24} height={24} className="opacity-80" />
-        </div>
-        <div className="absolute right-1 top-1/4 transform translate-x-1/2 -translate-y-1/2 animate-pulse" style={{ animationDelay: '1.1s' }}>
-          <Image src="/images/design-mode/tree.png" alt="Tree decoration" width={28} height={28} className="opacity-80" />
-        </div>
-        <div className="absolute right-1 top-1/3 transform translate-x-1/2 -translate-y-1/2 animate-bounce" style={{ animationDuration: '2.7s', animationDelay: '0.8s' }}>
-          <Image src="/images/design-mode/hood.png" alt="Hood decoration" width={25} height={25} className="opacity-80" />
-        </div>
-        <div className="absolute right-1 top-1/2 transform translate-x-1/2 -translate-y-1/2 animate-bounce" style={{ animationDuration: '2.8s', animationDelay: '1.5s' }}>
-          <Image src="/images/design-mode/boy.png" alt="Boy decoration" width={30} height={30} className="opacity-80" />
-        </div>
-        <div className="absolute right-1 top-2/3 transform translate-x-1/2 -translate-y-1/2 animate-pulse" style={{ animationDelay: '0.8s' }}>
-          <Image src="/images/design-mode/tree.png" alt="Tree decoration" width={26} height={26} className="opacity-80" />
-        </div>
-        <div className="absolute right-1 top-3/4 transform translate-x-1/2 -translate-y-1/2 animate-bounce" style={{ animationDuration: '2.4s', animationDelay: '1.9s' }}>
-          <Image src="/images/design-mode/star.png" alt="Star decoration" width={23} height={23} className="opacity-80" />
-        </div>
-        <div className="absolute right-1 top-5/6 transform translate-x-1/2 -translate-y-1/2 animate-bounce" style={{ animationDuration: '3.2s', animationDelay: '1.2s' }}>
-          <Image src="/images/design-mode/hood.png" alt="Hood decoration" width={24} height={24} className="opacity-80" />
-        </div>
-        <div className="absolute right-1 top-7/8 transform translate-x-1/2 -translate-y-1/2 animate-pulse" style={{ animationDelay: '2.3s' }}>
-          <Image src="/images/design-mode/cone.png" alt="Cone decoration" width={27} height={27} className="opacity-80" />
-        </div>
-        
-        {/* Bottom side decorations */}
-        <div className="absolute bottom-1 left-1/8 transform -translate-x-1/2 translate-y-1/2 animate-bounce" style={{ animationDuration: '3.2s', animationDelay: '1.2s' }}>
-          <Image src="/images/design-mode/tree.png" alt="Tree decoration" width={26} height={26} className="opacity-80" />
-        </div>
-        <div className="absolute bottom-1 left-1/6 transform -translate-x-1/2 translate-y-1/2 animate-pulse" style={{ animationDelay: '0.4s' }}>
-          <Image src="/images/design-mode/star.png" alt="Star decoration" width={22} height={22} className="opacity-80" />
-        </div>
-        <div className="absolute bottom-1 left-1/4 transform -translate-x-1/2 translate-y-1/2 animate-bounce" style={{ animationDuration: '2.6s', animationDelay: '1.7s' }}>
-          <Image src="/images/design-mode/cone.png" alt="Cone decoration" width={25} height={25} className="opacity-80" />
-        </div>
-        <div className="absolute bottom-1 left-1/3 transform -translate-x-1/2 translate-y-1/2 animate-pulse" style={{ animationDelay: '0.9s' }}>
-          <Image src="/images/design-mode/hood.png" alt="Hood decoration" width={24} height={24} className="opacity-80" />
-        </div>
-        <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 translate-y-1/2 animate-bounce" style={{ animationDuration: '2.8s', animationDelay: '2.5s' }}>
-          <Image src="/images/design-mode/cone.png" alt="Cone decoration" width={24} height={24} className="opacity-80" />
-        </div>
-        <div className="absolute bottom-1 left-2/3 transform -translate-x-1/2 translate-y-1/2 animate-pulse" style={{ animationDelay: '1.8s' }}>
-          <Image src="/images/design-mode/boy.png" alt="Boy decoration" width={28} height={28} className="opacity-80" />
-        </div>
-        <div className="absolute bottom-1 left-3/4 transform -translate-x-1/2 translate-y-1/2 animate-bounce" style={{ animationDuration: '2.9s', animationDelay: '0.6s' }}>
-          <Image src="/images/design-mode/star.png" alt="Star decoration" width={23} height={23} className="opacity-80" />
-        </div>
-        <div className="absolute bottom-1 left-5/6 transform -translate-x-1/2 translate-y-1/2 animate-bounce" style={{ animationDuration: '2.7s', animationDelay: '0.3s' }}>
-          <Image src="/images/design-mode/hood.png" alt="Hood decoration" width={26} height={26} className="opacity-80" />
-        </div>
-        <div className="absolute bottom-1 left-7/8 transform -translate-x-1/2 translate-y-1/2 animate-pulse" style={{ animationDelay: '2.1s' }}>
-          <Image src="/images/design-mode/tree.png" alt="Tree decoration" width={27} height={27} className="opacity-80" />
-        </div>
-        
-        {/* Left side decorations */}
-        <div className="absolute left-1 top-1/8 transform -translate-x-1/2 -translate-y-1/2 animate-pulse" style={{ animationDelay: '1.8s' }}>
-          <Image src="/images/design-mode/hood.png" alt="Hood decoration" width={26} height={26} className="opacity-80" />
-        </div>
-        <div className="absolute left-1 top-1/6 transform -translate-x-1/2 -translate-y-1/2 animate-bounce" style={{ animationDuration: '2.6s', animationDelay: '0.2s' }}>
-          <Image src="/images/design-mode/star.png" alt="Star decoration" width={24} height={24} className="opacity-80" />
-        </div>
-        <div className="absolute left-1 top-1/4 transform -translate-x-1/2 -translate-y-1/2 animate-pulse" style={{ animationDelay: '1.3s' }}>
-          <Image src="/images/design-mode/tree.png" alt="Tree decoration" width={27} height={27} className="opacity-80" />
-        </div>
-        <div className="absolute left-1 top-1/3 transform -translate-x-1/2 -translate-y-1/2 animate-bounce" style={{ animationDuration: '2.4s', animationDelay: '0.9s' }}>
-          <Image src="/images/design-mode/cone.png" alt="Cone decoration" width={25} height={25} className="opacity-80" />
-        </div>
-        <div className="absolute left-1 top-1/2 transform -translate-x-1/2 -translate-y-1/2 animate-bounce" style={{ animationDuration: '3.5s', animationDelay: '0.7s' }}>
-          <Image src="/images/design-mode/boy.png" alt="Boy decoration" width={32} height={32} className="opacity-80" />
-        </div>
-        <div className="absolute left-1 top-2/3 transform -translate-x-1/2 -translate-y-1/2 animate-pulse" style={{ animationDelay: '2.2s' }}>
-          <Image src="/images/design-mode/tree.png" alt="Tree decoration" width={28} height={28} className="opacity-80" />
-        </div>
-        <div className="absolute left-1 top-3/4 transform -translate-x-1/2 -translate-y-1/2 animate-bounce" style={{ animationDuration: '2.8s', animationDelay: '1.6s' }}>
-          <Image src="/images/design-mode/star.png" alt="Star decoration" width={23} height={23} className="opacity-80" />
-        </div>
-        <div className="absolute left-1 top-5/6 transform -translate-x-1/2 -translate-y-1/2 animate-bounce" style={{ animationDuration: '2.9s', animationDelay: '1.1s' }}>
-          <Image src="/images/design-mode/cone.png" alt="Cone decoration" width={26} height={26} className="opacity-80" />
-        </div>
-        <div className="absolute left-1 top-7/8 transform -translate-x-1/2 -translate-y-1/2 animate-pulse" style={{ animationDelay: '2.5s' }}>
-          <Image src="/images/design-mode/hood.png" alt="Hood decoration" width={24} height={24} className="opacity-80" />
-        </div>
-        
-        {/* Corner decorations */}
-        <div className="absolute bottom-0 left-0 transform -translate-x-1/2 translate-y-1/2 animate-bounce" style={{ animationDuration: '2.9s', animationDelay: '1.4s' }}>
-          <Image src="/images/design-mode/cone.png" alt="Cone decoration" width={22} height={22} className="opacity-70" />
-        </div>
-        <div className="absolute bottom-0 right-0 transform translate-x-1/2 translate-y-1/2 animate-pulse" style={{ animationDelay: '0.6s' }}>
-          <Image src="/images/design-mode/hood.png" alt="Hood decoration" width={20} height={20} className="opacity-70" />
-        </div>
+        {/* Decorative images removed for better performance */}
       </div>
       <audio ref={audioRef} loop>
         <source
@@ -462,12 +347,10 @@ export default function HollyJollyPage() {
         {backgroundOrnaments.map((ornament, i) => (
           <div
             key={`ornament-${i}`}
-            className="absolute animate-bounce"
+            className="absolute"
             style={{
               left: `${ornament.left}%`,
               top: `${ornament.top}%`,
-              animationDuration: `${ornament.animationDuration}s`,
-              animationDelay: `${ornament.animationDelay}s`,
               width: `${ornament.width}px`,
               height: `${ornament.height}px`,
             }}
@@ -477,43 +360,41 @@ export default function HollyJollyPage() {
               alt="Christmas decoration"
               width={60}
               height={60}
-              className="w-full h-full object-contain"
+              className="w-full h-full object-contain opacity-60"
             />
           </div>
         ))}
       </div>
 
-      <div className="fixed left-4 top-1/4 z-10 pointer-events-none animate-pulse">
+      <div className="fixed left-4 top-1/4 z-10 pointer-events-none">
         <Image
           src="/images/design-mode/boy.png"
           alt="Christmas boy"
           width={80}
           height={80}
-          className="w-20 h-20 object-contain"
+          className="w-20 h-20 object-contain opacity-70"
         />
       </div>
-      <div className="fixed right-4 top-1/3 z-10 pointer-events-none animate-pulse" style={{ animationDelay: "1s" }}>
+      <div className="fixed right-4 top-1/3 z-10 pointer-events-none">
         <Image
           src="/images/design-mode/hood.png"
           alt="Christmas hood"
           width={80}
           height={80}
-          className="w-20 h-20 object-contain"
+          className="w-20 h-20 object-contain opacity-70"
         />
       </div>
 
       <div className="fixed inset-0 pointer-events-none z-10">
-        {[...Array(30)].map((_, i) => (
+        {[...Array(8)].map((_, i) => (
           <div
             key={`star-${i}`}
-            className="absolute animate-pulse"
+            className="absolute"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
-              animationDuration: `${Math.random() * 2 + 1}s`,
-              animationDelay: `${Math.random() * 2}s`,
-              width: `${Math.random() * 20 + 15}px`,
-              height: `${Math.random() * 20 + 15}px`,
+              width: `${Math.random() * 15 + 10}px`,
+              height: `${Math.random() * 15 + 10}px`,
             }}
           >
             <Image
@@ -521,20 +402,19 @@ export default function HollyJollyPage() {
               alt="Twinkling star"
               width={35}
               height={35}
-              className="w-full h-full object-contain"
+              className="w-full h-full object-contain opacity-40"
             />
           </div>
         ))}
       </div>
 
       <div className="fixed top-0 left-0 right-0 z-20 h-12 flex justify-around items-center pointer-events-none">
-        {[...Array(20)].map((_, i) => (
+        {[...Array(10)].map((_, i) => (
           <div
             key={i}
-            className="w-3 h-3 rounded-full animate-pulse"
+            className="w-3 h-3 rounded-full"
             style={{
               backgroundColor: i % 3 === 0 ? "#dc2626" : i % 3 === 1 ? "#ffd700" : "#ffffff",
-              animationDelay: `${i * 0.1}s`,
             }}
           />
         ))}
@@ -563,7 +443,7 @@ export default function HollyJollyPage() {
               priority
             />
           </div>
-          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold text-red-600 mb-6 sm:mb-8 md:mb-12 drop-shadow-lg leading-tight">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold text-red-600 mb-6 sm:mb-8 md:mb-12 drop-shadow-lg leading-tight font-english">
             Welcome to
             <br />
             Holly Jolly!
@@ -574,10 +454,10 @@ export default function HollyJollyPage() {
       <section className="py-12 sm:py-16 md:py-20 lg:py-24 px-4 relative z-20">
         <div className="max-w-4xl mx-auto text-center">
           <div className="bg-gradient-to-r from-red-50 to-green-50 rounded-2xl p-8 sm:p-12 border-2 border-primary/20 shadow-lg relative z-30">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-primary mb-6 leading-tight">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-primary mb-6 leading-tight font-english">
               A Magical Christmas Celebration
           </h2>
-            <p className="text-lg sm:text-xl text-gray-700 font-medium">
+            <p className="text-lg sm:text-xl text-gray-700 font-medium font-english">
               Join us for an unforgettable holiday experience!
             </p>
           </div>
@@ -598,10 +478,10 @@ export default function HollyJollyPage() {
 
         <div className="max-w-7xl mx-auto relative z-30">
           <div className="bg-gradient-to-r from-red-50 to-green-50 rounded-2xl p-8 sm:p-12 border-2 border-primary/20 shadow-lg mb-12">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-center text-primary mb-4 sm:mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-center text-primary mb-4 sm:mb-6 font-english">
               Memories from Last Year
             </h2>
-            <p className="text-center text-lg sm:text-xl text-gray-700 font-medium">
+            <p className="text-center text-lg sm:text-xl text-gray-700 font-medium font-english">
             Relive the joy and magic of our previous celebration!
           </p>
           </div>
@@ -631,8 +511,8 @@ export default function HollyJollyPage() {
             <Card className="shadow-2xl border-4 border-primary bg-white">
               <CardContent className="p-8 md:p-12">
                 <div className="text-center mb-6 sm:mb-8">
-                  <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary mb-3 sm:mb-4">Register Now!</h2>
-                  <p className="text-lg sm:text-xl text-gray-700">
+                  <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary mb-3 sm:mb-4 font-english">Register Now!</h2>
+                  <p className="text-lg sm:text-xl text-gray-700 font-english">
                     Secure your spot at this year's Holly Jolly celebration
                   </p>
                 </div>
@@ -641,60 +521,60 @@ export default function HollyJollyPage() {
                   {/* Event Information */}
                   <div className="bg-gradient-to-r from-red-50 to-green-50 border-2 border-primary/20 rounded-lg p-4 sm:p-6 mb-4 sm:mb-6">
                     <div className="text-center mb-3 sm:mb-4">
-                      <h3 className="text-xl sm:text-2xl font-bold text-primary mb-2">🎄 Holly Jolly 🎄</h3>
-                      <p className="text-base sm:text-lg text-gray-700 font-semibold">يوم رياضي لأطفال ابتدائي وأسرهم</p>
+                      <h3 className="text-xl sm:text-2xl font-bold text-primary mb-2 font-english">🎄 Holly Jolly 🎄</h3>
+                      <p className="text-base sm:text-lg text-gray-700 font-semibold font-arabic">يوم رياضي لأطفال ابتدائي وأسرهم</p>
                       </div>
                     
                     <div className="space-y-3 text-sm text-gray-700">
                       <div className="flex items-start space-x-2">
                         <span className="text-primary font-bold">📍</span>
-                        <span>تابع لكنيسة مارمرقس مصر الجديدة وتحت إشراف أسرة القديس أبسخيرون القليني</span>
+                        <span className="font-arabic">تابع لكنيسة مارمرقس مصر الجديدة وتحت إشراف أسرة القديس أبسخيرون القليني</span>
                       </div>
                       
                       <div className="flex items-start space-x-2">
                         <span className="text-primary font-bold">🏫</span>
-                        <span>سيقام في الـ College de la Salle بالتجمع</span>
+                        <span className="font-arabic">سيقام في الـ College de la Salle بالتجمع</span>
                       </div>
                       
                       <div className="flex items-start space-x-2">
                         <span className="text-primary font-bold">📅</span>
-                        <span>الجمعة ٢٦ من ديسمبر ٢٠٢٥</span>
+                        <span className="font-arabic">الجمعة ٢٦ من ديسمبر ٢٠٢٥</span>
                       </div>
                       </div>
                     
                     <div className="mt-4 p-4 bg-white/80 rounded-lg border border-primary/30">
-                      <h4 className="text-lg font-bold text-primary mb-3 text-center">الشروط والأحكام</h4>
+                      <h4 className="text-lg font-bold text-primary mb-3 text-center font-arabic">الشروط والأحكام</h4>
                       <ul className="space-y-2 text-sm text-gray-700">
                         <li className="flex items-start space-x-2">
                           <span className="text-red-500 font-bold">•</span>
-                          <span>آخر ميعاد للحجز واسترداد الفلوس ٢١ ديسمبر</span>
+                          <span className="font-arabic">آخر ميعاد للحجز واسترداد الفلوس ٢١ ديسمبر</span>
                         </li>
                         <li className="flex items-start space-x-2">
                           <span className="text-blue-500 font-bold">•</span>
-                          <span>سعر التذكرة الواحدة لكل فرد في العائلة ٢٠٠ جنيه ليوم ١٤ ديسمبر</span>
+                          <span className="font-arabic">سعر التذكرة الواحدة لكل فرد في العائلة ٢٠٠ جنيه ليوم ١٤ ديسمبر</span>
                         </li>
                         <li className="flex items-start space-x-2">
                           <span className="text-blue-500 font-bold">•</span>
-                          <span>ابتداء من ١٥ ل ٢١ ديسمبر سعر التذكرة الواحدة لكل فرد ٢٥٠ جنيه</span>
+                          <span className="font-arabic">ابتداء من ١٥ ل ٢١ ديسمبر سعر التذكرة الواحدة لكل فرد ٢٥٠ جنيه</span>
                         </li>
                         <li className="flex items-start space-x-2">
                           <span className="text-red-500 font-bold">•</span>
-                          <span>الدخول بالتذاكر لنفس الأشخاص المسجلين في الفورم (ممنوع استبدال التذاكر)</span>
+                          <span className="font-arabic">الدخول بالتذاكر لنفس الأشخاص المسجلين في الفورم (ممنوع استبدال التذاكر)</span>
                         </li>
                         <li className="flex items-start space-x-2">
                           <span className="text-green-500 font-bold">•</span>
-                          <span>نرحب بعائلة الطفل (أب وأم وأخوات فقط)</span>
+                          <span className="font-arabic">نرحب بعائلة الطفل (أب وأم وأخوات فقط)</span>
                         </li>
                         <li className="flex items-start space-x-2">
                           <span className="text-red-500 font-bold">•</span>
-                          <span>نعتذر لا يوجد تذاكر يوم الحفلة على الباب</span>
+                          <span className="font-arabic">نعتذر لا يوجد تذاكر يوم الحفلة على الباب</span>
                         </li>
                       </ul>
                       </div>
                   </div>
 
                   <div className="space-y-3">
-                    <Label className="text-base sm:text-lg font-semibold text-gray-800">1. اسم الكنيسة *</Label>
+                    <Label className="text-base sm:text-lg font-semibold text-gray-800 font-arabic">1. اسم الكنيسة *</Label>
                     <RadioGroup
                       value={formData.eventType}
                       onValueChange={(value) => handleRadioChange("eventType", value)}
@@ -702,43 +582,43 @@ export default function HollyJollyPage() {
                     >
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="مارمرقس م.الجديده مدارس احد" id="church1" />
-                        <Label htmlFor="church1" className="font-normal cursor-pointer text-gray-800">
+                        <Label htmlFor="church1" className="font-normal cursor-pointer text-gray-800 font-arabic">
                           مارمرقس م.الجديده مدارس احد
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="مارمرقس م.الجديده اجتماع" id="church2" />
-                        <Label htmlFor="church2" className="font-normal cursor-pointer text-gray-800">
+                        <Label htmlFor="church2" className="font-normal cursor-pointer text-gray-800 font-arabic">
                           مارمرقس م.الجديده اجتماع
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="العذارء ارض الجولف" id="church3" />
-                        <Label htmlFor="church3" className="font-normal cursor-pointer text-gray-800">
+                        <Label htmlFor="church3" className="font-normal cursor-pointer text-gray-800 font-arabic">
                           العذارء ارض الجولف
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="الكاروز التجمع" id="church4" />
-                        <Label htmlFor="church4" className="font-normal cursor-pointer text-gray-800">
+                        <Label htmlFor="church4" className="font-normal cursor-pointer text-gray-800 font-arabic">
                           الكاروز التجمع
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="العذارء و الانبا بيشوي التجمع" id="church5" />
-                        <Label htmlFor="church5" className="font-normal cursor-pointer text-gray-800">
+                        <Label htmlFor="church5" className="font-normal cursor-pointer text-gray-800 font-arabic">
                           العذارء و الانبا بيشوي التجمع
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="العذارء الرحاب" id="church6" />
-                        <Label htmlFor="church6" className="font-normal cursor-pointer text-gray-800">
+                        <Label htmlFor="church6" className="font-normal cursor-pointer text-gray-800 font-arabic">
                           العذارء الرحاب
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="العذارء و مارجرجس مدينتي" id="church7" />
-                        <Label htmlFor="church7" className="font-normal cursor-pointer text-gray-800">
+                        <Label htmlFor="church7" className="font-normal cursor-pointer text-gray-800 font-arabic">
                           العذارء و مارجرجس مدينتي
                         </Label>
                       </div>
@@ -746,7 +626,7 @@ export default function HollyJollyPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="fullName" className="text-base sm:text-lg font-semibold text-gray-800">
+                    <Label htmlFor="fullName" className="text-base sm:text-lg font-semibold text-gray-800 font-arabic">
                       2. اسم الطفل (في المرحله الابتدائية ) ثلاثي بالعربي *
                     </Label>
                     <Input
@@ -761,7 +641,7 @@ export default function HollyJollyPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="gender" className="text-base sm:text-lg font-semibold text-gray-800">
+                    <Label htmlFor="gender" className="text-base sm:text-lg font-semibold text-gray-800 font-english">
                       3. Gender *
                     </Label>
                     <select
@@ -779,7 +659,7 @@ export default function HollyJollyPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="text-base sm:text-lg font-semibold text-gray-800">
+                    <Label htmlFor="email" className="text-base sm:text-lg font-semibold text-gray-800 font-arabic">
                       4. اسم الاب ثلاثي بالعربي*
                     </Label>
                     <Input
@@ -795,7 +675,7 @@ export default function HollyJollyPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="phone" className="text-base sm:text-lg font-semibold text-gray-800">
+                    <Label htmlFor="phone" className="text-base sm:text-lg font-semibold text-gray-800 font-arabic">
                       5. اسم الام ثلاثي بالعربي*
                     </Label>
                     <Input
@@ -811,7 +691,7 @@ export default function HollyJollyPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="age" className="text-base sm:text-lg font-semibold text-gray-800">
+                    <Label htmlFor="age" className="text-base sm:text-lg font-semibold text-gray-800 font-arabic">
                       6. رقم تليفون الاب/الام *
                     </Label>
                     <Input
@@ -829,7 +709,7 @@ export default function HollyJollyPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="dietaryRestrictions" className="text-base sm:text-lg font-semibold text-gray-800">
+                    <Label htmlFor="dietaryRestrictions" className="text-base sm:text-lg font-semibold text-gray-800 font-arabic">
                       7. عدد الاخوات *
                     </Label>
                     <Input
@@ -848,7 +728,7 @@ export default function HollyJollyPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="emergencyContact" className="text-base sm:text-lg font-semibold text-gray-800">
+                    <Label htmlFor="emergencyContact" className="text-base sm:text-lg font-semibold text-gray-800 font-arabic">
                       8. عدد التذاكر المطلوبة *
                     </Label>
                     <Input
@@ -880,7 +760,7 @@ export default function HollyJollyPage() {
                   </div>
 
                   <div className="space-y-3">
-                    <Label className="text-base sm:text-lg font-semibold text-gray-800">9. Payment Method *</Label>
+                    <Label className="text-base sm:text-lg font-semibold text-gray-800 font-english">9. Payment Method *</Label>
                     <RadioGroup
                       value={formData.paymentMethod}
                       onValueChange={(value) => handleRadioChange("paymentMethod", value)}
@@ -888,13 +768,13 @@ export default function HollyJollyPage() {
                     >
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="cash" id="cash" />
-                        <Label htmlFor="cash" className="font-normal cursor-pointer text-gray-800">
+                        <Label htmlFor="cash" className="font-normal cursor-pointer text-gray-800 font-english">
                           Cash
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="instapay" id="instapay" />
-                        <Label htmlFor="instapay" className="font-normal cursor-pointer text-gray-800">
+                        <Label htmlFor="instapay" className="font-normal cursor-pointer text-gray-800 font-english">
                           Instapay
                         </Label>
                       </div>
@@ -902,10 +782,10 @@ export default function HollyJollyPage() {
 
                     {formData.paymentMethod === "cash" && (
                       <div className="mt-4 space-y-4 p-4 bg-white/90 rounded-lg border-2 border-primary/30">
-                        <p className="text-base text-black font-bold text-center">
+                        <p className="text-base text-black font-bold text-center font-arabic">
                           هنجمع الاشتراكات ابتداء من ٢ نوفمبر
                         </p>
-                        <p className="text-sm text-black font-semibold">Please select your preferred pickup time:</p>
+                        <p className="text-sm text-black font-semibold font-english">Please select your preferred pickup time:</p>
                         <RadioGroup
                           value={formData.cashPickupTime}
                           onValueChange={(value) => handleRadioChange("cashPickupTime", value)}
@@ -915,7 +795,7 @@ export default function HollyJollyPage() {
                             <RadioGroupItem value="friday" id="friday" />
                             <Label
                               htmlFor="friday"
-                              className="font-normal cursor-pointer text-black text-sm leading-relaxed"
+                              className="font-normal cursor-pointer text-black text-sm leading-relaxed font-arabic"
                             >
                               الجمعه من ١٠ص ل ١ظ في المبني الجديد +بين الفيلتين في الكنيسة الرئيسية
                             </Label>
@@ -924,7 +804,7 @@ export default function HollyJollyPage() {
                             <RadioGroupItem value="sunday" id="sunday" />
                             <Label
                               htmlFor="sunday"
-                              className="font-normal cursor-pointer text-black text-sm leading-relaxed"
+                              className="font-normal cursor-pointer text-black text-sm leading-relaxed font-arabic"
                             >
                               الاحد من ٦ م ل ٨ م في المبني الجديد +بين الفليتين في الكنيسة الرئيسية
                             </Label>
@@ -936,8 +816,8 @@ export default function HollyJollyPage() {
                     {formData.paymentMethod === "instapay" && (
                       <div className="mt-4 space-y-4 p-4 bg-white/90 rounded-lg border-2 border-primary/30">
                         <div className="text-center mb-4">
-                          <p className="text-lg font-semibold text-primary mb-2">Payment Instructions</p>
-                          <p className="text-sm text-gray-700">
+                          <p className="text-lg font-semibold text-primary mb-2 font-english">Payment Instructions</p>
+                          <p className="text-sm text-gray-700 font-english">
                             Please send payment to: <span className="font-bold text-primary">
                               {assignedInstapayUser || "Loading..."}
                             </span>
@@ -952,7 +832,7 @@ export default function HollyJollyPage() {
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="instapayDetails" className="text-base font-semibold text-black">
+                          <Label htmlFor="instapayDetails" className="text-base font-semibold text-black font-english">
                             Enter your transaction reference number *
                           </Label>
                           <Input
@@ -1018,9 +898,9 @@ export default function HollyJollyPage() {
             height={150}
             className="mx-auto mb-6"
           />
-          <h3 className="text-3xl font-bold mb-4 text-primary">Holly Jolly Christmas Event</h3>
-          <p className="text-xl mb-2 text-gray-600">Spreading joy and Christmas cheer!</p>
-          <p className="text-lg opacity-90">© 2025 Holly Jolly. All rights reserved. 🎅🎄✨</p>
+          <h3 className="text-3xl font-bold mb-4 text-primary font-english">Holly Jolly Christmas Event</h3>
+          <p className="text-xl mb-2 text-gray-600 font-english">Spreading joy and Christmas cheer!</p>
+          <p className="text-lg opacity-90 font-english">© 2025 Holly Jolly. All rights reserved. 🎅🎄✨</p>
         </div>
       </footer>
 
@@ -1034,12 +914,12 @@ export default function HollyJollyPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <h2 className="text-3xl font-bold text-primary mb-2">🎉 تم التسجيل بنجاح! 🎉</h2>
-              <p className="text-lg text-gray-700 mb-4">Thank you for registering for Holly Jolly!</p>
-              <p className="text-sm text-gray-600 mb-4">Your registration has been saved successfully.</p>
+              <h2 className="text-3xl font-bold text-primary mb-2 font-arabic">🎉 تم التسجيل بنجاح! 🎉</h2>
+              <p className="text-lg text-gray-700 mb-4 font-english">Thank you for registering for Holly Jolly!</p>
+              <p className="text-sm text-gray-600 mb-4 font-english">Your registration has been saved successfully.</p>
               <div className="bg-gradient-to-r from-pink-50 to-purple-50 p-4 rounded-lg border border-pink-200">
-                <p className="text-sm text-gray-700 font-semibold mb-2">📸 Follow us on Instagram:</p>
-                <p className="text-lg font-bold text-pink-600">@Abssportsteam</p>
+                <p className="text-sm text-gray-700 font-semibold mb-2 font-english">📸 Follow us on Instagram:</p>
+                <p className="text-lg font-bold text-pink-600 font-english">@Abssportsteam</p>
               </div>
             </div>
             
