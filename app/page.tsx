@@ -546,13 +546,13 @@ export default function HollyJollyPage() {
           <Image
             src="/images/design-mode/tree.png"
             alt="Christmas Tree"
-            width={400}
-            height={600}
-            className="object-contain w-48 sm:w-64 md:w-80 lg:w-96 xl:w-[400px] h-auto"
+            width={800}
+            height={1200}
+            className="object-contain w-72 sm:w-80 md:w-96 lg:w-[600px] xl:w-[700px] h-auto"
           />
         </div>
 
-        <div className="relative z-20 text-center px-4">
+        <div className="relative z-30 text-center px-4">
           <div className="mb-4 sm:mb-6 md:mb-8 float-animation">
             <Image
               src="/images/design-mode/final-logo-01.png"
@@ -563,7 +563,7 @@ export default function HollyJollyPage() {
               priority
             />
           </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-8xl font-bold text-red-600 mb-6 sm:mb-8 md:mb-12 drop-shadow-lg leading-tight">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold text-red-600 mb-6 sm:mb-8 md:mb-12 drop-shadow-lg leading-tight">
             Welcome to
             <br />
             Holly Jolly!
@@ -576,7 +576,7 @@ export default function HollyJollyPage() {
           <div className="bg-gradient-to-r from-red-50 to-green-50 rounded-2xl p-8 sm:p-12 border-2 border-primary/20 shadow-lg relative z-30">
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-primary mb-6 leading-tight">
               A Magical Christmas Celebration
-            </h2>
+          </h2>
             <p className="text-lg sm:text-xl text-gray-700 font-medium">
               Join us for an unforgettable holiday experience!
             </p>
@@ -602,8 +602,8 @@ export default function HollyJollyPage() {
               Memories from Last Year
             </h2>
             <p className="text-center text-lg sm:text-xl text-gray-700 font-medium">
-              Relive the joy and magic of our previous celebration!
-            </p>
+            Relive the joy and magic of our previous celebration!
+          </p>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-16">
