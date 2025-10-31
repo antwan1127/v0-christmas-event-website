@@ -973,7 +973,14 @@ export default function HollyJollyPage() {
               <p className="text-sm text-gray-600 mb-4 font-english">Your registration has been saved successfully.</p>
               <div className="bg-gradient-to-r from-pink-50 to-purple-50 p-4 rounded-lg border border-pink-200">
                 <p className="text-sm text-gray-700 font-semibold mb-2 font-english">📸 Follow us on Instagram:</p>
-                <p className="text-lg font-bold text-pink-600 font-english">@Abssportsteam</p>
+                <a 
+                  href="https://www.instagram.com/abssportsteam?igsh=MjRvbWd2bW82ZGs2" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-lg font-bold text-pink-600 font-english hover:text-pink-700 hover:underline cursor-pointer select-text"
+                >
+                  @Abssportsteam
+                </a>
               </div>
             </div>
             
