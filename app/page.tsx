@@ -620,8 +620,20 @@ export default function HollyJollyPage() {
                           <span className="font-arabic">نرحب بعائلة الطفل (أب وأم وأخوات فقط)</span>
                         </li>
                         <li className="flex items-start space-x-2">
+                          <span className="text-green-500 font-bold">•</span>
+                          <span className="font-arabic">يشترط وجود احد الابوين</span>
+                        </li>
+                        <li className="flex items-start space-x-2">
+                          <span className="text-blue-500 font-bold">•</span>
+                          <span className="font-arabic">الاخوات بداية من ٣ سنين لهم تذكرة كاملة</span>
+                        </li>
+                        <li className="flex items-start space-x-2">
                           <span className="text-red-500 font-bold">•</span>
                           <span className="font-arabic">نعتذر لا يوجد تذاكر يوم الحفلة على الباب</span>
+                        </li>
+                        <li className="flex items-start space-x-2">
+                          <span className="text-red-500 font-bold">•</span>
+                          <span className="font-arabic">لا يوجد باص</span>
                         </li>
                       </ul>
                       </div>
