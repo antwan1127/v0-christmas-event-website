@@ -317,7 +317,7 @@ export default function HollyJollyPage() {
 
     try {
       const GOOGLE_SHEETS_URL =
-        "https://script.google.com/macros/s/AKfycbzQBA1ZQsemoDNitZiDMZQpVuY1Bwa8XaKgdw_IftYOz0jqEZEh0evsq47ZcGZ9OPO9/exec"
+        "https://script.google.com/macros/s/AKfycbxCiBwDLvy3qix-5D4D_n3DteE_n2QkuPTSRIUfU3ljavWsh9qLNzjGnZaImQY4sPiw/exec"
 
       // Prepare the payment info
       let paymentInfo = ""
