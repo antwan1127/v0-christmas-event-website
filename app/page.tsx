@@ -37,6 +37,7 @@ export default function HollyJollyPage() {
   const [formData, setFormData] = useState({
     eventType: "",
     gender: "",
+    grade: "",
     fullName: "",
     email: "",
     phone: "",
@@ -46,6 +47,9 @@ export default function HollyJollyPage() {
     paymentMethod: "",
     instapayDetails: "",
     cashPickupTime: "", // Added field for cash pickup time selection
+    servantName: "", // اسم الخادم /الخادمه ثلاثي بالعربي
+    servantFamily: "", // الاسرة
+    servantPhone: "", // رقم التليفون
   })
   const audioRef = useRef<HTMLAudioElement>(null)
 
@@ -117,12 +121,12 @@ export default function HollyJollyPage() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     
-    // For numeric fields (age, dietaryRestrictions, emergencyContact), only allow numbers
-    if (name === 'age' || name === 'dietaryRestrictions' || name === 'emergencyContact') {
+        // For numeric fields (age, dietaryRestrictions, emergencyContact, servantPhone), only allow numbers
+    if (name === 'age' || name === 'dietaryRestrictions' || name === 'emergencyContact' || name === 'servantPhone') {
       // Only allow numbers and empty string - block all letters and special characters
       if (value === '' || /^\d+$/.test(value)) {
-        // For phone number (age), limit to 11 digits
-        if (name === 'age' && value.length > 11) {
+        // For phone number (age, servantPhone), limit to 11 digits
+        if ((name === 'age' || name === 'servantPhone') && value.length > 11) {
           return
         }
         // For brothers count (dietaryRestrictions), allow 0 or more
@@ -136,18 +140,18 @@ export default function HollyJollyPage() {
         setFormData({ ...formData, [name]: value })
       }
     }
-    // For Instapay reference number, only allow numbers and limit to 12 digits
+    // For Instapay reference number, only allow numbers and limit to 12 digits 
     else if (name === 'instapayDetails') {
       if (value === '' || /^\d+$/.test(value)) {
         if (value.length <= 12) {
           setFormData({ ...formData, [name]: value })
         }
       }
-    } 
-    // For name fields (fullName, email, phone), only allow Arabic characters
-    else if (name === 'fullName' || name === 'email' || name === 'phone') {
-      // Only allow Arabic letters, spaces, and common Arabic punctuation
-      if (value === '' || /^[\u0600-\u06FF\s\u064B-\u0652\u0670\u0640]*$/.test(value)) {
+    }
+    // For name fields (fullName, email, phone, servantName), only allow Arabic characters   
+    else if (name === 'fullName' || name === 'email' || name === 'phone' || name === 'servantName') {     
+      // Only allow Arabic letters, spaces, and common Arabic punctuation       
+      if (value === '' || /^[\u0600-\u06FF\s\u064B-\u0652\u0670\u0640]*$/.test(value)) {                                                                        
         setFormData({ ...formData, [name]: value })
       }
     } else {
@@ -171,68 +175,101 @@ export default function HollyJollyPage() {
     setShowValidationModal(true)
   }
 
-  const validateForm = () => {
-    // Check required fields
+    const validateForm = () => {
+    // Check required fields - always validate eventType
     if (!formData.eventType) {
       showValidationError("يرجى اختيار اسم الكنيسة")
-      return false
-    }
-    if (!formData.gender) {
-      showValidationError("يرجى اختيار جنس الطفل")
       return false
     }
     if (!formData.paymentMethod) {
       showValidationError("يرجى اختيار طريقة الدفع")
       return false
     }
-    
-    // Check if questions 3, 4, 5 have exactly 3 words and are Arabic only
-    if (!validateArabicOnly(formData.fullName)) {
-      showValidationError("❌ خطأ في اسم الطفل\n\nاسم الطفل يجب أن يحتوي على أحرف عربية فقط (بدون أرقام أو أحرف إنجليزية)")
-      return false
+
+    // Validate based on form type
+    if (formData.eventType === "خدام اجتماع الخدمه العام") {
+      // Servant form validation
+      if (!validateArabicOnly(formData.servantName)) {
+        showValidationError("❌ خطأ في اسم الخادم /الخادمه\n\nاسم الخادم /الخادمه يجب أن يحتوي على أحرف عربية فقط (بدون أرقام أو أحرف إنجليزية)")                                     
+        return false
+      }
+      if (!validateThreeWords(formData.servantName)) {
+        showValidationError("❌ خطأ في اسم الخادم /الخادمه\n\nاسم الخادم /الخادمه يجب أن يكون ثلاثي (3 كلمات بالضبط)")                                                                
+        return false
+      }
+      if (!formData.servantFamily || formData.servantFamily === '') {
+        showValidationError("الاسرة مطلوبة")
+        return false
+      }
+      if (!formData.servantPhone || formData.servantPhone === '') {
+        showValidationError("رقم التليفون مطلوب")
+        return false
+      }
+      if (formData.servantPhone && formData.servantPhone.length !== 11) {
+        showValidationError("❌ خطأ في رقم التليفون\n\nرقم التليفون يجب أن يكون 11 رقم بالضبط")                                                                   
+        return false
+      }
+    } else {
+      // Regular form validation
+      if (!formData.gender) {
+        showValidationError("يرجى اختيار جنس الطفل")
+        return false
+      }
+      if (!formData.grade) {
+        showValidationError("يرجى اختيار الصف")
+        return false
+      }
+
+      // Check if questions 3, 4, 5 have exactly 3 words and are Arabic only      
+      if (!validateArabicOnly(formData.fullName)) {
+        showValidationError("❌ خطأ في اسم الطفل\n\nاسم الطفل يجب أن يحتوي على أحرف عربية فقط (بدون أرقام أو أحرف إنجليزية)")                                     
+        return false
+      }
+      if (!validateThreeWords(formData.fullName)) {
+        showValidationError("❌ خطأ في اسم الطفل\n\nاسم الطفل يجب أن يكون ثلاثي (3 كلمات بالضبط)")                                                                
+        return false
+      }
+
+      if (!validateArabicOnly(formData.email)) {
+        showValidationError("❌ خطأ في اسم الأب\n\nاسم الأب يجب أن يحتوي على أحرف عربية فقط (بدون أرقام أو أحرف إنجليزية)")                                       
+        return false
+      }
+      if (!validateThreeWords(formData.email)) {
+        showValidationError("❌ خطأ في اسم الأب\n\nاسم الأب يجب أن يكون ثلاثي (3 كلمات بالضبط)")                                                                  
+        return false
+      }
+
+      if (!validateArabicOnly(formData.phone)) {
+        showValidationError("❌ خطأ في اسم الأم\n\nاسم الأم يجب أن يحتوي على أحرف عربية فقط (بدون أرقام أو أحرف إنجليزية)")                                       
+        return false
+      }
+      if (!validateThreeWords(formData.phone)) {
+        showValidationError("❌ خطأ في اسم الأم\n\nاسم الأم يجب أن يكون ثلاثي (3 كلمات بالضبط)")                                                                  
+        return false
+      }
+
+      // Check if numeric fields are not empty
+      if (!formData.age || formData.age === '') {
+        showValidationError("رقم تليفون الاب/الام مطلوب")
+        return false
+      }
+      if (formData.age && formData.age.length !== 11) {
+        showValidationError("❌ خطأ في رقم التليفون\n\nرقم التليفون يجب أن يكون 11 رقم بالضبط")                                                                   
+        return false
+      }
+      if (!formData.dietaryRestrictions || formData.dietaryRestrictions === '') { 
+        showValidationError("عدد الاخوات مطلوب")
+        return false
+      }
     }
-    if (!validateThreeWords(formData.fullName)) {
-      showValidationError("❌ خطأ في اسم الطفل\n\nاسم الطفل يجب أن يكون ثلاثي (3 كلمات بالضبط)")
-      return false
-    }
-    
-    if (!validateArabicOnly(formData.email)) {
-      showValidationError("❌ خطأ في اسم الأب\n\nاسم الأب يجب أن يحتوي على أحرف عربية فقط (بدون أرقام أو أحرف إنجليزية)")
-      return false
-    }
-    if (!validateThreeWords(formData.email)) {
-      showValidationError("❌ خطأ في اسم الأب\n\nاسم الأب يجب أن يكون ثلاثي (3 كلمات بالضبط)")
-      return false
-    }
-    
-    if (!validateArabicOnly(formData.phone)) {
-      showValidationError("❌ خطأ في اسم الأم\n\nاسم الأم يجب أن يحتوي على أحرف عربية فقط (بدون أرقام أو أحرف إنجليزية)")
-      return false
-    }
-    if (!validateThreeWords(formData.phone)) {
-      showValidationError("❌ خطأ في اسم الأم\n\nاسم الأم يجب أن يكون ثلاثي (3 كلمات بالضبط)")
-      return false
-    }
-    
-    // Check if numeric fields are not empty
-    if (!formData.age || formData.age === '') {
-      showValidationError("رقم تليفون الاب/الام مطلوب")
-      return false
-    }
-    if (formData.age && formData.age.length !== 11) {
-      showValidationError("❌ خطأ في رقم التليفون\n\nرقم التليفون يجب أن يكون 11 رقم بالضبط")
-      return false
-    }
-    if (!formData.dietaryRestrictions || formData.dietaryRestrictions === '') {
-      showValidationError("عدد الاخوات مطلوب")
-      return false
-    }
-    if (!formData.emergencyContact || formData.emergencyContact === '') {
+
+    // Common validation for both forms
+    if (!formData.emergencyContact || formData.emergencyContact === '') {       
       showValidationError("عدد التذاكر المطلوبة مطلوب")
       return false
     }
     if (formData.emergencyContact && parseInt(formData.emergencyContact) <= 0) {
-      showValidationError("❌ خطأ في عدد التذاكر\n\nعدد التذاكر يجب أن يكون أكبر من صفر")
+      showValidationError("❌ خطأ في عدد التذاكر\n\nعدد التذاكر يجب أن يكون أكبر من صفر")                                                                       
       return false
     }
     
@@ -280,7 +317,7 @@ export default function HollyJollyPage() {
 
     try {
       const GOOGLE_SHEETS_URL =
-        "https://script.google.com/macros/s/AKfycbyYMvQrXbVlVqCxsOmdUslNFN_9qsi2eBm6dRimnCfbTQa6IrG4M_4p3j_3nRlieqAx/exec"
+        "https://script.google.com/macros/s/AKfycbzQBA1ZQsemoDNitZiDMZQpVuY1Bwa8XaKgdw_IftYOz0jqEZEh0evsq47ZcGZ9OPO9/exec"
 
       // Prepare the payment info
       let paymentInfo = ""
@@ -290,25 +327,49 @@ export default function HollyJollyPage() {
         paymentInfo = `Cash - ${formData.cashPickupTime}`
       }
 
+      // Prepare submission data based on form type
+      let submissionData
+      if (formData.eventType === "خدام اجتماع الخدمه العام") {
+        // Servant form submission
+        submissionData = {
+          question1: formData.eventType,
+          question2: formData.servantName,
+          question3: formData.servantFamily,
+          question4: formData.servantPhone,
+          question5: "N/A",
+          question6: "N/A",
+          question7: "N/A",
+          question8: "N/A",
+          question9: formData.emergencyContact,
+          question10: paymentInfo,
+          question11: parseInt(formData.emergencyContact) * 200,
+          question12: formData.paymentMethod === "instapay" ? formData.instapayDetails : "",
+        }
+      } else {
+        // Regular form submission
+        submissionData = {
+          question1: formData.eventType,
+          question2: formData.fullName,
+          question3: formData.grade,
+          question4: formData.gender,
+          question5: formData.email,
+          question6: formData.phone,
+          question7: formData.age,
+          question8: formData.dietaryRestrictions || "None",
+          question9: formData.emergencyContact,
+          question10: paymentInfo,
+          question11: parseInt(formData.emergencyContact) * 200,
+          question12: formData.paymentMethod === "instapay" ? formData.instapayDetails : "",
+        }
+      }
+
       const response = await fetch(GOOGLE_SHEETS_URL, {
         method: "POST",
         mode: "no-cors",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          question1: formData.eventType,
-          question2: formData.gender,
-          question3: formData.fullName,
-          question4: formData.email,
-          question5: formData.phone,
-          question6: formData.age,
-          question7: formData.dietaryRestrictions || "None",
-          question8: formData.emergencyContact,
-          question9: paymentInfo,
-          question10: parseInt(formData.emergencyContact) * 200,
-          question11: formData.paymentMethod === "instapay" ? formData.instapayDetails : "",
-        }),
+        body: JSON.stringify(submissionData),
       })
 
       // Since we're using no-cors mode, we can't check response status
@@ -317,6 +378,7 @@ export default function HollyJollyPage() {
       setFormData({
         eventType: "",
         gender: "",
+        grade: "",
         fullName: "",
         email: "",
         phone: "",
@@ -326,6 +388,9 @@ export default function HollyJollyPage() {
         paymentMethod: "",
         instapayDetails: "",
         cashPickupTime: "",
+        servantName: "",
+        servantFamily: "",
+        servantPhone: "",
       })
     } catch (error) {
       console.error("[v0] Error submitting form:", error)
@@ -682,18 +747,80 @@ export default function HollyJollyPage() {
                           العذارء الرحاب
                         </Label>
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="العذارء و مارجرجس مدينتي" id="church7" />
-                        <Label htmlFor="church7" className="font-normal cursor-pointer text-gray-800 font-arabic">
+                                            <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="العذارء و مارجرجس مدينتي" id="church7" />                                                                        
+                        <Label htmlFor="church7" className="font-normal cursor-pointer text-gray-800 font-arabic">                                              
                           العذارء و مارجرجس مدينتي
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="خدام اجتماع الخدمه العام" id="church8" />                                                                        
+                        <Label htmlFor="church8" className="font-normal cursor-pointer text-gray-800 font-arabic">                                              
+                          خدام اجتماع الخدمه العام
                         </Label>
                       </div>
                     </RadioGroup>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="fullName" className="text-base sm:text-lg font-semibold text-gray-800 font-arabic">
-                      2. اسم الطفل (في المرحله الابتدائية ) ثلاثي بالعربي *
+                  {/* Conditional rendering based on eventType */}
+                  {formData.eventType === "خدام اجتماع الخدمه العام" ? (
+                    // Servant form fields
+                    <>
+                      <div className="space-y-2">
+                        <Label htmlFor="servantName" className="text-base sm:text-lg font-semibold text-gray-800 font-arabic">                                         
+                          2. اسم الخادم /الخادمه ثلاثي بالعربي *
+                        </Label>
+                        <Input
+                          id="servantName"
+                          name="servantName"
+                          value={formData.servantName}
+                          onChange={handleInputChange}
+                          required
+                          className="text-lg text-gray-800"
+                          placeholder=""
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="servantFamily" className="text-base sm:text-lg font-semibold text-gray-800 font-arabic">                                         
+                          3. الاسرة *
+                        </Label>
+                        <Input
+                          id="servantFamily"
+                          name="servantFamily"
+                          type="text"
+                          value={formData.servantFamily}
+                          onChange={handleInputChange}
+                          required
+                          className="text-lg text-gray-800"
+                          placeholder=""
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="servantPhone" className="text-base sm:text-lg font-semibold text-gray-800 font-arabic">                                         
+                          4. رقم التليفون *
+                        </Label>
+                        <Input
+                          id="servantPhone"
+                          name="servantPhone"
+                          type="tel"
+                          inputMode="numeric"
+                          value={formData.servantPhone}
+                          onChange={handleInputChange}
+                          required
+                          className="text-lg text-gray-800"
+                          placeholder=""
+                          maxLength={11}
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    // Regular form fields
+                    <>
+                                    <div className="space-y-2">
+                    <Label htmlFor="fullName" className="text-base sm:text-lg font-semibold text-gray-800 font-arabic">                                         
+                      2. اسم الطفل (في المرحله الابتدائية ) ثلاثي بالعربي *     
                     </Label>
                     <Input
                       id="fullName"
@@ -706,9 +833,57 @@ export default function HollyJollyPage() {
                     />
                   </div>
 
+                  <div className="space-y-3">
+                    <Label className="text-base sm:text-lg font-semibold text-gray-800">                                          
+                      3. Grade/ <span className="font-arabic">سنة الطفل</span> *
+                    </Label>
+                    <RadioGroup
+                      value={formData.grade}
+                      onValueChange={(value) => handleRadioChange("grade", value)}                                                                          
+                      required
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="اولي ابتدائي" id="grade1" />
+                        <Label htmlFor="grade1" className="font-normal cursor-pointer text-gray-800 font-arabic">                                              
+                          اولي ابتدائي <span className="font-english">(grade 1)</span>
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="تانية ابتدائي" id="grade2" />
+                        <Label htmlFor="grade2" className="font-normal cursor-pointer text-gray-800 font-arabic">                                              
+                          تانية ابتدائي <span className="font-english">(grade 2)</span>
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="ثالثة ابتدائي" id="grade3" />
+                        <Label htmlFor="grade3" className="font-normal cursor-pointer text-gray-800 font-arabic">                                              
+                          ثالثة ابتدائي <span className="font-english">(grade 3)</span>
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="رابعه ابتدائي" id="grade4" />
+                        <Label htmlFor="grade4" className="font-normal cursor-pointer text-gray-800 font-arabic">                                              
+                          رابعه ابتدائي <span className="font-english">(grade 4)</span>
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="خامسة ابتدائي" id="grade5" />
+                        <Label htmlFor="grade5" className="font-normal cursor-pointer text-gray-800 font-arabic">                                              
+                          خامسة ابتدائي <span className="font-english">(grade 5)</span>
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="سادسة ابتدائي" id="grade6" />
+                        <Label htmlFor="grade6" className="font-normal cursor-pointer text-gray-800 font-arabic">                                              
+                          سادسة ابتدائي <span className="font-english">(grade 6)</span>
+                        </Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+
                   <div className="space-y-2">
-                    <Label htmlFor="gender" className="text-base sm:text-lg font-semibold text-gray-800 font-english">
-                      3. Gender *
+                    <Label htmlFor="gender" className="text-base sm:text-lg font-semibold text-gray-800 font-english">                                          
+                      4. Gender *
                     </Label>
                     <select
                       id="gender"
@@ -716,7 +891,7 @@ export default function HollyJollyPage() {
                       value={formData.gender}
                       onChange={handleSelectChange}
                       required
-                      className="w-full px-3 py-2 text-lg text-gray-800 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                      className="w-full px-3 py-2 text-lg text-gray-800 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"                                                          
                     >
                       <option value="">Select Gender</option>
                       <option value="male">Male</option>
@@ -725,8 +900,8 @@ export default function HollyJollyPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="text-base sm:text-lg font-semibold text-gray-800 font-arabic">
-                      4. اسم الاب ثلاثي بالعربي*
+                    <Label htmlFor="email" className="text-base sm:text-lg font-semibold text-gray-800 font-arabic">                                            
+                      5. اسم الاب ثلاثي بالعربي*
                     </Label>
                     <Input
                       id="email"
@@ -740,9 +915,9 @@ export default function HollyJollyPage() {
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="phone" className="text-base sm:text-lg font-semibold text-gray-800 font-arabic">
-                      5. اسم الام ثلاثي بالعربي*
+                                    <div className="space-y-2">
+                    <Label htmlFor="phone" className="text-base sm:text-lg font-semibold text-gray-800 font-arabic">                                            
+                      6. اسم الام ثلاثي بالعربي*
                     </Label>
                     <Input
                       id="phone"
@@ -757,8 +932,8 @@ export default function HollyJollyPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="age" className="text-base sm:text-lg font-semibold text-gray-800 font-arabic">
-                      6. رقم تليفون الاب/الام *
+                    <Label htmlFor="age" className="text-base sm:text-lg font-semibold text-gray-800 font-arabic">                                              
+                      7. رقم تليفون الاب/الام *
                     </Label>
                     <Input
                       id="age"
@@ -774,9 +949,9 @@ export default function HollyJollyPage() {
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="dietaryRestrictions" className="text-base sm:text-lg font-semibold text-gray-800 font-arabic">
-                      7. عدد الاخوات *
+                                    <div className="space-y-2">
+                    <Label htmlFor="dietaryRestrictions" className="text-base sm:text-lg font-semibold text-gray-800 font-arabic">                              
+                      8. عدد الاخوات *
                     </Label>
                     <Input
                       id="dietaryRestrictions"
@@ -792,10 +967,13 @@ export default function HollyJollyPage() {
                       placeholder=""
                     />
                   </div>
+                    </>
+                  )}
 
+                  {/* Common fields for both forms - Number of tickets */}
                   <div className="space-y-2">
-                    <Label htmlFor="emergencyContact" className="text-base sm:text-lg font-semibold text-gray-800 font-arabic">
-                      8. عدد التذاكر المطلوبة *
+                    <Label htmlFor="emergencyContact" className="text-base sm:text-lg font-semibold text-gray-800 font-arabic">                                 
+                      9. عدد التذاكر المطلوبة *
                     </Label>
                     <Input
                       id="emergencyContact"
@@ -825,11 +1003,11 @@ export default function HollyJollyPage() {
                     )}
                   </div>
 
-                  <div className="space-y-3">
-                    <Label className="text-base sm:text-lg font-semibold text-gray-800 font-english">9. Payment Method *</Label>
+                                    <div className="space-y-3">
+                    <Label className="text-base sm:text-lg font-semibold text-gray-800 font-english">10. Payment Method *</Label>                                
                     <RadioGroup
                       value={formData.paymentMethod}
-                      onValueChange={(value) => handleRadioChange("paymentMethod", value)}
+                      onValueChange={(value) => handleRadioChange("paymentMethod", value)}                                                                      
                       required
                     >
                       <div className="flex items-center space-x-2">
