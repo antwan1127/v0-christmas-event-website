@@ -55,7 +55,7 @@ export default function HollyJollyPage() {
 
   // Instapay users array
   const instapayUsers = [
-    "Beyaminghobrial@instapay",
+    "Benyaminghobrial@instapay",
     "jssss@instapay", 
     "Karenamir@instapay",
     "Kerminamagedqnb@instapay"
