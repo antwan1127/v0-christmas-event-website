@@ -137,7 +137,29 @@ export default function HollyJollyPage() {
         if (name === 'emergencyContact' && value !== '' && parseInt(value) < 1) {
           return
         }
-        setFormData({ ...formData, [name]: value })
+        // For tickets count (emergencyContact), validate maximum based on siblings
+        if (name === 'emergencyContact' && value !== '') {
+          const ticketsValue = parseInt(value)
+          // Only apply validation if dietaryRestrictions (siblings) exists and has a value
+          if (formData.dietaryRestrictions && formData.dietaryRestrictions !== '') {
+            const maxTickets = parseInt(formData.dietaryRestrictions) + 3
+            if (ticketsValue > maxTickets) {
+              showValidationError("You have reached the maximum allowed number of tickets.")
+              return
+            }
+          }
+        }
+        // Update the form data
+        const updatedFormData = { ...formData, [name]: value }
+        // When siblings count changes, validate if tickets already exceeds new maximum
+        if (name === 'dietaryRestrictions' && value !== '' && updatedFormData.emergencyContact && updatedFormData.emergencyContact !== '') {
+          const maxTickets = parseInt(value) + 3
+          if (parseInt(updatedFormData.emergencyContact) > maxTickets) {
+            showValidationError("You have reached the maximum allowed number of tickets.")
+            // Still allow the siblings value to update, but show the error
+          }
+        }
+        setFormData(updatedFormData)
       }
     }
     // For Instapay reference number, only allow numbers and limit to 12 digits 
@@ -271,6 +293,14 @@ export default function HollyJollyPage() {
     if (formData.emergencyContact && parseInt(formData.emergencyContact) <= 0) {
       showValidationError("❌ خطأ في عدد التذاكر\n\nعدد التذاكر يجب أن يكون أكبر من صفر")                                                                       
       return false
+    }
+    // Validate maximum tickets based on siblings (only for regular form where dietaryRestrictions exists)
+    if (formData.dietaryRestrictions && formData.dietaryRestrictions !== '') {
+      const maxTickets = parseInt(formData.dietaryRestrictions) + 3
+      if (parseInt(formData.emergencyContact) > maxTickets) {
+        showValidationError("You have reached the maximum allowed number of tickets.")
+        return false
+      }
     }
     
     // Check payment method specific fields
