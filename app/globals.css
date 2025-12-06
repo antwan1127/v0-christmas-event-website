@@ -1,12 +1,11 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-
-@custom-variant dark (&:is(.dark *));
-
-/* Custom Fonts */
+/* Custom Fonts - @import must come before all other rules */
 @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@300;400;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap');
+
+@custom-variant dark (&:is(.dark *));
 
 /* Custom font faces for Tido Bold and Balabeloo - Add your font files to /public/fonts/ */
 @font-face {
