@@ -159,6 +159,25 @@
   .font-english, h1, h2, h3, p, span, div {
     font-family: 'Balabeloo', 'Baloo 2', 'Comic Neue', 'Arial', sans-serif !important;
   }
+  
+  /* Normal font override for Instapay usernames - EXTRA explicit override */
+  .font-normal-text,
+  .font-normal-text p,
+  .font-normal-text span,
+  p.font-normal-text,
+  span.font-normal-text {
+    font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif !important;
+    font-weight: normal !important;
+    font-style: normal !important;
+  }
+  
+  /* Ensure bold weight is preserved when needed */
+  .font-normal-text.font-bold,
+  span.font-normal-text.font-bold {
+    font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif !important;
+    font-weight: bold !important;
+    font-style: normal !important;
+  }
 }
 
 /* Enhanced snowflake animation */

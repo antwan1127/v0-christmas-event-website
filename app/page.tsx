@@ -1091,9 +1091,9 @@ export default function HollyJollyPage() {
                     {formData.paymentMethod === "instapay" && (
                       <div className="mt-4 space-y-4 p-4 bg-white/90 rounded-lg border-2 border-primary/30">
                         <div className="text-center mb-4">
-                          <p className="text-lg font-semibold text-primary mb-2 font-english">Payment Instructions</p>
-                          <p className="text-sm text-gray-700 font-english">
-                            Please send payment to: <span className="font-bold text-primary">
+                          <p className="text-lg font-semibold text-primary mb-2 font-normal-text" style={{ fontFamily: 'Arial, Helvetica Neue, Helvetica, sans-serif', fontWeight: '600' }}>Payment Instructions</p>
+                          <p className="text-sm text-gray-700 font-normal-text" style={{ fontFamily: 'Arial, Helvetica Neue, Helvetica, sans-serif', fontWeight: 'normal' }}>
+                            Please send payment to: <span className="font-bold text-primary font-normal-text" style={{ fontFamily: 'Arial, Helvetica Neue, Helvetica, sans-serif', fontWeight: 'bold' }}>
                               {assignedInstapayUser || "Loading..."}
                             </span>
                           </p>
@@ -1107,7 +1107,7 @@ export default function HollyJollyPage() {
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="instapayDetails" className="text-base font-semibold text-black font-english">
+                          <Label htmlFor="instapayDetails" className="text-base font-semibold text-black font-normal-text">
                             Enter your transaction reference number *
                           </Label>
                           <Input
