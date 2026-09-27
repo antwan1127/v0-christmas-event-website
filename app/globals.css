@@ -1,7 +1,13 @@
+/* Custom Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@300;400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap');
+
 @import "tailwindcss";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
+
 
 /* Custom font faces for Tido Bold and Balabeloo - Add your font files to /public/fonts/ */
 @font-face {
@@ -158,25 +164,6 @@
   /* Force font loading with fallback */
   .font-english, h1, h2, h3, p, span, div {
     font-family: 'Balabeloo', 'Baloo 2', 'Comic Neue', 'Arial', sans-serif !important;
-  }
-  
-  /* Normal font override for Instapay usernames - EXTRA explicit override */
-  .font-normal-text,
-  .font-normal-text p,
-  .font-normal-text span,
-  p.font-normal-text,
-  span.font-normal-text {
-    font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif !important;
-    font-weight: normal !important;
-    font-style: normal !important;
-  }
-  
-  /* Ensure bold weight is preserved when needed */
-  .font-normal-text.font-bold,
-  span.font-normal-text.font-bold {
-    font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif !important;
-    font-weight: bold !important;
-    font-style: normal !important;
   }
 }
 

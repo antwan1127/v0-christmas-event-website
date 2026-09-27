@@ -46,6 +46,7 @@ export default function HollyJollyPage() {
     emergencyContact: "",
     paymentMethod: "",
     instapayDetails: "",
+    cashPickupTime: "", // Added field for cash pickup time selection
     servantName: "", // اسم الخادم /الخادمه ثلاثي بالعربي
     servantFamily: "", // الاسرة
     servantPhone: "", // رقم التليفون
@@ -54,9 +55,10 @@ export default function HollyJollyPage() {
 
   // Instapay users array
   const instapayUsers = [
+    "Benyaminghobrial@instapay",
+    "jssss@instapay", 
     "Karenamir@instapay",
-    "Kerminamagedqnb@instapay",
-    "Benyaminghobrial@instapay"
+    "Kerminamagedqnb@instapay"
   ]
 
   // Assign Instapay user on component mount
@@ -310,6 +312,10 @@ export default function HollyJollyPage() {
       showValidationError("❌ خطأ في رقم المعاملة\n\nرقم المعاملة يجب أن يكون 12 رقم بالضبط")
       return false
     }
+    if (formData.paymentMethod === "cash" && !formData.cashPickupTime) {
+      showValidationError("يرجى اختيار وقت استلام النقود")
+      return false
+    }
     
     return true
   }
@@ -344,7 +350,12 @@ export default function HollyJollyPage() {
         "https://script.google.com/macros/s/AKfycbxCiBwDLvy3qix-5D4D_n3DteE_n2QkuPTSRIUfU3ljavWsh9qLNzjGnZaImQY4sPiw/exec"
 
       // Prepare the payment info
-      let paymentInfo = `Instapay - ${assignedInstapayUser}`
+      let paymentInfo = ""
+      if (formData.paymentMethod === "instapay") {
+        paymentInfo = `Instapay - ${assignedInstapayUser}`
+      } else {
+        paymentInfo = `Cash - ${formData.cashPickupTime}`
+      }
 
       // Prepare submission data based on form type
       let submissionData
@@ -406,6 +417,7 @@ export default function HollyJollyPage() {
         emergencyContact: "",
         paymentMethod: "",
         instapayDetails: "",
+        cashPickupTime: "",
         servantName: "",
         servantFamily: "",
         servantPhone: "",
@@ -684,11 +696,15 @@ export default function HollyJollyPage() {
                       <ul className="space-y-2 text-sm text-gray-700">
                         <li className="flex items-start space-x-2">
                           <span className="text-red-500 font-bold">•</span>
-                          <span className="font-arabic">اخر يوم للحجز الثلاثاء ٢٣/١٢</span>
+                          <span className="font-arabic">آخر ميعاد للحجز واسترداد الفلوس ٢١ ديسمبر</span>
                         </li>
                         <li className="flex items-start space-x-2">
                           <span className="text-blue-500 font-bold">•</span>
                           <span className="font-arabic">سعر التذكرة الواحدة لكل فرد في العائلة ٢٠٠ جنيه ليوم ١٤ ديسمبر</span>
+                        </li>
+                        <li className="flex items-start space-x-2">
+                          <span className="text-blue-500 font-bold">•</span>
+                          <span className="font-arabic">ابتداء من ١٥ ل ٢١ ديسمبر سعر التذكرة الواحدة لكل فرد ٢٥٠ جنيه</span>
                         </li>
                         <li className="flex items-start space-x-2">
                           <span className="text-red-500 font-bold">•</span>
@@ -1031,6 +1047,12 @@ export default function HollyJollyPage() {
                       required
                     >
                       <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="cash" id="cash" />
+                        <Label htmlFor="cash" className="font-normal cursor-pointer text-gray-800 font-english">
+                          Cash
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
                         <RadioGroupItem value="instapay" id="instapay" />
                         <Label htmlFor="instapay" className="font-normal cursor-pointer text-gray-800 font-english">
                           Instapay
@@ -1038,12 +1060,45 @@ export default function HollyJollyPage() {
                       </div>
                     </RadioGroup>
 
+                    {formData.paymentMethod === "cash" && (
+                      <div className="mt-4 space-y-4 p-4 bg-white/90 rounded-lg border-2 border-primary/30">
+                        <p className="text-base text-black font-bold text-center font-arabic">
+                          هنجمع الاشتراكات ابتداء من ٢ نوفمبر
+                        </p>
+                        <p className="text-sm text-black font-semibold font-english">Please select your preferred pickup time:</p>
+                        <RadioGroup
+                          value={formData.cashPickupTime}
+                          onValueChange={(value) => handleRadioChange("cashPickupTime", value)}
+                          required
+                        >
+                          <div className="flex items-center space-x-2 p-3 bg-white rounded border border-primary/20">
+                            <RadioGroupItem value="friday" id="friday" />
+                            <Label
+                              htmlFor="friday"
+                              className="font-normal cursor-pointer text-black text-sm leading-relaxed font-arabic"
+                            >
+                              الجمعه من ١٠ص ل ١ظ في المبني الجديد +بين الفيلتين في الكنيسة الرئيسية
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2 p-3 bg-white rounded border border-primary/20">
+                            <RadioGroupItem value="sunday" id="sunday" />
+                            <Label
+                              htmlFor="sunday"
+                              className="font-normal cursor-pointer text-black text-sm leading-relaxed font-arabic"
+                            >
+                              الاحد من ٦ م ل ٨ م في المبني الجديد +بين الفليتين في الكنيسة الرئيسية
+                            </Label>
+                          </div>
+                        </RadioGroup>
+                      </div>
+                    )}
+
                     {formData.paymentMethod === "instapay" && (
                       <div className="mt-4 space-y-4 p-4 bg-white/90 rounded-lg border-2 border-primary/30">
                         <div className="text-center mb-4">
-                          <p className="text-lg font-semibold text-primary mb-2 font-normal-text" style={{ fontFamily: 'Arial, Helvetica Neue, Helvetica, sans-serif', fontWeight: '600' }}>Payment Instructions</p>
-                          <p className="text-sm text-gray-700 font-normal-text" style={{ fontFamily: 'Arial, Helvetica Neue, Helvetica, sans-serif', fontWeight: 'normal' }}>
-                            Please send payment to: <span className="font-bold text-primary font-normal-text" style={{ fontFamily: 'Arial, Helvetica Neue, Helvetica, sans-serif', fontWeight: 'bold' }}>
+                          <p className="text-lg font-semibold text-primary mb-2 font-english">Payment Instructions</p>
+                          <p className="text-sm text-gray-700 font-english">
+                            Please send payment to: <span className="font-bold text-primary">
                               {assignedInstapayUser || "Loading..."}
                             </span>
                           </p>
@@ -1057,7 +1112,7 @@ export default function HollyJollyPage() {
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="instapayDetails" className="text-base font-semibold text-black font-normal-text">
+                          <Label htmlFor="instapayDetails" className="text-base font-semibold text-black font-english">
                             Enter your transaction reference number *
                           </Label>
                           <Input
