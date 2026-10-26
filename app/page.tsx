@@ -667,72 +667,138 @@ export default function HollyJollyPage() {
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-                  {/* Event Information */}
-                  <div className="bg-gradient-to-r from-red-50 to-green-50 border-2 border-primary/20 rounded-lg p-4 sm:p-6 mb-4 sm:mb-6">
-                    <div className="text-center mb-3 sm:mb-4">
-                      <h3 className="text-xl sm:text-2xl font-bold text-primary mb-2 font-english">🎄 Holly Jolly 🎄</h3>
-                      <p className="text-base sm:text-lg text-gray-700 font-semibold font-arabic">يوم رياضي لأطفال ابتدائي وأسرهم</p>
-                      </div>
-                    
-                    <div className="space-y-3 text-sm text-gray-700">
-                      <div className="flex items-start space-x-2">
-                        <span className="text-primary font-bold">📍</span>
-                        <span className="font-arabic">تابع لكنيسة مارمرقس مصر الجديدة وتحت إشراف أسرة القديس أبسخيرون القليني</span>
-                      </div>
-                      
-                      <div className="flex items-start space-x-2">
-                        <span className="text-primary font-bold">🏫</span>
-                        <span className="font-arabic">سيقام في الـ College de la Salle بالتجمع</span>
-                      </div>
-                      
-                      <div className="flex items-start space-x-2">
-                        <span className="text-primary font-bold">📅</span>
-                        <span className="font-arabic">الجمعة ٢٦ من ديسمبر ٢٠٢٥</span>
-                      </div>
-                      </div>
-                    
-                    <div className="mt-4 p-4 bg-white/80 rounded-lg border border-primary/30">
-                      <h4 className="text-lg font-bold text-primary mb-3 text-center font-arabic">الشروط والأحكام</h4>
-                      <ul className="space-y-2 text-sm text-gray-700">
-                        <li className="flex items-start space-x-2">
-                          <span className="text-red-500 font-bold">•</span>
-                          <span className="font-arabic">آخر ميعاد للحجز واسترداد الفلوس ٢١ ديسمبر</span>
-                        </li>
-                        <li className="flex items-start space-x-2">
-                          <span className="text-blue-500 font-bold">•</span>
-                          <span className="font-arabic">سعر التذكرة الواحدة لكل فرد في العائلة ٢٠٠ جنيه ليوم ١٤ ديسمبر</span>
-                        </li>
-                        <li className="flex items-start space-x-2">
-                          <span className="text-blue-500 font-bold">•</span>
-                          <span className="font-arabic">ابتداء من ١٥ ل ٢١ ديسمبر سعر التذكرة الواحدة لكل فرد ٢٥٠ جنيه</span>
-                        </li>
-                        <li className="flex items-start space-x-2">
-                          <span className="text-red-500 font-bold">•</span>
-                          <span className="font-arabic">الدخول بالتذاكر لنفس الأشخاص المسجلين في الفورم (ممنوع استبدال التذاكر)</span>
-                        </li>
-                        <li className="flex items-start space-x-2">
-                          <span className="text-green-500 font-bold">•</span>
-                          <span className="font-arabic">نرحب بعائلة الطفل (أب وأم وأخوات فقط)</span>
-                        </li>
-                        <li className="flex items-start space-x-2">
-                          <span className="text-green-500 font-bold">•</span>
-                          <span className="font-arabic">يشترط وجود احد الابوين</span>
-                        </li>
-                        <li className="flex items-start space-x-2">
-                          <span className="text-blue-500 font-bold">•</span>
-                          <span className="font-arabic">الاخوات بداية من ٣ سنين لهم تذكرة كاملة</span>
-                        </li>
-                        <li className="flex items-start space-x-2">
-                          <span className="text-red-500 font-bold">•</span>
-                          <span className="font-arabic">نعتذر لا يوجد تذاكر يوم الحفلة على الباب</span>
-                        </li>
-                        <li className="flex items-start space-x-2">
-                          <span className="text-red-500 font-bold">•</span>
-                          <span className="font-arabic">لا يوجد باص</span>
-                        </li>
-                      </ul>
-                      </div>
-                  </div>
+                 {/* Event Information */}
+{/* Event Information */}
+<div className="bg-gradient-to-r from-red-50 to-green-50 border-2 border-primary/20 rounded-lg p-4 sm:p-6 mb-4 sm:mb-6">
+  <div className="text-center mb-3 sm:mb-4">
+    <h3 className="text-xl sm:text-2xl font-bold text-primary mb-2 font-english">
+      🎄 Holly Jolly 🎄
+    </h3>
+
+    <p className="text-base sm:text-lg text-gray-700 font-semibold font-arabic">
+      يوم رياضي روحي لأطفال ابتدائي وأسرهم
+    </p>
+  </div>
+
+  <div className="space-y-3 text-sm text-gray-700">
+
+    {/* Church */}
+    <div className="flex items-start space-x-2">
+      <span className="text-primary font-bold">📍</span>
+      <span className="font-arabic">
+        تابع لكنيسة مارمرقس مصر الجديدة وتحت إشراف أسرة القديس أبسخيرون القليني
+      </span>
+    </div>
+
+    {/* Location */}
+    <div className="flex items-start space-x-2">
+      <span className="text-primary font-bold">🏫</span>
+      <span className="font-arabic">
+        سيقام في الـ College de la Salle بالتجمع
+      </span>
+    </div>
+
+    {/* Event Date */}
+    <div className="flex items-start space-x-2">
+      <span className="text-primary font-bold">📅</span>
+      <span className="font-arabic">
+        الخميس ٢٥ ديسمبر ٢٠٢٥
+      </span>
+    </div>
+
+  </div>
+
+  {/* Terms & Conditions */}
+  <div className="mt-4 p-4 bg-white/80 rounded-lg border border-primary/30">
+    <h4 className="text-lg font-bold text-primary mb-3 text-center font-arabic">
+      الشروط والأحكام
+    </h4>
+
+    <ul className="space-y-2 text-sm text-gray-700">
+
+      {/* Refund Deadline */}
+      <li className="flex items-start space-x-2">
+        <span className="text-red-500 font-bold">•</span>
+        <span className="font-arabic">
+          آخر ميعاد للحجز واسترداد التذاكر هو ١٨ ديسمبر
+        </span>
+      </li>
+
+      {/* Form Validity */}
+      <li className="flex items-start space-x-2">
+        <span className="text-blue-500 font-bold">•</span>
+        <span className="font-arabic">
+          صلاحية الفورم أسبوعين من تاريخ التسجيل
+        </span>
+      </li>
+
+      {/* Ticket Price */}
+      <li className="flex items-start space-x-2">
+        <span className="text-blue-500 font-bold">•</span>
+        <span className="font-arabic">
+          سعر التذكرة الواحدة لكل فرد في العائلة ٢٥٠ جنيه
+        </span>
+      </li>
+
+      {/* InstaPay */}
+<li className="flex items-start space-x-2">
+  <span className="text-green-500 font-bold">•</span>
+  <span className="font-arabic">
+    في حالة الدفع عن طريق InstaPay، يتم استلام التذاكر عند الباب يوم الإيفنت
+  </span>
+</li>
+
+      {/* Registered People Only */}
+      <li className="flex items-start space-x-2">
+        <span className="text-red-500 font-bold">•</span>
+        <span className="font-arabic">
+          الدخول بالتذاكر لنفس الأشخاص المسجلين في الفورم (ممنوع استبدال التذاكر)
+        </span>
+      </li>
+
+      {/* Family */}
+      <li className="flex items-start space-x-2">
+        <span className="text-green-500 font-bold">•</span>
+        <span className="font-arabic">
+          نرحب بعائلة الطفل (أب وأم وأخوات فقط)
+        </span>
+      </li>
+
+      {/* Parent Required */}
+      <li className="flex items-start space-x-2">
+        <span className="text-green-500 font-bold">•</span>
+        <span className="font-arabic">
+          يشترط وجود أحد الأبوين
+        </span>
+      </li>
+
+      {/* Siblings Age */}
+      <li className="flex items-start space-x-2">
+        <span className="text-blue-500 font-bold">•</span>
+        <span className="font-arabic">
+          الأخوات بداية من ٣ سنين لهم تذكرة كاملة
+        </span>
+      </li>
+
+      {/* No Tickets At Door */}
+      <li className="flex items-start space-x-2">
+        <span className="text-red-500 font-bold">•</span>
+        <span className="font-arabic">
+          نعتذر، لا يوجد تذاكر يوم الحفلة على الباب
+        </span>
+      </li>
+
+      {/* No Bus */}
+      <li className="flex items-start space-x-2">
+        <span className="text-red-500 font-bold">•</span>
+        <span className="font-arabic">
+          لا يوجد باص
+        </span>
+      </li>
+
+    </ul>
+  </div>
+</div>
 
                   <div className="space-y-3">
                     <Label className="text-base sm:text-lg font-semibold text-gray-800 font-arabic">1. اسم الكنيسة *</Label>
@@ -878,6 +944,20 @@ export default function HollyJollyPage() {
                       onValueChange={(value) => handleRadioChange("grade", value)}                                                                          
                       required
                     >
+                      <div className="flex items-center space-x-2">
+  
+                  <RadioGroupItem value="أسرة رؤساء من 3 إلى 5 سنين" id="preschool" />
+  <Label htmlFor="preschool" className="font-normal cursor-pointer text-gray-800 font-arabic">
+    أسرة رؤساءملايكه من 3 إلى 5 سنين
+  </Label>
+</div>
+
+<div className="flex items-center space-x-2">
+  <RadioGroupItem value="أسرة ملايكة" id="angels" />
+  <Label htmlFor="angels" className="font-normal cursor-pointer text-gray-800 font-arabic">
+    أسرة ملايكة <span className="font-english">(KG1, KG2)</span>
+  </Label>
+</div>    
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="اولي ابتدائي" id="grade1" />
                         <Label htmlFor="grade1" className="font-normal cursor-pointer text-gray-800 font-arabic">                                              
@@ -1063,7 +1143,7 @@ export default function HollyJollyPage() {
                     {formData.paymentMethod === "cash" && (
                       <div className="mt-4 space-y-4 p-4 bg-white/90 rounded-lg border-2 border-primary/30">
                         <p className="text-base text-black font-bold text-center font-arabic">
-                          هنجمع الاشتراكات ابتداء من ٢ نوفمبر
+                          هنجمع الاشتراكات ابتداء من ١٣ نوفمبر
                         </p>
                         <p className="text-sm text-black font-semibold font-english">Please select your preferred pickup time:</p>
                         <RadioGroup
