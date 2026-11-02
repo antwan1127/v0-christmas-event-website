@@ -15,6 +15,7 @@ import Image from "next/image"
 export default function HollyJollyPage() {
   const [isMusicPlaying, setIsMusicPlaying] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isCheckingDuplicate, setIsCheckingDuplicate] = useState(false)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
   const [showValidationModal, setShowValidationModal] = useState(false)
   const [validationMessage, setValidationMessage] = useState("")
@@ -318,8 +319,42 @@ export default function HollyJollyPage() {
     return true
   }
 
-  const handleRadioChange = (name: string, value: string) => {
-    setFormData({ ...formData, [name]: value })
+  const handleRadioChange = async (name: string, value: string) => {
+    if (name !== "paymentMethod") {
+      setFormData({ ...formData, [name]: value })
+      return
+    }
+
+    setIsCheckingDuplicate(true)
+    try {
+      const params = new URLSearchParams({
+        question2: formData.fullName,
+        question5: formData.email,
+        question6: formData.phone,
+        question7: formData.age,
+        servantName: formData.servantName,
+        servantPhone: formData.servantPhone,
+      })
+      const response = await fetch(`/api/duplicate-check?${params.toString()}`, {
+        cache: "no-store",
+      })
+      const result = await response.json()
+
+      if (!response.ok || result.error) {
+        showValidationError("تعذر التأكد من التسجيل السابق. لن يتم فتح الدفع، حاول مرة أخرى.")
+        return
+      }
+      if (result.duplicate) {
+        showValidationError("هذا التسجيل موجود بالفعل. لا تقم بالدفع مرة أخرى.")
+        return
+      }
+
+      setFormData({ ...formData, paymentMethod: value })
+    } catch {
+      showValidationError("تعذر التأكد من التسجيل السابق. لن يتم فتح الدفع، حاول مرة أخرى.")
+    } finally {
+      setIsCheckingDuplicate(false)
+    }
   }
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -339,7 +374,7 @@ export default function HollyJollyPage() {
 
     try {
       const GOOGLE_SHEETS_URL =
-        "https://script.google.com/macros/s/AKfycbyQQd71I6I-Bfl90fojsW23TiE8oCJ1w0lu_QCVyrOWfatQRzh76Lo4ckwZNKA4iieMWA/exec"
+        "https://script.google.com/macros/s/AKfycbyVeMq_vH4SkFTdLuleYqQIFmFkwJjb4SCU55FHCZEZTyStTAeWQFo7Zv8h4MJGHgnXcQ/exec"
 
       // Keep payment method, InstaPay link, and reference number in separate sheet fields.
       const paymentInfo = formData.paymentMethod === "instapay"
@@ -733,7 +768,7 @@ export default function HollyJollyPage() {
       <li className="flex items-start space-x-2">
         <span className="text-blue-500 font-bold">•</span>
         <span className="font-arabic">
-          سعر التذكرة الواحدة لكل فرد في العائلة ٢٥٠ جنيه
+          سعر التذكر�� الواحدة لكل فرد في العائلة ٢٥٠ جنيه
         </span>
       </li>
 
@@ -741,7 +776,7 @@ export default function HollyJollyPage() {
 <li className="flex items-start space-x-2">
   <span className="text-green-500 font-bold">•</span>
   <span className="font-arabic">
-    في حالة الدفع عن طريق InstaPay، يتم استلام التذاكر عند الباب يوم الإيفنت
+    في حالة الدفع عن طريق InstaPay، ي��م استلام التذاكر عند الباب يوم الإيفنت
   </span>
 </li>
 
@@ -1170,6 +1205,11 @@ export default function HollyJollyPage() {
                       </div>
                     )}
 
+                    {isCheckingDuplicate && (
+                      <p className="mt-3 text-center text-sm text-primary font-arabic" role="status">
+                        جاري التأكد من عدم وجود تسجيل سابق...
+                      </p>
+                    )}
                     {formData.paymentMethod === "instapay" && (
                       <div className="mt-4 space-y-4 p-4 bg-white/90 rounded-lg border-2 border-primary/30" dir="rtl">
                         <div className="text-center mb-4">
@@ -1214,10 +1254,19 @@ export default function HollyJollyPage() {
                     )}
                   </div>
 
-                  <Button
-                    type="submit"
-                    size="lg"
-                    disabled={isSubmitting}
+  <section className="rounded-xl border-2 border-primary/20 bg-primary/5 p-5 text-center font-arabic" dir="rtl" aria-labelledby="contact-heading">
+  <h3 id="contact-heading" className="mb-2 text-xl font-bold text-primary">للتواصل معنا</h3>
+  <p className="mb-3 text-base text-gray-700">المكالمات من ٧ صباحًا إلى ١١ مساءً — واتساب ٢٤/٧</p>
+  <div className="flex flex-col items-center justify-center gap-2 sm:flex-row sm:gap-5" dir="ltr">
+  <a href="tel:01043436043" className="font-semibold text-primary underline underline-offset-4">01043436043</a>
+  <a href="tel:01096447756" className="font-semibold text-primary underline underline-offset-4">01096447756</a>
+  </div>
+  </section>
+
+  <Button
+  type="submit"
+  size="lg"
+                    disabled={isSubmitting || isCheckingDuplicate}
                     className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg sm:text-xl py-4 sm:py-6 rounded-full shadow-xl hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px] sm:min-h-[56px]"
                   >
                     {isSubmitting ? "Submitting..." : "Submit Registration 🎄"}
