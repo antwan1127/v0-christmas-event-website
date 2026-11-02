@@ -19,6 +19,7 @@ export default function HollyJollyPage() {
   const [showValidationModal, setShowValidationModal] = useState(false)
   const [validationMessage, setValidationMessage] = useState("")
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
+  const [selectedInstapayLink, setSelectedInstapayLink] = useState("")
   
   // Generate stable background ornaments that don't change on re-render - Reduced for better performance
   const backgroundOrnaments = useMemo(() => {
@@ -54,14 +55,20 @@ export default function HollyJollyPage() {
   const audioRef = useRef<HTMLAudioElement>(null)
 
   const instapayLinks = [
-    { label: "هندوس", url: "https://ipn.eg/S/jssss/instapay/92Woym" },
-    { label: "كيرمن", url: "https://ipn.eg/S/kerminamlabib/instapay/7FmRlp" },
-    { label: "بنيامين", url: "https://ipn.eg/S/benyaminghobrial/instapay/05lfiF" },
+    "https://ipn.eg/S/jssss/instapay/92Woym",
+    "https://ipn.eg/S/kerminamlabib/instapay/7FmRlp",
+    "https://ipn.eg/S/benyaminghobrial/instapay/05lfiF",
   ]
+
+  useEffect(() => {
+    const randomLink = instapayLinks[Math.floor(Math.random() * instapayLinks.length)]
+    setSelectedInstapayLink(randomLink)
+    setFormData((current) => ({ ...current, instapayLink: randomLink }))
+  }, [])
 
   // Live countdown timer
   useEffect(() => {
-    const targetDate = new Date('2026-12-25T00:00:00').getTime()
+    const targetDate = new Date('2026-12-25T00:00:00+02:00').getTime()
     
     const updateCountdown = () => {
       const now = new Date().getTime()
@@ -705,9 +712,9 @@ export default function HollyJollyPage() {
     <Image
       src="/images/terms-logo.png"
       alt="شعار هولي جولي"
-      width={180}
-      height={120}
-      className="mx-auto mb-3 h-auto w-40 object-contain"
+      width={320}
+      height={180}
+      className="mx-auto mb-4 h-auto w-64 object-contain"
     />
     <h4 className="text-lg font-bold text-primary mb-3 text-center font-arabic">
       الشروط والأحكام
@@ -1016,7 +1023,7 @@ export default function HollyJollyPage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="email" className="text-base sm:text-lg font-semibold text-gray-800 font-arabic">                                            
-                      5. اسم الاب ثلاثي بالعربي*
+                      5. اسم الاب ثلاثي بالع��بي*
                     </Label>
                     <Input
                       id="email"
@@ -1178,24 +1185,16 @@ export default function HollyJollyPage() {
                           <p className="text-lg font-semibold text-primary mb-2 font-arabic">خطوات الدفع عند اختيار InstaPay</p>
                           <p className="text-sm text-gray-700 font-arabic">١. هندوس اللينك، ٢. هنحول، ٣. هنرجع نكتب reference number زي اللي في الصورة</p>
                         </div>
-                        <div className="grid gap-3">
-                          {instapayLinks.map((account) => (
-                            <a
-                              key={account.url}
-                              href={account.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              onClick={() => handleRadioChange("instapayLink", account.url)}
-                              className={`rounded-lg border-2 p-3 text-center font-arabic transition-colors ${
-                                formData.instapayLink === account.url
-                                  ? "border-primary bg-primary/10 text-primary"
-                                  : "border-primary/30 text-gray-800 hover:border-primary"
-                              }`}
-                            >
-                              الدفع عن طريق InstaPay - {account.label}
-                            </a>
-                          ))}
-                        </div>
+                        {selectedInstapayLink && (
+                          <a
+                            href={selectedInstapayLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block rounded-lg border-2 border-primary bg-primary/10 p-4 text-center font-english text-sm break-all text-primary underline underline-offset-4 transition-colors hover:bg-primary/20"
+                          >
+                            {selectedInstapayLink}
+                          </a>
+                        )}
                         <div className="space-y-2">
                           <Label htmlFor="instapayDetails" className="text-base font-semibold text-black font-arabic">
                             اكتب رقم الـ reference number بعد التحويل *
