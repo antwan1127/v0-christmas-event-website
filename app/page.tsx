@@ -389,10 +389,9 @@ export default function HollyJollyPage() {
       const response = await fetch(GOOGLE_SHEETS_URL, {
         method: "POST",
         mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(submissionData),
+        body: new URLSearchParams(
+          Object.entries(submissionData).map(([key, value]) => [key, String(value)])
+        ),
       })
 
       // Since we're using no-cors mode, we can't check response status
@@ -734,7 +733,7 @@ export default function HollyJollyPage() {
       <li className="flex items-start space-x-2">
         <span className="text-blue-500 font-bold">•</span>
         <span className="font-arabic">
-          سعر التذكرة الو��حدة لكل فرد في العائلة ٢٥٠ جنيه
+          سعر التذكرة الواحدة لكل فرد في العائلة ٢٥٠ جنيه
         </span>
       </li>
 
@@ -1047,7 +1046,7 @@ export default function HollyJollyPage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="age" className="text-base sm:text-lg font-semibold text-gray-800 font-arabic">                                              
-                      7. رقم تليفون الا��/الام *
+                      7. رقم تليفون الأب/الأم *
                     </Label>
                     <Input
                       id="age"
