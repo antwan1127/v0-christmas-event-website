@@ -95,25 +95,20 @@ export default function HollyJollyPage() {
     return () => clearInterval(interval)
   }, [])
 
-  useEffect(() => {
-    // Auto-play music on mount
-    if (audioRef.current) {
-      audioRef.current.play().catch(() => {
-        // Auto-play might be blocked by browser
-        setIsMusicPlaying(false)
-      })
-      setIsMusicPlaying(true)
-    }
-  }, [])
+  const toggleMusic = async () => {
+    if (!audioRef.current) return
 
-  const toggleMusic = () => {
-    if (audioRef.current) {
-      if (isMusicPlaying) {
-        audioRef.current.pause()
-      } else {
-        audioRef.current.play()
-      }
-      setIsMusicPlaying(!isMusicPlaying)
+    if (isMusicPlaying) {
+      audioRef.current.pause()
+      setIsMusicPlaying(false)
+      return
+    }
+
+    try {
+      await audioRef.current.play()
+      setIsMusicPlaying(true)
+    } catch {
+      setIsMusicPlaying(false)
     }
   }
 
@@ -449,12 +444,9 @@ export default function HollyJollyPage() {
         
         {/* Decorative images removed for better performance */}
       </div>
-      <audio ref={audioRef} loop>
-        <source
-          src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Audio%202025-10-07%20at%2018.50.55_c990cb06-SGaDMfkyQ7bBleT977NKxRQqURi9rR.mp3"
-          type="audio/mpeg"
-        />
-      </audio>
+  <audio ref={audioRef} loop preload="auto">
+  <source src="/music/holly-jolly.mp3" type="audio/mpeg" />
+  </audio>
 
       {/* Music control button */}
       <button
@@ -712,9 +704,9 @@ export default function HollyJollyPage() {
     <Image
       src="/images/terms-logo.png"
       alt="شعار هولي جولي"
-      width={320}
-      height={180}
-      className="mx-auto mb-4 h-auto w-64 object-contain"
+      width={480}
+      height={270}
+      className="mx-auto mb-4 h-auto w-80 object-contain"
     />
     <h4 className="text-lg font-bold text-primary mb-3 text-center font-arabic">
       الشروط والأحكام
@@ -742,7 +734,7 @@ export default function HollyJollyPage() {
       <li className="flex items-start space-x-2">
         <span className="text-blue-500 font-bold">•</span>
         <span className="font-arabic">
-          سعر التذكرة الواحدة لكل فرد في العائلة ٢٥٠ جنيه
+          سعر التذكرة الو��حدة لكل فرد في العائلة ٢٥٠ جنيه
         </span>
       </li>
 
@@ -1023,7 +1015,7 @@ export default function HollyJollyPage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="email" className="text-base sm:text-lg font-semibold text-gray-800 font-arabic">                                            
-                      5. اسم الاب ثلاثي بالع��بي*
+                      5. اسم الاب ثلاثي بالعربي*
                     </Label>
                     <Input
                       id="email"
@@ -1055,7 +1047,7 @@ export default function HollyJollyPage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="age" className="text-base sm:text-lg font-semibold text-gray-800 font-arabic">                                              
-                      7. رقم تليفون الاب/الام *
+                      7. رقم تليفون الا��/الام *
                     </Label>
                     <Input
                       id="age"
@@ -1184,6 +1176,14 @@ export default function HollyJollyPage() {
                         <div className="text-center mb-4">
                           <p className="text-lg font-semibold text-primary mb-2 font-arabic">خطوات الدفع عند اختيار InstaPay</p>
                           <p className="text-sm text-gray-700 font-arabic">١. هندوس اللينك، ٢. هنحول، ٣. هنرجع نكتب reference number زي اللي في الصورة</p>
+                        </div>
+                        <div className="relative mx-auto h-80 w-full max-w-lg overflow-hidden rounded-lg border-2 border-primary/50 bg-white">
+                          <Image
+                            src="/instapay.jpg"
+                            alt="InstaPay payment instructions"
+                            fill
+                            className="object-contain"
+                          />
                         </div>
                         {selectedInstapayLink && (
                           <a
