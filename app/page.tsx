@@ -1254,9 +1254,18 @@ export default function HollyJollyPage() {
                     )}
                   </div>
 
-                  <Button
-                    type="submit"
-                    size="lg"
+  <section className="rounded-xl border-2 border-primary/20 bg-primary/5 p-5 text-center font-arabic" dir="rtl" aria-labelledby="contact-heading">
+  <h3 id="contact-heading" className="mb-2 text-xl font-bold text-primary">للتواصل معنا</h3>
+  <p className="mb-3 text-base text-gray-700">المكالمات من ٧ صباحًا إلى ١١ مساءً — واتساب ٢٤/٧</p>
+  <div className="flex flex-col items-center justify-center gap-2 sm:flex-row sm:gap-5" dir="ltr">
+  <a href="tel:01043436043" className="font-semibold text-primary underline underline-offset-4">01043436043</a>
+  <a href="tel:01096447756" className="font-semibold text-primary underline underline-offset-4">01096447756</a>
+  </div>
+  </section>
+
+  <Button
+  type="submit"
+  size="lg"
                     disabled={isSubmitting || isCheckingDuplicate}
                     className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg sm:text-xl py-4 sm:py-6 rounded-full shadow-xl hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px] sm:min-h-[56px]"
                   >
