@@ -339,7 +339,7 @@ export default function HollyJollyPage() {
 
     try {
       const GOOGLE_SHEETS_URL =
-        "https://script.google.com/macros/s/AKfycbyQQd71I6I-Bfl90fojsW23TiE8oCJ1w0lu_QCVyrOWfatQRzh76Lo4ckwZNKA4iieMWA/exec"
+        "https://script.google.com/macros/s/AKfycbwo7jBD01DP1-bppEObZH4tfUP6jta1WzesXyobzLyIM3MqiMH-6VUDts7XL59OINIAbQ/exec"
 
       // Keep payment method, InstaPay link, and reference number in separate sheet fields.
       const paymentInfo = formData.paymentMethod === "instapay"
@@ -733,7 +733,7 @@ export default function HollyJollyPage() {
       <li className="flex items-start space-x-2">
         <span className="text-blue-500 font-bold">•</span>
         <span className="font-arabic">
-          سعر التذكرة الواحدة لكل فرد في العائلة ٢٥٠ جنيه
+          سعر التذكر�� الواحدة لكل فرد في العائلة ٢٥٠ جنيه
         </span>
       </li>
 
@@ -741,7 +741,7 @@ export default function HollyJollyPage() {
 <li className="flex items-start space-x-2">
   <span className="text-green-500 font-bold">•</span>
   <span className="font-arabic">
-    في حالة الدفع عن طريق InstaPay، يتم استلام التذاكر عند الباب يوم الإيفنت
+    في حالة الدفع عن طريق InstaPay، ي��م استلام التذاكر عند الباب يوم الإيفنت
   </span>
 </li>
 
