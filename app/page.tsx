@@ -1255,11 +1255,11 @@ export default function HollyJollyPage() {
                   </div>
 
   <section className="rounded-xl border-2 border-primary/20 bg-primary/5 p-5 text-center font-arabic" dir="rtl" aria-labelledby="contact-heading">
-  <h3 id="contact-heading" className="mb-2 text-xl font-bold text-primary">للتواصل معنا</h3>
-  <p className="mb-3 text-base text-gray-700">المكالمات من ٧ صباحًا إلى ١١ مساءً — واتساب ٢٤/٧</p>
+  <h3 id="contact-heading" className="font-arabic mb-2 text-xl font-bold text-primary">للتواصل معنا</h3>
+  <p className="font-arabic mb-3 text-base text-gray-700">المكالمات من ٧ مساءً إلى ١١ مساءً — واتساب ٢٤/٧</p>
   <div className="flex flex-col items-center justify-center gap-2 sm:flex-row sm:gap-5" dir="ltr">
-  <a href="tel:01043436043" className="font-semibold text-primary underline underline-offset-4">01043436043</a>
-  <a href="tel:01096447756" className="font-semibold text-primary underline underline-offset-4">01096447756</a>
+  <a href="tel:01043436043" className="font-arabic font-semibold text-primary underline underline-offset-4">01043436043</a>
+  <a href="tel:01096447756" className="font-arabic font-semibold text-primary underline underline-offset-4">01096447756</a>
   </div>
   </section>
 
