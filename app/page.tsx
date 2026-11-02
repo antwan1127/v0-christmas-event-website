@@ -18,7 +18,6 @@ export default function HollyJollyPage() {
   const [showSuccessModal, setShowSuccessModal] = useState(false)
   const [showValidationModal, setShowValidationModal] = useState(false)
   const [validationMessage, setValidationMessage] = useState("")
-  const [assignedInstapayUser, setAssignedInstapayUser] = useState("")
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
   
   // Generate stable background ornaments that don't change on re-render - Reduced for better performance
@@ -45,6 +44,7 @@ export default function HollyJollyPage() {
     dietaryRestrictions: "",
     emergencyContact: "",
     paymentMethod: "",
+    instapayLink: "",
     instapayDetails: "",
     cashPickupTime: "", // Added field for cash pickup time selection
     servantName: "", // اسم الخادم /الخادمه ثلاثي بالعربي
@@ -53,23 +53,15 @@ export default function HollyJollyPage() {
   })
   const audioRef = useRef<HTMLAudioElement>(null)
 
-  // Instapay users array
-  const instapayUsers = [
-    "Benyaminghobrial@instapay",
-    "jssss@instapay", 
-    "Karenamir@instapay",
-    "Kerminamagedqnb@instapay"
+  const instapayLinks = [
+    { label: "هندوس", url: "https://ipn.eg/S/jssss/instapay/92Woym" },
+    { label: "كيرمن", url: "https://ipn.eg/S/kerminamlabib/instapay/7FmRlp" },
+    { label: "بنيامين", url: "https://ipn.eg/S/benyaminghobrial/instapay/05lfiF" },
   ]
-
-  // Assign Instapay user on component mount
-  useEffect(() => {
-    const randomIndex = Math.floor(Math.random() * instapayUsers.length)
-    setAssignedInstapayUser(instapayUsers[randomIndex])
-  }, [])
 
   // Live countdown timer
   useEffect(() => {
-    const targetDate = new Date('2025-12-26T00:00:00').getTime()
+    const targetDate = new Date('2026-12-25T00:00:00').getTime()
     
     const updateCountdown = () => {
       const now = new Date().getTime()
@@ -304,6 +296,10 @@ export default function HollyJollyPage() {
     }
     
     // Check payment method specific fields
+    if (formData.paymentMethod === "instapay" && !formData.instapayLink) {
+      showValidationError("يرجى اختيار رابط InstaPay")
+      return false
+    }
     if (formData.paymentMethod === "instapay" && !formData.instapayDetails) {
       showValidationError("يرجى إدخال رقم المعاملة")
       return false
@@ -337,25 +333,18 @@ export default function HollyJollyPage() {
       return
     }
     
-    // Ensure Instapay user is assigned
-    if (formData.paymentMethod === "instapay" && !assignedInstapayUser) {
-      alert("Please wait a moment for payment details to load, then try again.")
-      return
-    }
-    
     setIsSubmitting(true)
 
     try {
       const GOOGLE_SHEETS_URL =
         "https://script.google.com/macros/s/AKfycbxCiBwDLvy3qix-5D4D_n3DteE_n2QkuPTSRIUfU3ljavWsh9qLNzjGnZaImQY4sPiw/exec"
 
-      // Prepare the payment info
-      let paymentInfo = ""
-      if (formData.paymentMethod === "instapay") {
-        paymentInfo = `Instapay - ${assignedInstapayUser}`
-      } else {
-        paymentInfo = `Cash - ${formData.cashPickupTime}`
-      }
+      // Keep payment method, InstaPay link, and reference number in separate sheet fields.
+      const paymentInfo = formData.paymentMethod === "instapay"
+        ? "Instapay"
+        : `Cash - ${formData.cashPickupTime}`
+      const instapayLink = formData.paymentMethod === "instapay" ? formData.instapayLink : ""
+      const instapayReference = formData.paymentMethod === "instapay" ? formData.instapayDetails : ""
 
       // Prepare submission data based on form type
       let submissionData
@@ -372,8 +361,9 @@ export default function HollyJollyPage() {
           question8: "N/A",
           question9: formData.emergencyContact,
           question10: paymentInfo,
-          question11: parseInt(formData.emergencyContact) * 200,
-          question12: formData.paymentMethod === "instapay" ? formData.instapayDetails : "",
+          question11: parseInt(formData.emergencyContact) * 250,
+          question12: instapayReference,
+          question13: instapayLink,
         }
       } else {
         // Regular form submission
@@ -388,8 +378,9 @@ export default function HollyJollyPage() {
           question8: formData.dietaryRestrictions || "None",
           question9: formData.emergencyContact,
           question10: paymentInfo,
-          question11: parseInt(formData.emergencyContact) * 200,
-          question12: formData.paymentMethod === "instapay" ? formData.instapayDetails : "",
+          question11: parseInt(formData.emergencyContact) * 250,
+          question12: instapayReference,
+          question13: instapayLink,
         }
       }
 
@@ -416,6 +407,7 @@ export default function HollyJollyPage() {
         dietaryRestrictions: "",
         emergencyContact: "",
         paymentMethod: "",
+        instapayLink: "",
         instapayDetails: "",
         cashPickupTime: "",
         servantName: "",
@@ -702,7 +694,7 @@ export default function HollyJollyPage() {
     <div className="flex items-start space-x-2">
       <span className="text-primary font-bold">📅</span>
       <span className="font-arabic">
-        الخميس ٢٥ ديسمبر ٢٠٢٥
+        الجمعة ٢٥ ديسمبر ٢٠٢٦
       </span>
     </div>
 
@@ -710,6 +702,13 @@ export default function HollyJollyPage() {
 
   {/* Terms & Conditions */}
   <div className="mt-4 p-4 bg-white/80 rounded-lg border border-primary/30">
+    <Image
+      src="/images/terms-logo.png"
+      alt="شعار هولي جولي"
+      width={180}
+      height={120}
+      className="mx-auto mb-3 h-auto w-40 object-contain"
+    />
     <h4 className="text-lg font-bold text-primary mb-3 text-center font-arabic">
       الشروط والأحكام
     </h4>
@@ -1109,10 +1108,10 @@ export default function HollyJollyPage() {
                         <div className="text-center">
                           <p className="text-sm text-gray-600 mb-1">Total Cost:</p>
                           <p className="text-2xl font-bold text-green-600">
-                            {parseInt(formData.emergencyContact) * 200} جنيه
+                            {parseInt(formData.emergencyContact) * 250} جنيه
                           </p>
                           <p className="text-xs text-gray-500 mt-1">
-                            {formData.emergencyContact} ticket(s) × 200 جنيه each
+                            {formData.emergencyContact} ticket(s) × 250 جنيه each
                           </p>
                         </div>
                       </div>
@@ -1174,37 +1173,42 @@ export default function HollyJollyPage() {
                     )}
 
                     {formData.paymentMethod === "instapay" && (
-                      <div className="mt-4 space-y-4 p-4 bg-white/90 rounded-lg border-2 border-primary/30">
+                      <div className="mt-4 space-y-4 p-4 bg-white/90 rounded-lg border-2 border-primary/30" dir="rtl">
                         <div className="text-center mb-4">
-                          <p className="text-lg font-semibold text-primary mb-2 font-english">Payment Instructions</p>
-                          <p className="text-sm text-gray-700 font-english">
-                            Please send payment to: <span className="font-bold text-primary">
-                              {assignedInstapayUser || "Loading..."}
-                            </span>
-                          </p>
+                          <p className="text-lg font-semibold text-primary mb-2 font-arabic">خطوات الدفع عند اختيار InstaPay</p>
+                          <p className="text-sm text-gray-700 font-arabic">١. هندوس اللينك، ٢. هنحول، ٣. هنرجع نكتب reference number زي اللي في الصورة</p>
                         </div>
-                        <div className="relative h-80 w-full max-w-lg mx-auto rounded-lg overflow-hidden border-2 border-primary/50">
-                          <Image
-                            src="/instapay.jpg"
-                            alt="Instapay QR Code for payment"
-                            fill
-                            className="object-contain bg-white"
-                          />
+                        <div className="grid gap-3">
+                          {instapayLinks.map((account) => (
+                            <a
+                              key={account.url}
+                              href={account.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={() => handleRadioChange("instapayLink", account.url)}
+                              className={`rounded-lg border-2 p-3 text-center font-arabic transition-colors ${
+                                formData.instapayLink === account.url
+                                  ? "border-primary bg-primary/10 text-primary"
+                                  : "border-primary/30 text-gray-800 hover:border-primary"
+                              }`}
+                            >
+                              الدفع عن طريق InstaPay - {account.label}
+                            </a>
+                          ))}
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="instapayDetails" className="text-base font-semibold text-black font-english">
-                            Enter your transaction reference number *
+                          <Label htmlFor="instapayDetails" className="text-base font-semibold text-black font-arabic">
+                            اكتب رقم الـ reference number بعد التحويل *
                           </Label>
                           <Input
                             id="instapayDetails"
                             name="instapayDetails"
-                            type="number"
+                            type="text"
                             inputMode="numeric"
                             value={formData.instapayDetails}
                             onChange={handleInputChange}
                             required={formData.paymentMethod === "instapay"}
-                            className="text-base sm:text-lg text-gray-800"
-                            placeholder=""
+                            className="text-base sm:text-lg text-gray-800 text-left"
                             maxLength={12}
                           />
                         </div>
@@ -1260,7 +1264,7 @@ export default function HollyJollyPage() {
           />
           <h3 className="text-3xl font-bold mb-4 text-primary font-english">Holly Jolly Christmas Event</h3>
           <p className="text-xl mb-2 text-gray-600 font-english">Spreading joy and Christmas cheer!</p>
-          <p className="text-lg opacity-90 font-english">© 2025 Holly Jolly. All rights reserved. 🎅🎄✨</p>
+          <p className="text-lg opacity-90 font-english">© 2026 Holly Jolly. All rights reserved. 🎅🎄✨</p>
         </div>
       </footer>
 
