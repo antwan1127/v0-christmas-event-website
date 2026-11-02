@@ -339,7 +339,7 @@ export default function HollyJollyPage() {
 
     try {
       const GOOGLE_SHEETS_URL =
-        "https://script.google.com/macros/s/AKfycbxCiBwDLvy3qix-5D4D_n3DteE_n2QkuPTSRIUfU3ljavWsh9qLNzjGnZaImQY4sPiw/exec"
+        "https://script.google.com/macros/s/AKfycbyQQd71I6I-Bfl90fojsW23TiE8oCJ1w0lu_QCVyrOWfatQRzh76Lo4ckwZNKA4iieMWA/exec"
 
       // Keep payment method, InstaPay link, and reference number in separate sheet fields.
       const paymentInfo = formData.paymentMethod === "instapay"
