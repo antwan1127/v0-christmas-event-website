@@ -770,7 +770,7 @@ export default function HollyJollyPage() {
       <li className="flex items-start space-x-2">
         <span className="text-blue-500 font-bold">•</span>
         <span className="font-arabic">
-          سعر التذكر�� الواحدة لكل فرد في العائلة ٢٥٠ جنيه
+          سعر التذكرة الواحدة لكل فرد في العائلة ٢٥٠ جنيه
         </span>
       </li>
 
@@ -778,7 +778,7 @@ export default function HollyJollyPage() {
 <li className="flex items-start space-x-2">
   <span className="text-green-500 font-bold">•</span>
   <span className="font-arabic">
-    في حالة الدفع عن طريق InstaPay، ي��م استلام التذاكر عند الباب يوم الإيفنت
+    في حالة الدفع عن طريق InstaPay، يتم استلام التذاكر عند الباب يوم الإيفنت
   </span>
 </li>
 
