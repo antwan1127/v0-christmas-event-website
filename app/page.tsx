@@ -1208,7 +1208,7 @@ export default function HollyJollyPage() {
                     {formData.paymentMethod === "cash" && (
                       <div className="mt-4 space-y-4 p-4 bg-white/90 rounded-lg border-2 border-primary/30">
                         <p className="text-base text-black font-bold text-center font-arabic">
-                          هنجمع الاشتراكات ابتداء من ١٣ نوفمبر
+                          هنجمع الاشتراكات ابتداء من ١٢ نوفمبر
                         </p>
                         <p className="text-sm text-black font-semibold font-english">Please select your preferred pickup time:</p>
                         <RadioGroup
