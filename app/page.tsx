@@ -54,6 +54,9 @@ export default function HollyJollyPage() {
     servantPhone: "", // رقم التليفون
   })
   const audioRef = useRef<HTMLAudioElement>(null)
+  const isServantRegistration =
+    formData.eventType === "خدام اجتماع الخدمه العام" ||
+    formData.eventType === "مارمرقس م.الجديده اجتماع"
 
   const instapayLinks = [
     "https://ipn.eg/S/jssss/instapay/92Woym",
@@ -204,7 +207,7 @@ export default function HollyJollyPage() {
     }
 
     // Validate based on form type
-    if (formData.eventType === "خدام اجتماع الخدمه العام") {
+    if (isServantRegistration) {
       // Servant form validation
       if (!validateArabicOnly(formData.servantName)) {
         showValidationError("❌ خطأ في اسم الخادم /الخادمه\n\nاسم الخادم /الخادمه يجب أن يحتوي على أحرف عربية فقط (بدون أرقام أو أحرف إنجليزية)")                                     
@@ -328,10 +331,10 @@ export default function HollyJollyPage() {
     setIsCheckingDuplicate(true)
     try {
       const params = new URLSearchParams({
-        question2: formData.fullName,
-        question5: formData.email,
-        question6: formData.phone,
-        question7: formData.age,
+        question2: isServantRegistration ? formData.servantName : formData.fullName,
+        question5: isServantRegistration ? formData.servantFamily : formData.email,
+        question6: isServantRegistration ? formData.servantPhone : formData.phone,
+        question7: isServantRegistration ? formData.servantPhone : formData.age,
         servantName: formData.servantName,
         servantPhone: formData.servantPhone,
       })
@@ -385,7 +388,7 @@ export default function HollyJollyPage() {
 
       // Prepare submission data based on form type
       let submissionData
-      if (formData.eventType === "خدام اجتماع الخدمه العام") {
+      if (isServantRegistration) {
         // Servant form submission
         submissionData = {
           question1: formData.eventType,
@@ -882,14 +885,50 @@ export default function HollyJollyPage() {
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="خدام اجتماع الخدمه العام" id="church8" />                                                                        
-                        <Label htmlFor="church8" className="font-normal cursor-pointer text-gray-800 font-arabic">                                              
+                        <RadioGroupItem value="مارجرجس هليوبوليس" id="church8" />
+                        <Label htmlFor="church8" className="font-normal cursor-pointer text-gray-800 font-arabic">
+                          مارجرجس هليوبوليس
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="جورجيوس والانبا انطونيوس" id="church9" />
+                        <Label htmlFor="church9" className="font-normal cursor-pointer text-gray-800 font-arabic">
+                          جورجيوس والانبا انطونيوس
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="العذراء النزهه الجديده" id="church10" />
+                        <Label htmlFor="church10" className="font-normal cursor-pointer text-gray-800 font-arabic">
+                          العذراء النزهه الجديده
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="الانبا بولا ارض الجولف" id="church11" />
+                        <Label htmlFor="church11" className="font-normal cursor-pointer text-gray-800 font-arabic">
+                          الانبا بولا ارض الجولف
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="مارجرجس الماظه" id="church12" />
+                        <Label htmlFor="church12" className="font-normal cursor-pointer text-gray-800 font-arabic">
+                          مارجرجس الماظه
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="الملاك شيراتون" id="church13" />
+                        <Label htmlFor="church13" className="font-normal cursor-pointer text-gray-800 font-arabic">
+                          الملاك شيراتون
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="خدام اجتماع الخدمه العام" id="church14" />                                                                        
+                        <Label htmlFor="church14" className="font-normal cursor-pointer text-gray-800 font-arabic">                                              
                           خدام اجتماع الخدمه العام
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="كنائس المهجر" id="church9" />                                                                        
-                        <Label htmlFor="church9" className="font-normal cursor-pointer text-gray-800 font-arabic">                                              
+                        <RadioGroupItem value="كنائس المهجر" id="church15" />                                                                        
+                        <Label htmlFor="church15" className="font-normal cursor-pointer text-gray-800 font-arabic">                                              
                           كنائس المهجر
                         </Label>
                       </div>
@@ -897,7 +936,7 @@ export default function HollyJollyPage() {
                   </div>
 
                   {/* Conditional rendering based on eventType */}
-                  {formData.eventType === "خدام اجتماع الخدمه العام" ? (
+                  {isServantRegistration ? (
                     // Servant form fields
                     <>
                       <div className="space-y-2">
