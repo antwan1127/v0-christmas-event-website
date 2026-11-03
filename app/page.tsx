@@ -55,7 +55,6 @@ export default function HollyJollyPage() {
   })
   const audioRef = useRef<HTMLAudioElement>(null)
   const isServantRegistration =
-    formData.eventType === "خدام اجتماع الخدمه العام" ||
     formData.eventType === "مارمرقس م.الجديده اجتماع"
 
   const instapayLinks = [
@@ -920,12 +919,7 @@ export default function HollyJollyPage() {
                           الملاك شيراتون
                         </Label>
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="خدام اجتماع الخدمه العام" id="church14" />                                                                        
-                        <Label htmlFor="church14" className="font-normal cursor-pointer text-gray-800 font-arabic">                                              
-                          خدام اجتماع الخدمه العام
-                        </Label>
-                      </div>
+
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="كنائس المهجر" id="church15" />                                                                        
                         <Label htmlFor="church15" className="font-normal cursor-pointer text-gray-800 font-arabic">                                              
