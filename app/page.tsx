@@ -134,16 +134,18 @@ export default function HollyJollyPage() {
         if (name === 'emergencyContact' && value !== '' && parseInt(value) < 1) {
           return
         }
-        // For tickets count (emergencyContact), validate maximum based on siblings
+          // Limit the special meeting to 10 tickets; preserve the existing rule for other options.
         if (name === 'emergencyContact' && value !== '') {
           const ticketsValue = parseInt(value)
-          // Only apply validation if dietaryRestrictions (siblings) exists and has a value
-          if (formData.dietaryRestrictions && formData.dietaryRestrictions !== '') {
-            const maxTickets = parseInt(formData.dietaryRestrictions) + 3
-            if (ticketsValue > maxTickets) {
-              showValidationError("You have reached the maximum allowed number of tickets.")
-              return
-            }
+          const maxTickets = isServantRegistration
+            ? 10
+            : formData.dietaryRestrictions && formData.dietaryRestrictions !== ''
+              ? parseInt(formData.dietaryRestrictions) + 3
+              : null
+
+          if (maxTickets !== null && ticketsValue > maxTickets) {
+            showValidationError("You have reached the maximum allowed number of tickets.")
+            return
           }
         }
         // Update the form data
@@ -291,13 +293,15 @@ export default function HollyJollyPage() {
       showValidationError("❌ خطأ في عدد التذاكر\n\nعدد التذاكر يجب أن يكون أكبر من صفر")                                                                       
       return false
     }
-    // Validate maximum tickets based on siblings (only for regular form where dietaryRestrictions exists)
-    if (formData.dietaryRestrictions && formData.dietaryRestrictions !== '') {
-      const maxTickets = parseInt(formData.dietaryRestrictions) + 3
-      if (parseInt(formData.emergencyContact) > maxTickets) {
-        showValidationError("You have reached the maximum allowed number of tickets.")
-        return false
-      }
+    const maxTickets = isServantRegistration
+      ? 10
+      : formData.dietaryRestrictions && formData.dietaryRestrictions !== ''
+        ? parseInt(formData.dietaryRestrictions) + 3
+        : null
+
+    if (maxTickets !== null && parseInt(formData.emergencyContact) > maxTickets) {
+      showValidationError("You have reached the maximum allowed number of tickets.")
+      return false
     }
     
     // Check payment method specific fields
@@ -1161,9 +1165,10 @@ export default function HollyJollyPage() {
                       name="emergencyContact"
                       type="number"
                       inputMode="numeric"
-                      min="1"
-                      step="1"
-                      value={formData.emergencyContact}
+  min="1"
+  max={isServantRegistration ? 10 : undefined}
+  step="1"
+  value={formData.emergencyContact}
                       onChange={handleInputChange}
                       required
                       className="text-lg text-gray-800"
