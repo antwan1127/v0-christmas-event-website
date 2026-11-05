@@ -149,8 +149,8 @@ export default function HollyJollyPage() {
           }
         }
         // Update the form data
-        const updatedFormData = { ...formData, [name]: value }
-        // When siblings count changes, validate if tickets already exceeds new maximum
+  const updatedFormData = { ...formData, [name]: value }
+  // When siblings count changes, validate if tickets already exceeds new maximum
         if (name === 'dietaryRestrictions' && value !== '' && updatedFormData.emergencyContact && updatedFormData.emergencyContact !== '') {
           const maxTickets = parseInt(value) + 3
           if (parseInt(updatedFormData.emergencyContact) > maxTickets) {
@@ -326,10 +326,16 @@ export default function HollyJollyPage() {
   }
 
   const handleRadioChange = async (name: string, value: string) => {
-    if (name !== "paymentMethod") {
-      setFormData({ ...formData, [name]: value })
-      return
-    }
+  if (name !== "paymentMethod") {
+    setFormData({
+      ...formData,
+      [name]: value,
+      ...(name === "eventType" && value === "مارمرقس م.الجديده اجتماع" && Number(formData.emergencyContact) > 10
+        ? { emergencyContact: "10" }
+        : {}),
+    })
+    return
+  }
 
     setIsCheckingDuplicate(true)
     try {
@@ -920,7 +926,7 @@ export default function HollyJollyPage() {
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="الملاك شيراتون" id="church13" />
                         <Label htmlFor="church13" className="font-normal cursor-pointer text-gray-800 font-arabic">
-                          الملاك شيراتون
+                          الملاك شيرا��ون
                         </Label>
                       </div>
 
