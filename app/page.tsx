@@ -351,7 +351,7 @@ export default function HollyJollyPage() {
         return
       }
       if (result.duplicate) {
-        showValidationError("هذا الت��جيل موجود بالفعل. لا تقم بالدفع مرة أخرى.")
+        showValidationError("هذا التسجيل موجود بالفعل. لا تقم بالدفع مرة أخرى.")
         return
       }
 
@@ -920,7 +920,7 @@ export default function HollyJollyPage() {
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="الملاك شيراتون" id="church13" />
                         <Label htmlFor="church13" className="font-normal cursor-pointer text-gray-800 font-arabic">
-                          الملاك شيرا��ون
+                          الملاك شيراتون
                         </Label>
                       </div>
 
