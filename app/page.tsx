@@ -327,13 +327,7 @@ export default function HollyJollyPage() {
 
   const handleRadioChange = async (name: string, value: string) => {
   if (name !== "paymentMethod") {
-    setFormData({
-      ...formData,
-      [name]: value,
-      ...(name === "eventType" && value === "مارمرقس م.الجديده اجتماع" && Number(formData.emergencyContact) > 10
-        ? { emergencyContact: "10" }
-        : {}),
-    })
+    setFormData({ ...formData, [name]: value })
     return
   }
 
@@ -357,7 +351,7 @@ export default function HollyJollyPage() {
         return
       }
       if (result.duplicate) {
-        showValidationError("هذا التسجيل موجود بالفعل. لا تقم بالدفع مرة أخرى.")
+        showValidationError("هذا الت��جيل موجود بالفعل. لا تقم بالدفع مرة أخرى.")
         return
       }
 
