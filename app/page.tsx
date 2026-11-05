@@ -707,7 +707,7 @@ export default function HollyJollyPage() {
     </h3>
 
     <p className="text-base sm:text-lg text-gray-700 font-semibold font-arabic">
-      يوم رياضي روحي لأطفال ابتدائي وأسرهم
+      يوم رياضي روحي لاطفال حضانه وابتدائي وأسرهم
     </p>
   </div>
 
