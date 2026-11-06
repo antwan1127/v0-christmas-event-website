@@ -743,7 +743,7 @@ export default function HollyJollyPage() {
   <div className="mt-4 p-4 bg-white/80 rounded-lg border border-primary/30">
     <Image
       src="/images/terms-logo.png"
-      alt="شعار هولي جولي"
+      alt="شعار هولي جول��"
       width={480}
       height={270}
       className="mx-auto mb-4 h-auto w-80 object-contain"
@@ -870,12 +870,6 @@ export default function HollyJollyPage() {
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="العذارء و الانبا بيشوي التجمع" id="church5" />
-                        <Label htmlFor="church5" className="font-normal cursor-pointer text-gray-800 font-arabic">
-                          العذارء و الانبا بيشوي التجمع
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
                         <RadioGroupItem value="العذارء الرحاب" id="church6" />
                         <Label htmlFor="church6" className="font-normal cursor-pointer text-gray-800 font-arabic">
                           العذارء الرحاب
@@ -888,21 +882,9 @@ export default function HollyJollyPage() {
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="مارجرجس هليوبوليس" id="church8" />
-                        <Label htmlFor="church8" className="font-normal cursor-pointer text-gray-800 font-arabic">
-                          مارجرجس هليوبوليس
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
                         <RadioGroupItem value="جورجيوس والانبا انطونيوس" id="church9" />
                         <Label htmlFor="church9" className="font-normal cursor-pointer text-gray-800 font-arabic">
                           جورجيوس والانبا انطونيوس
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="العذراء النزهه الجديده" id="church10" />
-                        <Label htmlFor="church10" className="font-normal cursor-pointer text-gray-800 font-arabic">
-                          العذراء النزهه الجديده
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
