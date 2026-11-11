@@ -465,16 +465,16 @@ export default function HollyJollyPage() {
   }
 
   const eventImages = [
-    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG-20251007-WA0001-dvl4Rw46h1gT7dJl47VZ5NrXUrGjHE.jpg",
-    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-10-07%20at%2017.16.52_069618b9-TL7a1yp6zKmDbihta2BmtyVPh5LEfI.jpg",
-    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-10-07%20at%2017.16.52_155b1bee-Zx0jRkgpM7gb5m8vb4RtXtWdaP9SmK.jpg",
-    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG-20251007-WA0005-0pCdWuZedlFirtacoInzAUufZUtdVm.jpg",
-    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-10-07%20at%2017.16.52_52c832fb-nVWdPgSd0IeXuGso2IdcR8BJc2LjXZ.jpg",
-    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG-20251007-WA0004-WPkqwFtsItSNQQccy18UygiDJjsCXs.jpg",
-    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-10-07%20at%2017.16.52_193cbdf7-Yv2ENpAsmhVnpjsAxj3L1Y1jobwvUf.jpg",
-    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG-20251007-WA0002-f8NsI7AXugFTZ9mXJVgsOXGL7rDL4Z.jpg",
-    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG-20251007-WA0003-3SqPrAyvN7KPpc5RzpoimF7YkCZJtm.jpg",
-    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-10-07%20at%2017.57.29_15e47db3-0v7kKcnoSYsTxQNzOf5wF2KDCE8sQa.jpg",
+    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202026-11-11%20at%202.23.32%20AM%20%281%29-UOIgvRxHuEDeIpPvz4jZSxDLANB2KQ.jpeg",
+    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202026-11-11%20at%202.23.32%20AM%20%282%29-twDKUC0YRWarjfxV6KGq9rGmTnkRDX.jpeg",
+    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202026-11-11%20at%202.23.32%20AM%20%283%29-yfM0v3hEE27BCjWzKd1oDDqEshCGfE.jpeg",
+    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202026-11-11%20at%202.23.32%20AM%20%284%29-NeFZAdspm7IkEWMuvDncwRwwFeGOPF.jpeg",
+    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202026-11-11%20at%202.23.32%20AM%20%285%29-HK5sERkiDEQpQnjqjRBvasMe4jHeee.jpeg",
+    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202026-11-11%20at%202.23.32%20AM%20%286%29-cXWVchAFHPL3LEHUBnFdyeVHwnxNDV.jpeg",
+    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202026-11-11%20at%202.23.32%20AM%20%287%29-qEmP94nlKBgJq7aLI0hu7FkBijDoKB.jpeg",
+    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202026-11-11%20at%202.23.32%20AM%20%288%29-1GeV9aRfBEq9z0GH1aYfdpQjBZoHjK.jpeg",
+    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202026-11-11%20at%202.23.32%20AM%20%289%29-Pr9rZWq34Vgv1dRwmdfFDjB8kNQVx2.jpeg",
+    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202026-11-11%20at%202.23.32%20AM-fR9bqwdK4RgvcVuLuqvqVepSWHd9eO.jpeg",
   ]
 
   return (
