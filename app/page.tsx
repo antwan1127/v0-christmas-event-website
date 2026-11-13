@@ -59,7 +59,7 @@ export default function HollyJollyPage() {
 
   const instapayLinks = [
     "https://ipn.eg/S/jssss/instapay/92Woym",
-    "https://ipn.eg/S/kerminamlabib/instapay/7FmRlp",
+    "https://ipn.eg/S/kerminamagedqnb/instapay/9D20Qo",
     "https://ipn.eg/S/benyaminghobrial/instapay/05lfiF",
   ]
 
@@ -1034,7 +1034,7 @@ export default function HollyJollyPage() {
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="خامسة ابتدائي" id="grade5" />
+                        <RadioGroupItem value="خامسة ابتد��ئي" id="grade5" />
                         <Label htmlFor="grade5" className="font-normal cursor-pointer text-gray-800 font-arabic">                                              
                           خامسة ابتدائي <span className="font-english">(grade 5)</span>
                         </Label>
