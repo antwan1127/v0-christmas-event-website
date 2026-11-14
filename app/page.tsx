@@ -15,7 +15,6 @@ import Image from "next/image"
 export default function HollyJollyPage() {
   const [isMusicPlaying, setIsMusicPlaying] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isCheckingDuplicate, setIsCheckingDuplicate] = useState(false)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
   const [showValidationModal, setShowValidationModal] = useState(false)
   const [validationMessage, setValidationMessage] = useState("")
@@ -320,42 +319,8 @@ export default function HollyJollyPage() {
     return true
   }
 
-  const handleRadioChange = async (name: string, value: string) => {
-  if (name !== "paymentMethod") {
-    setFormData({ ...formData, [name]: value })
-    return
-  }
-
-    setIsCheckingDuplicate(true)
-    try {
-      const params = new URLSearchParams({
-        question2: isServantRegistration ? formData.servantName : formData.fullName,
-        question5: isServantRegistration ? formData.servantFamily : formData.email,
-        question6: isServantRegistration ? formData.servantPhone : formData.phone,
-        question7: isServantRegistration ? formData.servantPhone : formData.age,
-        servantName: formData.servantName,
-        servantPhone: formData.servantPhone,
-      })
-      const response = await fetch(`/api/duplicate-check?${params.toString()}`, {
-        cache: "no-store",
-      })
-      const result = await response.json()
-
-      if (!response.ok || result.error) {
-        showValidationError("تعذر التأكد من التسجيل السابق. لن يتم فتح الدفع، حاول مرة أخرى.")
-        return
-      }
-      if (result.duplicate) {
-        showValidationError("هذا التسجيل موجود بالفعل. لا تقم بالدفع مرة أخرى.")
-        return
-      }
-
-      setFormData({ ...formData, paymentMethod: value })
-    } catch {
-      showValidationError("تعذر التأكد من التسجيل السابق. لن يتم فتح الدفع، حاول مرة أخرى.")
-    } finally {
-      setIsCheckingDuplicate(false)
-    }
+  const handleRadioChange = (name: string, value: string) => {
+    setFormData((current) => ({ ...current, [name]: value }))
   }
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -427,6 +392,11 @@ export default function HollyJollyPage() {
         ),
       })
       const result = await response.json()
+
+      if (result.duplicate) {
+        showValidationError(result.message || "هذا التسجيل موجود بالفعل. لا تقم بالدفع مرة أخرى.")
+        return
+      }
 
       if (!response.ok || result.success !== true) {
         throw new Error(result.message || result.error || "Your registration could not be saved. Please try again.")
@@ -1220,11 +1190,6 @@ export default function HollyJollyPage() {
                       </div>
                     )}
 
-                    {isCheckingDuplicate && (
-                      <p className="mt-3 text-center text-sm text-primary font-arabic" role="status">
-                        جاري التأكد من عدم وجود تسجيل سابق...
-                      </p>
-                    )}
                     {formData.paymentMethod === "instapay" && (
                       <div className="mt-4 space-y-4 p-4 bg-white/90 rounded-lg border-2 border-primary/30" dir="rtl">
                         <div className="text-center mb-4">
@@ -1286,7 +1251,7 @@ export default function HollyJollyPage() {
   <Button
   type="submit"
   size="lg"
-                    disabled={isSubmitting || isCheckingDuplicate}
+                    disabled={isSubmitting}
                     className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg sm:text-xl py-4 sm:py-6 rounded-full shadow-xl hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px] sm:min-h-[56px]"
                   >
                     {isSubmitting ? "Submitting..." : "Submit Registration 🎄"}
