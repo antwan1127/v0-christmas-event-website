@@ -55,7 +55,7 @@ export default function HollyJollyPage() {
   })
   const audioRef = useRef<HTMLAudioElement>(null)
   const isServantRegistration =
-    formData.eventType === "مارمرقس م.الجديده اجتماع"
+    formData.eventType === "اجتماع الخدمه العام مارمرقرس م.الجديده"
 
   const instapayLinks = [
     "https://ipn.eg/S/jssss/instapay/92Woym",
@@ -169,13 +169,8 @@ export default function HollyJollyPage() {
         }
       }
     }
-    // For name fields (fullName, email, phone, servantName), only allow Arabic characters   
-    else if (name === 'fullName' || name === 'email' || name === 'phone' || name === 'servantName') {     
-      // Only allow Arabic letters, spaces, and common Arabic punctuation       
-      if (value === '' || /^[\u0600-\u06FF\s\u064B-\u0652\u0670\u0640]*$/.test(value)) {                                                                        
-        setFormData({ ...formData, [name]: value })
-      }
-    } else {
+    // Name fields remain editable; Arabic-only validation runs on submit.
+    else {
       setFormData({ ...formData, [name]: value })
     }
   }
@@ -852,9 +847,9 @@ export default function HollyJollyPage() {
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="مارمرقس م.الجديده اجتماع" id="church2" />
+                        <RadioGroupItem value="اجتماع الخدمه العام مارمرقرس م.الجديده" id="church2" />
                         <Label htmlFor="church2" className="font-normal cursor-pointer text-gray-800 font-arabic">
-                          مارمرقس م.الجديده اجتماع
+                          اجتماع الخدمه العام مارمرقرس م.الجديده
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
