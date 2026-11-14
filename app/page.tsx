@@ -379,9 +379,6 @@ export default function HollyJollyPage() {
     setIsSubmitting(true)
 
     try {
-      const GOOGLE_SHEETS_URL =
-        "https://script.google.com/macros/s/AKfycbyVeMq_vH4SkFTdLuleYqQIFmFkwJjb4SCU55FHCZEZTyStTAeWQFo7Zv8h4MJGHgnXcQ/exec"
-
       // Keep payment method, InstaPay link, and reference number in separate sheet fields.
       const paymentInfo = formData.paymentMethod === "instapay"
         ? "Instapay"
@@ -427,16 +424,19 @@ export default function HollyJollyPage() {
         }
       }
 
-      const response = await fetch(GOOGLE_SHEETS_URL, {
+      const response = await fetch("/api/sheet-submission", {
         method: "POST",
-        mode: "no-cors",
+        headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
         body: new URLSearchParams(
           Object.entries(submissionData).map(([key, value]) => [key, String(value)])
         ),
       })
+      const result = await response.json()
 
-      // Since we're using no-cors mode, we can't check response status
-      // But we'll assume success if no error is thrown
+      if (!response.ok || result.success !== true) {
+        throw new Error(result.message || result.error || "Your registration could not be saved. Please try again.")
+      }
+
       setShowSuccessModal(true)
       setFormData({
         eventType: "",
@@ -458,7 +458,7 @@ export default function HollyJollyPage() {
       })
     } catch (error) {
       console.error("[v0] Error submitting form:", error)
-      alert("There was an error submitting your registration. Please try again.")
+      alert(error instanceof Error ? error.message : "There was an error submitting your registration. Please try again.")
     } finally {
       setIsSubmitting(false)
     }
@@ -1034,7 +1034,7 @@ export default function HollyJollyPage() {
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="خامسة ابت������������ئي" id="grade5" />
+                        <RadioGroupItem value="خامسة ابت��������������ئي" id="grade5" />
                         <Label htmlFor="grade5" className="font-normal cursor-pointer text-gray-800 font-arabic">                                              
                           خامسة ابتدائي <span className="font-english">(grade 5)</span>
                         </Label>
