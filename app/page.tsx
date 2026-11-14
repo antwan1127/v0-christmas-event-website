@@ -53,8 +53,15 @@ export default function HollyJollyPage() {
     servantPhone: "", // رقم التليفون
   })
   const audioRef = useRef<HTMLAudioElement>(null)
+  const normalizeEventName = (value: string) => value
+    .normalize("NFKC")
+    .replace(/[\u064B-\u0652\u0640]/g, "")
+    .replace(/[أإآٱ]/g, "ا")
+    .replace(/ى/g, "ي")
+    .replace(/[\s\u200f\u200e]+/g, "")
+    .toLowerCase()
   const isServantRegistration =
-    formData.eventType === "اجتماع الخدمه العام مارمرقرس م.الجديده"
+    normalizeEventName(formData.eventType) === normalizeEventName("اجتماع الخدمه العام مارمرقرس م.الجديده")
 
   const instapayLinks = [
     "https://ipn.eg/S/jssss/instapay/92Woym",
@@ -1175,6 +1182,15 @@ export default function HollyJollyPage() {
                               className="font-normal cursor-pointer text-black text-sm leading-relaxed font-arabic"
                             >
                               الجمعه من ١٠ص ل ١ظ في المبني الجديد +بين الفيلتين في الكنيسة الرئيسية
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2 p-3 bg-white rounded border border-primary/20">
+                            <RadioGroupItem value="saturday" id="saturday" />
+                            <Label
+                              htmlFor="saturday"
+                              className="font-normal cursor-pointer text-black text-sm leading-relaxed font-arabic"
+                            >
+                              السبت من ٧ ل ٩م في المبني الجديد +بين الفليتين في الكنيسة الرئيسية
                             </Label>
                           </div>
                           <div className="flex items-center space-x-2 p-3 bg-white rounded border border-primary/20">
