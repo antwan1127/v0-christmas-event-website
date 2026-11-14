@@ -1185,6 +1185,15 @@ export default function HollyJollyPage() {
                             </Label>
                           </div>
                           <div className="flex items-center space-x-2 p-3 bg-white rounded border border-primary/20">
+                            <RadioGroupItem value="saturday" id="saturday" />
+                            <Label
+                              htmlFor="saturday"
+                              className="font-normal cursor-pointer text-black text-sm leading-relaxed font-arabic"
+                            >
+                              السبت من ٧ ل ٩م في المبني الجديد +بين الفليتين في الكنيسة الرئيسية
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2 p-3 bg-white rounded border border-primary/20">
                             <RadioGroupItem value="sunday" id="sunday" />
                             <Label
                               htmlFor="sunday"
