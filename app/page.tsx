@@ -1034,7 +1034,7 @@ export default function HollyJollyPage() {
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="خامسة ابت����������ئي" id="grade5" />
+                        <RadioGroupItem value="خامسة ابت������������ئي" id="grade5" />
                         <Label htmlFor="grade5" className="font-normal cursor-pointer text-gray-800 font-arabic">                                              
                           خامسة ابتدائي <span className="font-english">(grade 5)</span>
                         </Label>
@@ -1279,8 +1279,8 @@ export default function HollyJollyPage() {
   <p className="font-arabic mb-3 text-[13px] leading-6 text-gray-700">
     <span className="font-arabic block">للمكالمات الهاتفية:</span>
     <span className="font-arabic block">الجمعة والسبت: طوال اليوم.</span>
-    <span className="font-arabic block">من الأحد إلى الخميس: من الساعة ٧ مساءً حتى ١١ مساءً.</span>
-    <span className="font-arabic block">واتساب: ٢٤/٧</span>
+    <span className="font-arabic block">من الأحد إلى الخميس: من ٧ مساءً حتى 11 مساءً.</span>
+    <span className="font-arabic block">واتساب: 24/7</span>
   </p>
   <div className="flex flex-col items-center justify-center gap-2 sm:flex-row sm:gap-5" dir="ltr">
   <a href="tel:01043436043" className="font-arabic font-semibold text-primary underline underline-offset-4">01043436043</a>
