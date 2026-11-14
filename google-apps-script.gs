@@ -75,13 +75,13 @@ function isDuplicate(data, rows) {
   const name = normalize(data.servantName || data.question2)
   const family = servant ? normalize(data.question3) : ""
   const phone = normalizePhone(
-    data.servantPhone || (servant ? data.question4 : data.question7)
+    data.servantPhone || (servant ? data.question4 : data.question6)
   )
 
   if (!event || !name || !phone || (servant && !family)) return false
 
-  // Q3 is the servant family, Q4 the servant phone, and Q7 the family-registration phone.
-  const phoneColumnIndex = servant ? 4 : 7
+  // Q3 is the servant family, Q4 the servant phone, and Q6 the regular-form phone.
+  const phoneColumnIndex = servant ? 4 : 6
   const eventMatches = function (existingEvent) {
     return servant
       ? isServantEvent(existingEvent)
