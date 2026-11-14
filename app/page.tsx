@@ -169,13 +169,8 @@ export default function HollyJollyPage() {
         }
       }
     }
-    // For name fields (fullName, email, phone, servantName), only allow Arabic characters   
-    else if (name === 'fullName' || name === 'email' || name === 'phone' || name === 'servantName') {     
-      // Only allow Arabic letters, spaces, and common Arabic punctuation       
-      if (value === '' || /^[\u0600-\u06FF\s\u064B-\u0652\u0670\u0640]*$/.test(value)) {                                                                        
-        setFormData({ ...formData, [name]: value })
-      }
-    } else {
+    // Name fields remain editable; Arabic-only validation runs on submit.
+    else {
       setFormData({ ...formData, [name]: value })
     }
   }
