@@ -36,9 +36,6 @@ function normalize(value) {
     })
 }
 
-function normalizePhone(value) {
-  return normalize(value).replace(/\D/g, "")
-}
 
 function isServantEvent(event) {
   const normalizedEvent = normalize(event)
@@ -74,14 +71,9 @@ function isDuplicate(data, rows) {
   const servant = isServantEvent(event) || Boolean(data.servantName || data.servantPhone)
   const name = normalize(data.servantName || data.question2)
   const family = servant ? normalize(data.question3) : ""
-  const phone = normalizePhone(
-    data.servantPhone || (servant ? data.question4 : data.question6)
-  )
 
-  if (!event || !name || !phone || (servant && !family)) return false
+  if (!event || !name || (servant && !family)) return false
 
-  // Q3 is the servant family, Q4 the servant phone, and Q6 the regular-form phone.
-  const phoneColumnIndex = servant ? 4 : 6
   const eventMatches = function (existingEvent) {
     return servant
       ? isServantEvent(existingEvent)
@@ -91,11 +83,10 @@ function isDuplicate(data, rows) {
   return rows.some(function (row) {
     return eventMatches(row[1]) &&
       normalize(row[2]) === name &&
-      (!servant || normalize(row[3]) === family) &&
-      normalizePhone(row[phoneColumnIndex]) === phone
+      (!servant || normalize(row[3]) === family)
   })
-
 }
+
 
 function jsonResponse_(payload) {
   return ContentService.createTextOutput(JSON.stringify(payload))
