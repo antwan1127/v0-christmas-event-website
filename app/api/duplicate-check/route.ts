@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 
 const GOOGLE_SHEETS_URL =
-  "https://script.google.com/macros/s/AKfycbytiTn-WvTnLSzbj_bWni7OgxT1sSCbuRSTsT9yB8vkiwrHJGvDQO0e3o7RSnDDFzt5Iw/exec"
+  "https://script.google.com/macros/s/AKfycbw6ZOc6AQZY7higuxSWhqq5m766l4uOxsxNV576VNjUoG__PeaXOBr3lkXed1XWSNaSGA/exec"
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
