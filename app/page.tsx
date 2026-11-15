@@ -15,6 +15,11 @@ import Image from "next/image"
 export default function HollyJollyPage() {
   const [isMusicPlaying, setIsMusicPlaying] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isCheckingDuplicate, setIsCheckingDuplicate] = useState(false)
+  const [paymentUnlocked, setPaymentUnlocked] = useState(false)
+  const [reservationToken, setReservationToken] = useState("")
+  const [reservationRequestId, setReservationRequestId] = useState("")
+  const [reservedIdentityData, setReservedIdentityData] = useState<Record<string, string> | null>(null)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
   const [showValidationModal, setShowValidationModal] = useState(false)
   const [validationMessage, setValidationMessage] = useState("")
@@ -53,6 +58,7 @@ export default function HollyJollyPage() {
     servantPhone: "", // رقم التليفون
   })
   const audioRef = useRef<HTMLAudioElement>(null)
+  const identityRevision = useRef(0)
   const normalizeEventName = (value: string) => value
     .normalize("NFKC")
     .replace(/[\u064B-\u0652\u0640]/g, "")
@@ -62,6 +68,43 @@ export default function HollyJollyPage() {
     .toLowerCase()
   const isServantRegistration =
     normalizeEventName(formData.eventType) === normalizeEventName("اجتماع الخدمه العام مارمرقرس م.الجديده")
+
+  const getIdentityData = (): Record<string, string> => isServantRegistration
+    ? {
+        question1: formData.eventType,
+        question2: formData.servantName,
+        question3: formData.servantFamily,
+        question4: formData.servantPhone,
+        servantName: formData.servantName,
+        servantFamily: formData.servantFamily,
+        servantPhone: formData.servantPhone,
+      }
+    : {
+        question1: formData.eventType,
+        question2: formData.fullName,
+        question5: formData.email,
+        question6: formData.phone,
+        question7: formData.age,
+      }
+
+  const invalidateReservation = () => {
+    if (reservationToken && reservedIdentityData) {
+      void fetch("/api/duplicate-check", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "release",
+          ...reservedIdentityData,
+          reservationToken,
+        }),
+      }).catch(() => undefined)
+    }
+    identityRevision.current += 1
+    setReservationToken("")
+    setReservationRequestId("")
+    setReservedIdentityData(null)
+    setPaymentUnlocked(false)
+  }
 
   const instapayLinks = [
     "https://ipn.eg/S/jssss/instapay/92Woym",
@@ -123,6 +166,9 @@ export default function HollyJollyPage() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
+    if (["fullName", "email", "phone", "age", "servantName", "servantFamily", "servantPhone"].includes(name)) {
+      invalidateReservation()
+    }
     
         // For numeric fields (age, dietaryRestrictions, emergencyContact, servantPhone), only allow numbers
     if (name === 'age' || name === 'dietaryRestrictions' || name === 'emergencyContact' || name === 'servantPhone') {
@@ -197,14 +243,10 @@ export default function HollyJollyPage() {
     setShowValidationModal(true)
   }
 
-    const validateForm = () => {
+    const validateForm = (requirePayment = true) => {
     // Check required fields - always validate eventType
     if (!formData.eventType) {
       showValidationError("يرجى اختيار اسم الكنيسة")
-      return false
-    }
-    if (!formData.paymentMethod) {
-      showValidationError("يرجى اختيار طريقة الدفع")
       return false
     }
 
@@ -304,7 +346,13 @@ export default function HollyJollyPage() {
       showValidationError("You have reached the maximum allowed number of tickets.")
       return false
     }
-    
+
+    if (!requirePayment) return true
+    if (!formData.paymentMethod) {
+      showValidationError("يرجى اختيار طريقة الدفع")
+      return false
+    }
+
     // Check payment method specific fields
     if (formData.paymentMethod === "instapay" && !formData.instapayLink) {
       showValidationError("يرجى اختيار رابط InstaPay")
@@ -327,17 +375,76 @@ export default function HollyJollyPage() {
   }
 
   const handleRadioChange = (name: string, value: string) => {
+    if (name === "eventType") invalidateReservation()
     setFormData((current) => ({ ...current, [name]: value }))
   }
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target
-    setFormData({ ...formData, [name]: value })
+    setFormData((current) => ({ ...current, [name]: value }))
+  }
+
+  const handleReserveRegistration = async () => {
+    if (!validateForm(false)) return
+
+    const identityData = getIdentityData()
+    const requestRevision = identityRevision.current
+    const requestId = reservationRequestId || crypto.randomUUID()
+    setReservationRequestId(requestId)
+    setIsCheckingDuplicate(true)
+
+    try {
+      const response = await fetch("/api/duplicate-check", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "reserve", ...identityData, clientRequestId: requestId }),
+      })
+      const result = await response.json()
+
+      if (requestRevision !== identityRevision.current) {
+        if (result.reservationToken) {
+          void fetch("/api/duplicate-check", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              action: "release",
+              ...identityData,
+              reservationToken: result.reservationToken,
+            }),
+          }).catch(() => undefined)
+        }
+        return
+      }
+
+      if (result.duplicate) {
+        setReservationRequestId("")
+        showValidationError(result.message || "هذا التسجيل موجود بالفعل. لا تقم بالدفع مرة أخرى.")
+        return
+      }
+      if (!response.ok || result.success !== true || typeof result.reservationToken !== "string") {
+        throw new Error(result.error || result.message || "تعذر التحقق من التسجيل. لن تظهر خيارات الدفع حتى ينجح التحقق.")
+      }
+
+      setReservationToken(result.reservationToken)
+      setReservedIdentityData(identityData)
+      setPaymentUnlocked(true)
+      setReservationRequestId("")
+      document.getElementById("payment-section")?.scrollIntoView({ behavior: "smooth", block: "start" })
+    } catch (error) {
+      showValidationError(error instanceof Error ? error.message : "تعذر التحقق من التسجيل. حاول مرة أخرى.")
+    } finally {
+      setIsCheckingDuplicate(false)
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
+    if (!paymentUnlocked || !reservationToken) {
+      showValidationError("تحقق من التسجيل أولاً قبل الانتقال إلى الدفع.")
+      return
+    }
+
     // Validate form before submission
     if (!validateForm()) {
       return
@@ -362,6 +469,7 @@ export default function HollyJollyPage() {
           question2: formData.servantName,
           question3: formData.servantFamily,
           question4: formData.servantPhone,
+          reservationToken,
           question5: "N/A",
           question6: "N/A",
           question7: "N/A",
@@ -377,6 +485,7 @@ export default function HollyJollyPage() {
         submissionData = {
           question1: formData.eventType,
           question2: formData.fullName,
+          reservationToken,
           question3: formData.grade,
           question4: formData.gender,
           question5: formData.email,
@@ -401,6 +510,7 @@ export default function HollyJollyPage() {
       const result = await response.json()
 
       if (result.duplicate) {
+        invalidateReservation()
         showValidationError(result.message || "هذا التسجيل موجود بالفعل. لا تقم بالدفع مرة أخرى.")
         return
       }
@@ -410,6 +520,10 @@ export default function HollyJollyPage() {
       }
 
       setShowSuccessModal(true)
+      setReservationToken("")
+      setReservationRequestId("")
+      setReservedIdentityData(null)
+      setPaymentUnlocked(false)
       setFormData({
         eventType: "",
         gender: "",
@@ -1143,7 +1257,33 @@ export default function HollyJollyPage() {
                     )}
                   </div>
 
-                                    <div className="space-y-3">
+                  {!paymentUnlocked ? (
+                    <div className="space-y-2">
+                      <Button
+                        type="button"
+                        onClick={handleReserveRegistration}
+                        disabled={isCheckingDuplicate || isSubmitting}
+                        className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                      >
+                        {isCheckingDuplicate ? "جارٍ التحقق من التسجيل..." : "تحقق من التسجيل والمتابعة إلى الدفع"}
+                      </Button>
+                      <p role="status" aria-live="polite" className="text-center text-sm text-gray-600 font-arabic">
+                        لن تظهر خيارات الدفع إلا بعد التأكد من عدم وجود تسجيل مكرر.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-2 rounded-lg border border-green-300 bg-green-50 p-4 text-center sm:flex-row sm:items-center sm:justify-between">
+                      <p role="status" aria-live="polite" className="text-sm text-green-800 font-arabic">
+                        تم التحقق. أكمل التسجيل خلال ٣٠ دقيقة. تغيير البيانات سيعيد قفل الدفع.
+                      </p>
+                      <Button type="button" variant="outline" onClick={invalidateReservation}>
+                        تعديل البيانات
+                      </Button>
+                    </div>
+                  )}
+
+                  {paymentUnlocked && (
+                    <div id="payment-section" className="space-y-3">
                     <Label className="text-base sm:text-lg font-semibold text-gray-800 font-english">10. Payment Method *</Label>                                
                     <RadioGroup
                       value={formData.paymentMethod}
@@ -1248,7 +1388,8 @@ export default function HollyJollyPage() {
                         </div>
                       </div>
                     )}
-                  </div>
+                    </div>
+                  )}
 
   <section className="rounded-xl border-2 border-primary/20 bg-primary/5 p-5 text-center font-arabic" dir="rtl" aria-labelledby="contact-heading">
   <h3 id="contact-heading" className="font-arabic mb-2 text-xl font-bold text-primary">للتواصل معنا</h3>
@@ -1264,14 +1405,16 @@ export default function HollyJollyPage() {
   </div>
   </section>
 
-  <Button
-  type="submit"
-  size="lg"
-                    disabled={isSubmitting}
-                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg sm:text-xl py-4 sm:py-6 rounded-full shadow-xl hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px] sm:min-h-[56px]"
-                  >
-                    {isSubmitting ? "Submitting..." : "Submit Registration 🎄"}
-                  </Button>
+  {paymentUnlocked && (
+    <Button
+      type="submit"
+      size="lg"
+      disabled={isSubmitting || isCheckingDuplicate}
+      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg sm:text-xl py-4 sm:py-6 rounded-full shadow-xl hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px] sm:min-h-[56px]"
+    >
+      {isSubmitting ? "Submitting..." : "Submit Registration 🎄"}
+    </Button>
+  )}
                 </form>
               </CardContent>
             </Card>
