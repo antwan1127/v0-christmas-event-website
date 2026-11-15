@@ -1268,12 +1268,12 @@ export default function HollyJollyPage() {
                     </Button>
                   )}
 
-                  {paymentUnlocked && (
-                    <div id="payment-section" className="space-y-3">
+                  <div id="payment-section" className="space-y-3">
                     <Label className="text-base sm:text-lg font-semibold text-gray-800 font-english">10. Payment Method *</Label>                                
                     <RadioGroup
                       value={formData.paymentMethod}
-                      onValueChange={(value) => handleRadioChange("paymentMethod", value)}                                                                      
+                      onValueChange={(value) => handleRadioChange("paymentMethod", value)}
+                      disabled={!paymentUnlocked}
                       required
                     >
                       <div className="flex items-center space-x-2">
@@ -1299,6 +1299,7 @@ export default function HollyJollyPage() {
                         <RadioGroup
                           value={formData.cashPickupTime}
                           onValueChange={(value) => handleRadioChange("cashPickupTime", value)}
+                          disabled={!paymentUnlocked}
                           required
                         >
                           <div className="flex items-center space-x-2 p-3 bg-white rounded border border-primary/20">
@@ -1348,10 +1349,15 @@ export default function HollyJollyPage() {
                         </div>
                         {selectedInstapayLink && (
                           <a
-                            href={selectedInstapayLink}
+                            href={paymentUnlocked ? selectedInstapayLink : undefined}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="block rounded-lg border-2 border-primary bg-primary/10 p-4 text-center font-english text-sm break-all text-primary underline underline-offset-4 transition-colors hover:bg-primary/20"
+                            aria-disabled={!paymentUnlocked}
+                            tabIndex={paymentUnlocked ? undefined : -1}
+                            onClick={(event) => {
+                              if (!paymentUnlocked) event.preventDefault()
+                            }}
+                            className={`block rounded-lg border-2 border-primary bg-primary/10 p-4 text-center font-english text-sm break-all text-primary underline underline-offset-4 transition-colors ${paymentUnlocked ? "hover:bg-primary/20" : "cursor-not-allowed opacity-60"}`}
                           >
                             {selectedInstapayLink}
                           </a>
@@ -1367,7 +1373,8 @@ export default function HollyJollyPage() {
                             inputMode="numeric"
                             value={formData.instapayDetails}
                             onChange={handleInputChange}
-                            required={formData.paymentMethod === "instapay"}
+                            required={paymentUnlocked && formData.paymentMethod === "instapay"}
+                            disabled={!paymentUnlocked}
                             className="text-base sm:text-lg text-gray-800 text-left"
                             maxLength={12}
                           />
@@ -1375,7 +1382,6 @@ export default function HollyJollyPage() {
                       </div>
                     )}
                     </div>
-                  )}
 
   <section className="rounded-xl border-2 border-primary/20 bg-primary/5 p-5 text-center font-arabic" dir="rtl" aria-labelledby="contact-heading">
   <h3 id="contact-heading" className="font-arabic mb-2 text-xl font-bold text-primary">للتواصل معنا</h3>
@@ -1391,16 +1397,14 @@ export default function HollyJollyPage() {
   </div>
   </section>
 
-  {paymentUnlocked && (
-    <Button
-      type="submit"
-      size="lg"
-      disabled={isSubmitting || isCheckingDuplicate}
-      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg sm:text-xl py-4 sm:py-6 rounded-full shadow-xl hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px] sm:min-h-[56px]"
-    >
-      {isSubmitting ? "Submitting..." : "Submit Registration 🎄"}
-    </Button>
-  )}
+                  <Button
+                    type="submit"
+                    size="lg"
+                    disabled={!paymentUnlocked || isSubmitting || isCheckingDuplicate}
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg sm:text-xl py-4 sm:py-6 rounded-full shadow-xl hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px] sm:min-h-[56px]"
+                  >
+                    {isSubmitting ? "Submitting..." : "Submit Registration 🎄"}
+                  </Button>
                 </form>
               </CardContent>
             </Card>
