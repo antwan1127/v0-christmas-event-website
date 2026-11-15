@@ -420,7 +420,7 @@ export default function HollyJollyPage() {
 
       if (result.duplicate) {
         setReservationRequestId("")
-        showValidationError("تم إرسال هذا النموذج بالفعل، من فضلك لا ترسله مرة أخرى.")
+        showValidationError("أنت سجلت قبل كده، متسجلش تاني.")
         return
       }
       if (!response.ok || result.success !== true || typeof result.reservationToken !== "string") {
