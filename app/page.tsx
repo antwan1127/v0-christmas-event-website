@@ -513,7 +513,7 @@ export default function HollyJollyPage() {
 
       if (result.duplicate) {
         invalidateReservation()
-        showValidationError(result.message || "هذا التسجيل موجود بالفعل. لا تقم بالدفع مرة أخرى.")
+        showValidationError("أنت سجلت قبل كده، متسجلش تاني.")
         return
       }
 

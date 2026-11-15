@@ -90,13 +90,13 @@ function getIdentity_(data) {
     }
   }
 
-  const father = normalize(data.question5)
-  const mother = normalize(data.question6)
-  const phone = normalizePhone(data.question7)
-  if (!father || !mother || !phone) return null
+  const phone = [data.question6, data.question7]
+    .map(normalizePhone)
+    .find(function (value) { return value.length >= 7 }) || ""
+  if (!phone) return null
 
   return {
-    key: JSON.stringify(["regular", event, name, father, mother, phone]),
+    key: JSON.stringify(["regular", event, name, phone]),
     servant: false,
   }
 }
