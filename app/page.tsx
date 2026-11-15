@@ -22,9 +22,6 @@ export default function HollyJollyPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isCheckingDuplicate, setIsCheckingDuplicate] = useState(false)
   const [paymentUnlocked, setPaymentUnlocked] = useState(false)
-  const [reservationToken, setReservationToken] = useState("")
-  const [reservationRequestId, setReservationRequestId] = useState("")
-  const [reservedIdentityData, setReservedIdentityData] = useState<Record<string, string> | null>(null)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
   const [showValidationModal, setShowValidationModal] = useState(false)
   const [validationMessage, setValidationMessage] = useState("")
@@ -77,9 +74,9 @@ export default function HollyJollyPage() {
         question2: formData.servantName,
         question3: formData.servantFamily,
         question4: formData.servantPhone,
-        servantName: formData.servantName,
-        servantFamily: formData.servantFamily,
-        servantPhone: formData.servantPhone,
+        question5: formData.servantFamily,
+        question6: "",
+        question7: formData.servantPhone,
       }
     : {
         question1: formData.eventType,
@@ -89,22 +86,8 @@ export default function HollyJollyPage() {
         question7: formData.age,
       }
 
-  const invalidateReservation = () => {
-    if (reservationToken && reservedIdentityData) {
-      void fetch("/api/duplicate-check", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "release",
-          ...reservedIdentityData,
-          reservationToken,
-        }),
-      }).catch(() => undefined)
-    }
+  const invalidateDuplicateCheck = () => {
     identityRevision.current += 1
-    setReservationToken("")
-    setReservationRequestId("")
-    setReservedIdentityData(null)
     setPaymentUnlocked(false)
   }
 
@@ -169,7 +152,7 @@ export default function HollyJollyPage() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     if (["fullName", "email", "phone", "age", "servantName", "servantFamily", "servantPhone"].includes(name)) {
-      invalidateReservation()
+      invalidateDuplicateCheck()
     }
     
         // For numeric fields (age, dietaryRestrictions, emergencyContact, servantPhone), only allow numbers
@@ -377,7 +360,7 @@ export default function HollyJollyPage() {
   }
 
   const handleRadioChange = (name: string, value: string) => {
-    if (name === "eventType") invalidateReservation()
+    if (name === "eventType") invalidateDuplicateCheck()
     setFormData((current) => ({ ...current, [name]: value }))
   }
 
@@ -386,51 +369,29 @@ export default function HollyJollyPage() {
     setFormData((current) => ({ ...current, [name]: value }))
   }
 
-  const handleReserveRegistration = async () => {
+  const handleCheckDuplicate = async () => {
     if (!validateForm(false)) return
 
     const identityData = getIdentityData()
     const requestRevision = identityRevision.current
-    const requestId = reservationRequestId || crypto.randomUUID()
-    setReservationRequestId(requestId)
+    const query = new URLSearchParams(identityData)
     setIsCheckingDuplicate(true)
 
     try {
-      const response = await fetch("/api/duplicate-check", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "reserve", ...identityData, clientRequestId: requestId }),
-      })
+      const response = await fetch(`/api/duplicate-check?${query.toString()}`, { cache: "no-store" })
       const result = await response.json()
 
-      if (requestRevision !== identityRevision.current) {
-        if (result.reservationToken) {
-          void fetch("/api/duplicate-check", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              action: "release",
-              ...identityData,
-              reservationToken: result.reservationToken,
-            }),
-          }).catch(() => undefined)
-        }
-        return
-      }
+      if (requestRevision !== identityRevision.current) return
 
       if (result.duplicate) {
-        setReservationRequestId("")
         showValidationError("أنت سجلت قبل كده، متسجلش تاني.")
         return
       }
-      if (!response.ok || result.success !== true || typeof result.reservationToken !== "string") {
+      if (!response.ok || result.success !== true) {
         throw new Error(result.error || result.message || "تعذر التحقق من التسجيل. لن تظهر خيارات الدفع حتى ينجح التحقق.")
       }
 
-      setReservationToken(result.reservationToken)
-      setReservedIdentityData(identityData)
       setPaymentUnlocked(true)
-      setReservationRequestId("")
       document.getElementById("payment-section")?.scrollIntoView({ behavior: "smooth", block: "start" })
     } catch (error) {
       showValidationError(error instanceof Error ? error.message : "تعذر التحقق من التسجيل. حاول مرة أخرى.")
@@ -442,7 +403,7 @@ export default function HollyJollyPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!paymentUnlocked || !reservationToken) {
+    if (!paymentUnlocked) {
       showValidationError("تحقق من التسجيل أولاً قبل الانتقال إلى الدفع.")
       return
     }
@@ -471,10 +432,9 @@ export default function HollyJollyPage() {
           question2: formData.servantName,
           question3: formData.servantFamily,
           question4: formData.servantPhone,
-          reservationToken,
-          question5: "N/A",
-          question6: "N/A",
-          question7: "N/A",
+          question5: formData.servantFamily,
+          question6: "",
+          question7: formData.servantPhone,
           question8: "N/A",
           question9: formData.emergencyContact,
           question10: paymentInfo,
@@ -487,7 +447,6 @@ export default function HollyJollyPage() {
         submissionData = {
           question1: formData.eventType,
           question2: formData.fullName,
-          reservationToken,
           question3: formData.grade,
           question4: formData.gender,
           question5: formData.email,
@@ -512,7 +471,7 @@ export default function HollyJollyPage() {
       const result = await response.json()
 
       if (result.duplicate) {
-        invalidateReservation()
+        invalidateDuplicateCheck()
         showValidationError("أنت سجلت قبل كده، متسجلش تاني.")
         return
       }
@@ -522,9 +481,6 @@ export default function HollyJollyPage() {
       }
 
       setShowSuccessModal(true)
-      setReservationToken("")
-      setReservationRequestId("")
-      setReservedIdentityData(null)
       setPaymentUnlocked(false)
       setFormData({
         eventType: "",
@@ -1262,7 +1218,7 @@ export default function HollyJollyPage() {
                   {!paymentUnlocked && (
                     <Button
                       type="button"
-                      onClick={handleReserveRegistration}
+                      onClick={handleCheckDuplicate}
                       disabled={isCheckingDuplicate || isSubmitting}
                       className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
                     >
