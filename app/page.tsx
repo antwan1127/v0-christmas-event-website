@@ -1257,29 +1257,15 @@ export default function HollyJollyPage() {
                     )}
                   </div>
 
-                  {!paymentUnlocked ? (
-                    <div className="space-y-2">
-                      <Button
-                        type="button"
-                        onClick={handleReserveRegistration}
-                        disabled={isCheckingDuplicate || isSubmitting}
-                        className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-                      >
-                        {isCheckingDuplicate ? "جارٍ التحقق من التسجيل..." : "تحقق من التسجيل والمتابعة إلى الدفع"}
-                      </Button>
-                      <p role="status" aria-live="polite" className="text-center text-sm text-gray-600 font-arabic">
-                        لن تظهر خيارات الدفع إلا بعد التأكد من عدم وجود تسجيل مكرر.
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col gap-2 rounded-lg border border-green-300 bg-green-50 p-4 text-center sm:flex-row sm:items-center sm:justify-between">
-                      <p role="status" aria-live="polite" className="text-sm text-green-800 font-arabic">
-                        تم التحقق. أكمل التسجيل خلال ٣٠ دقيقة. تغيير البيانات سيعيد قفل الدفع.
-                      </p>
-                      <Button type="button" variant="outline" onClick={invalidateReservation}>
-                        تعديل البيانات
-                      </Button>
-                    </div>
+                  {!paymentUnlocked && (
+                    <Button
+                      type="button"
+                      onClick={handleReserveRegistration}
+                      disabled={isCheckingDuplicate || isSubmitting}
+                      className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                    >
+                      {isCheckingDuplicate ? "جارٍ التحقق من التسجيل..." : "تحقق من التسجيل والمتابعة إلى الدفع"}
+                    </Button>
                   )}
 
                   {paymentUnlocked && (
