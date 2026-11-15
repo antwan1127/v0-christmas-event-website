@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useEffect, useRef, useMemo } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -11,6 +11,11 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Volume2, VolumeX } from "lucide-react"
 import Image from "next/image"
 
+
+const getDecorationValue = (index: number, seed: number) => {
+  const value = Math.sin((index + 1) * 12.9898 + seed * 78.233) * 43758.5453
+  return value - Math.floor(value)
+}
 
 export default function HollyJollyPage() {
   const [isMusicPlaying, setIsMusicPlaying] = useState(false)
@@ -26,17 +31,14 @@ export default function HollyJollyPage() {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
   const [selectedInstapayLink, setSelectedInstapayLink] = useState("")
   
-  // Generate stable background ornaments that don't change on re-render - Reduced for better performance
-  const backgroundOrnaments = useMemo(() => {
-    return Array.from({ length: 15 }, (_, i) => ({
-      left: Math.random() * 100,
-      top: Math.random() * 100,
-      animationDuration: Math.random() * 1 + 4, // Slower animations
-      animationDelay: Math.random() * 3, // More spread out delays
-      width: Math.random() * 20 + 25, // Smaller elements
-      height: Math.random() * 20 + 25,
-    }))
-  }, [])
+  const backgroundOrnaments = Array.from({ length: 15 }, (_, i) => ({
+    left: getDecorationValue(i, 1) * 100,
+    top: getDecorationValue(i, 2) * 100,
+    animationDuration: getDecorationValue(i, 3) + 4,
+    animationDelay: getDecorationValue(i, 4) * 3,
+    width: getDecorationValue(i, 5) * 20 + 25,
+    height: getDecorationValue(i, 6) * 20 + 25,
+  }))
   
   
   const [formData, setFormData] = useState({
@@ -418,7 +420,7 @@ export default function HollyJollyPage() {
 
       if (result.duplicate) {
         setReservationRequestId("")
-        showValidationError(result.message || "هذا التسجيل موجود بالفعل. لا تقم بالدفع مرة أخرى.")
+        showValidationError("تم إرسال هذا النموذج بالفعل، من فضلك لا ترسله مرة أخرى.")
         return
       }
       if (!response.ok || result.success !== true || typeof result.reservationToken !== "string") {
@@ -633,10 +635,10 @@ export default function HollyJollyPage() {
             key={`star-${i}`}
             className="absolute"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              width: `${Math.random() * 15 + 10}px`,
-              height: `${Math.random() * 15 + 10}px`,
+              left: `${getDecorationValue(i, 10) * 100}%`,
+              top: `${getDecorationValue(i, 11) * 100}%`,
+              width: `${getDecorationValue(i, 12) * 15 + 10}px`,
+              height: `${getDecorationValue(i, 13) * 15 + 10}px`,
             }}
           >
             <Image
