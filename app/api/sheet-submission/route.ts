@@ -12,6 +12,21 @@ export async function POST(request: Request) {
         { status: 400 },
       )
     }
+    if (!new URLSearchParams(body).get("reservationToken")) {
+      return NextResponse.json(
+        { success: false, error: "Complete the duplicate check before submitting." },
+        { status: 409 },
+      )
+    }
+
+    const versionResponse = await fetch(`${GOOGLE_SHEETS_URL}?action=reservationVersion`, { cache: "no-store" })
+    const version = await versionResponse.json().catch(() => null) as { reservationVersion?: number } | null
+    if (!versionResponse.ok || version?.reservationVersion !== 1) {
+      return NextResponse.json(
+        { success: false, error: "Duplicate protection is not active yet. Registration is temporarily unavailable." },
+        { status: 503 },
+      )
+    }
 
     const upstream = await fetch(GOOGLE_SHEETS_URL, {
       method: "POST",

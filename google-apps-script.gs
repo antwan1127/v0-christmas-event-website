@@ -22,6 +22,8 @@ const SERVANT_EVENT = "اجتماع الخدمه العام مارمرقرس م.
 const LEGACY_SERVANT_EVENTS = ["مارمرقس م.الجديده اجتماع"]
 const SORT_NAME_COLUMN = 3
 const FIT_EXTRA_WIDTH = 20
+const RESERVATION_PREFIX = "registration_reservation_"
+const RESERVATION_TTL_MS = 30 * 60 * 1000
 
 function normalize(value) {
   return String(value == null ? "" : value)
@@ -66,25 +68,174 @@ function getExistingRows(sheet) {
     : []
 }
 
-function isDuplicate(data, rows) {
-  const event = normalize(data.question1 || data.eventType)
-  const servant = isServantEvent(event) || Boolean(data.servantName || data.servantPhone)
+function normalizePhone(value) {
+  return normalize(value).replace(/[^0-9]/g, "")
+}
+
+function getIdentity_(data) {
+  const rawEvent = String(data.question1 || data.eventType || "").trim()
+  const event = normalize(rawEvent)
+  const servant = isServantEvent(rawEvent) || Boolean(data.servantName || data.servantPhone)
   const name = normalize(data.servantName || data.question2)
-  const family = servant ? normalize(data.question3) : ""
 
-  if (!event || !name || (servant && !family)) return false
+  if (!event || !name) return null
 
-  const eventMatches = function (existingEvent) {
-    return servant
-      ? isServantEvent(existingEvent)
-      : normalize(existingEvent) === event
+  if (servant) {
+    const family = normalize(data.servantFamily || data.question3)
+    const phone = normalizePhone(data.servantPhone || data.question4)
+    if (!family || !phone) return null
+    return {
+      key: JSON.stringify(["servant", name, family, phone]),
+      servant: true,
+    }
   }
 
-  return rows.some(function (row) {
-    return eventMatches(row[1]) &&
-      normalize(row[2]) === name &&
-      (!servant || normalize(row[3]) === family)
+  const father = normalize(data.question5)
+  const mother = normalize(data.question6)
+  const phone = normalizePhone(data.question7)
+  if (!father || !mother || !phone) return null
+
+  return {
+    key: JSON.stringify(["regular", event, name, father, mother, phone]),
+    servant: false,
+  }
+}
+
+function getIdentityFromRow_(row) {
+  const event = row[1]
+  if (isServantEvent(event)) {
+    return getIdentity_({
+      question1: event,
+      question2: row[2],
+      question3: row[3],
+      question4: row[4],
+    })
+  }
+
+  return getIdentity_({
+    question1: event,
+    question2: row[2],
+    question5: row[5],
+    question6: row[6],
+    question7: row[7],
   })
+}
+
+function isDuplicate(data, rows) {
+  const identity = getIdentity_(data)
+  if (!identity) return false
+
+  return rows.some(function (row) {
+    const existingIdentity = getIdentityFromRow_(row)
+    return existingIdentity && existingIdentity.key === identity.key
+  })
+}
+
+function getReservationPropertyKey_(identity) {
+  const digest = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, identity.key)
+  return RESERVATION_PREFIX + Utilities.base64EncodeWebSafe(digest).replace(/=+$/g, "")
+}
+
+function parseReservation_(value) {
+  if (!value) return null
+  try {
+    return JSON.parse(value)
+  } catch (error) {
+    return null
+  }
+}
+
+function removeExpiredReservations_(properties, now) {
+  const allProperties = properties.getProperties()
+  Object.keys(allProperties).forEach(function (key) {
+    if (key.indexOf(RESERVATION_PREFIX) !== 0) return
+    const reservation = parseReservation_(allProperties[key])
+    if (!reservation || Number(reservation.expiresAt) <= now) {
+      properties.deleteProperty(key)
+    }
+  })
+}
+
+function reserveRegistration_(data, sheet) {
+  const identity = getIdentity_(data)
+  if (!identity) {
+    return { success: false, error: "Required identifying fields are missing." }
+  }
+
+  if (isDuplicate(data, getExistingRows(sheet))) {
+    return {
+      success: false,
+      duplicate: true,
+      message: "This registration already exists. Payment is not available.",
+    }
+  }
+
+  const properties = PropertiesService.getScriptProperties()
+  const now = Date.now()
+  removeExpiredReservations_(properties, now)
+  const propertyKey = getReservationPropertyKey_(identity)
+  const existing = parseReservation_(properties.getProperty(propertyKey))
+
+  if (existing && Number(existing.expiresAt) > now) {
+    if (
+      (data.reservationToken && data.reservationToken === existing.token) ||
+      (data.clientRequestId && data.clientRequestId === existing.clientRequestId)
+    ) {
+      return {
+        success: true,
+        duplicate: false,
+        reservationToken: existing.token,
+        expiresAt: existing.expiresAt,
+      }
+    }
+    return {
+      success: false,
+      duplicate: true,
+      inProgress: true,
+      message: "This registration is already being completed. Payment is not available.",
+    }
+  }
+
+  const reservation = {
+    token: Utilities.getUuid(),
+    clientRequestId: String(data.clientRequestId || ""),
+    expiresAt: now + RESERVATION_TTL_MS,
+  }
+  properties.setProperty(propertyKey, JSON.stringify(reservation))
+  return {
+    success: true,
+    duplicate: false,
+    reservationToken: reservation.token,
+    expiresAt: reservation.expiresAt,
+  }
+}
+
+function releaseRegistrationReservation_(data) {
+  const identity = getIdentity_(data)
+  if (!identity || !data.reservationToken) {
+    return { success: true, released: false }
+  }
+
+  const properties = PropertiesService.getScriptProperties()
+  const propertyKey = getReservationPropertyKey_(identity)
+  const reservation = parseReservation_(properties.getProperty(propertyKey))
+  if (reservation && reservation.token === data.reservationToken) {
+    properties.deleteProperty(propertyKey)
+    return { success: true, released: true }
+  }
+  return { success: true, released: false }
+}
+
+function isReservedByAnother_(data) {
+  const identity = getIdentity_(data)
+  if (!identity) return false
+  const properties = PropertiesService.getScriptProperties()
+  const reservation = parseReservation_(properties.getProperty(getReservationPropertyKey_(identity)))
+  return Boolean(
+    reservation &&
+    Number(reservation.expiresAt) > Date.now() &&
+    reservation.token !== data.reservationToken
+  )
 }
 
 
@@ -96,6 +247,9 @@ function jsonResponse_(payload) {
 function doGet(e) {
   try {
     const data = e && e.parameter ? e.parameter : {}
+    if (data.action === "reservationVersion") {
+      return jsonResponse_({ success: true, reservationVersion: 1 })
+    }
     if (data.action !== "checkDuplicate") {
       return ContentService.createTextOutput("Apps Script web app is working")
         .setMimeType(ContentService.MimeType.TEXT)
@@ -103,17 +257,18 @@ function doGet(e) {
 
     const event = data.question1 || data.eventType ||
       ((data.servantName || data.servantPhone) ? SERVANT_EVENT : "")
-    if (!event) {
+    const identityData = Object.assign({}, data, { question1: event })
+    if (!getIdentity_(identityData)) {
       return jsonResponse_({
         success: false,
         duplicate: false,
-        error: "Missing event type for duplicate check.",
+        error: "Required identifying fields are missing for duplicate check.",
       })
     }
 
     const sheet = getSheet_()
     const rows = getExistingRows(sheet)
-    const duplicate = isDuplicate(Object.assign({}, data, { question1: event }), rows)
+    const duplicate = isDuplicate(identityData, rows) || isReservedByAnother_(identityData)
     return jsonResponse_({ success: true, duplicate: duplicate })
   } catch (error) {
     return jsonResponse_({ success: false, duplicate: false, error: String(error) })
@@ -180,14 +335,28 @@ function doPost(e) {
     lockAcquired = true
 
     const data = e && e.parameter ? e.parameter : {}
-    if (!data.question1 || !data.question2) {
-      throw new Error("Required registration fields are missing.")
-    }
-    if (isServantEvent(data.question1) && (!data.question3 || !data.question4)) {
-      throw new Error("Servant family and phone number are required.")
+    const action = data.action || "submit"
+
+    if (action === "release") {
+      return jsonResponse_(releaseRegistrationReservation_(data))
     }
 
     const sheet = getSheet_()
+    if (action === "reserve") {
+      return jsonResponse_(reserveRegistration_(data, sheet))
+    }
+
+    if (!data.question1 || !data.question2) {
+      throw new Error("Required registration fields are missing.")
+    }
+
+    const identity = getIdentity_(data)
+    if (!identity) {
+      return jsonResponse_({
+        success: false,
+        error: "Required identifying fields are missing or incomplete.",
+      })
+    }
 
     const rows = getExistingRows(sheet)
     if (isDuplicate(data, rows)) {
@@ -195,6 +364,32 @@ function doPost(e) {
         success: false,
         duplicate: true,
         message: "This registration has already been submitted.",
+      })
+    }
+
+    if (!data.reservationToken) {
+      return jsonResponse_({
+        success: false,
+        reservationExpired: true,
+        error: "The registration check is missing or expired. Check your details again before paying.",
+      })
+    }
+
+    const properties = PropertiesService.getScriptProperties()
+    const propertyKey = getReservationPropertyKey_(identity)
+    const reservation = parseReservation_(properties.getProperty(propertyKey))
+    if (
+      !reservation ||
+      reservation.token !== data.reservationToken ||
+      Number(reservation.expiresAt) <= Date.now()
+    ) {
+      if (reservation && Number(reservation.expiresAt) <= Date.now()) {
+        properties.deleteProperty(propertyKey)
+      }
+      return jsonResponse_({
+        success: false,
+        reservationExpired: true,
+        error: "The registration check expired. Check your details again before paying.",
       })
     }
 
@@ -216,6 +411,7 @@ function doPost(e) {
     ]
 
     sheet.appendRow(rowData)
+    properties.deleteProperty(propertyKey)
     try {
       sortByParticipantName_(sheet)
       fitColumnsAndRows_(sheet)
