@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useEffect, useRef, useMemo } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -11,6 +11,11 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Volume2, VolumeX } from "lucide-react"
 import Image from "next/image"
 
+
+const getDecorationValue = (index: number, seed: number) => {
+  const value = Math.sin((index + 1) * 12.9898 + seed * 78.233) * 43758.5453
+  return value - Math.floor(value)
+}
 
 export default function HollyJollyPage() {
   const [isMusicPlaying, setIsMusicPlaying] = useState(false)
@@ -26,17 +31,14 @@ export default function HollyJollyPage() {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
   const [selectedInstapayLink, setSelectedInstapayLink] = useState("")
   
-  // Generate stable background ornaments that don't change on re-render - Reduced for better performance
-  const backgroundOrnaments = useMemo(() => {
-    return Array.from({ length: 15 }, (_, i) => ({
-      left: Math.random() * 100,
-      top: Math.random() * 100,
-      animationDuration: Math.random() * 1 + 4, // Slower animations
-      animationDelay: Math.random() * 3, // More spread out delays
-      width: Math.random() * 20 + 25, // Smaller elements
-      height: Math.random() * 20 + 25,
-    }))
-  }, [])
+  const backgroundOrnaments = Array.from({ length: 15 }, (_, i) => ({
+    left: getDecorationValue(i, 1) * 100,
+    top: getDecorationValue(i, 2) * 100,
+    animationDuration: getDecorationValue(i, 3) + 4,
+    animationDelay: getDecorationValue(i, 4) * 3,
+    width: getDecorationValue(i, 5) * 20 + 25,
+    height: getDecorationValue(i, 6) * 20 + 25,
+  }))
   
   
   const [formData, setFormData] = useState({
@@ -418,7 +420,7 @@ export default function HollyJollyPage() {
 
       if (result.duplicate) {
         setReservationRequestId("")
-        showValidationError(result.message || "هذا التسجيل موجود بالفعل. لا تقم بالدفع مرة أخرى.")
+        showValidationError("أنت سجلت قبل كده، متسجلش تاني.")
         return
       }
       if (!response.ok || result.success !== true || typeof result.reservationToken !== "string") {
@@ -633,10 +635,10 @@ export default function HollyJollyPage() {
             key={`star-${i}`}
             className="absolute"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              width: `${Math.random() * 15 + 10}px`,
-              height: `${Math.random() * 15 + 10}px`,
+              left: `${getDecorationValue(i, 10) * 100}%`,
+              top: `${getDecorationValue(i, 11) * 100}%`,
+              width: `${getDecorationValue(i, 12) * 15 + 10}px`,
+              height: `${getDecorationValue(i, 13) * 15 + 10}px`,
             }}
           >
             <Image
@@ -1257,37 +1259,23 @@ export default function HollyJollyPage() {
                     )}
                   </div>
 
-                  {!paymentUnlocked ? (
-                    <div className="space-y-2">
-                      <Button
-                        type="button"
-                        onClick={handleReserveRegistration}
-                        disabled={isCheckingDuplicate || isSubmitting}
-                        className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-                      >
-                        {isCheckingDuplicate ? "جارٍ التحقق من التسجيل..." : "تحقق من التسجيل والمتابعة إلى الدفع"}
-                      </Button>
-                      <p role="status" aria-live="polite" className="text-center text-sm text-gray-600 font-arabic">
-                        لن تظهر خيارات الدفع إلا بعد التأكد من عدم وجود تسجيل مكرر.
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col gap-2 rounded-lg border border-green-300 bg-green-50 p-4 text-center sm:flex-row sm:items-center sm:justify-between">
-                      <p role="status" aria-live="polite" className="text-sm text-green-800 font-arabic">
-                        تم التحقق. أكمل التسجيل خلال ٣٠ دقيقة. تغيير البيانات سيعيد قفل الدفع.
-                      </p>
-                      <Button type="button" variant="outline" onClick={invalidateReservation}>
-                        تعديل البيانات
-                      </Button>
-                    </div>
+                  {!paymentUnlocked && (
+                    <Button
+                      type="button"
+                      onClick={handleReserveRegistration}
+                      disabled={isCheckingDuplicate || isSubmitting}
+                      className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                    >
+                      {isCheckingDuplicate ? "جارٍ التحقق من التسجيل..." : "تحقق من التسجيل والمتابعة إلى الدفع"}
+                    </Button>
                   )}
 
-                  {paymentUnlocked && (
-                    <div id="payment-section" className="space-y-3">
+                  <div id="payment-section" className="space-y-3">
                     <Label className="text-base sm:text-lg font-semibold text-gray-800 font-english">10. Payment Method *</Label>                                
                     <RadioGroup
                       value={formData.paymentMethod}
-                      onValueChange={(value) => handleRadioChange("paymentMethod", value)}                                                                      
+                      onValueChange={(value) => handleRadioChange("paymentMethod", value)}
+                      disabled={!paymentUnlocked}
                       required
                     >
                       <div className="flex items-center space-x-2">
@@ -1313,6 +1301,7 @@ export default function HollyJollyPage() {
                         <RadioGroup
                           value={formData.cashPickupTime}
                           onValueChange={(value) => handleRadioChange("cashPickupTime", value)}
+                          disabled={!paymentUnlocked}
                           required
                         >
                           <div className="flex items-center space-x-2 p-3 bg-white rounded border border-primary/20">
@@ -1362,10 +1351,15 @@ export default function HollyJollyPage() {
                         </div>
                         {selectedInstapayLink && (
                           <a
-                            href={selectedInstapayLink}
+                            href={paymentUnlocked ? selectedInstapayLink : undefined}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="block rounded-lg border-2 border-primary bg-primary/10 p-4 text-center font-english text-sm break-all text-primary underline underline-offset-4 transition-colors hover:bg-primary/20"
+                            aria-disabled={!paymentUnlocked}
+                            tabIndex={paymentUnlocked ? undefined : -1}
+                            onClick={(event) => {
+                              if (!paymentUnlocked) event.preventDefault()
+                            }}
+                            className={`block rounded-lg border-2 border-primary bg-primary/10 p-4 text-center font-english text-sm break-all text-primary underline underline-offset-4 transition-colors ${paymentUnlocked ? "hover:bg-primary/20" : "cursor-not-allowed opacity-60"}`}
                           >
                             {selectedInstapayLink}
                           </a>
@@ -1381,7 +1375,8 @@ export default function HollyJollyPage() {
                             inputMode="numeric"
                             value={formData.instapayDetails}
                             onChange={handleInputChange}
-                            required={formData.paymentMethod === "instapay"}
+                            required={paymentUnlocked && formData.paymentMethod === "instapay"}
+                            disabled={!paymentUnlocked}
                             className="text-base sm:text-lg text-gray-800 text-left"
                             maxLength={12}
                           />
@@ -1389,7 +1384,6 @@ export default function HollyJollyPage() {
                       </div>
                     )}
                     </div>
-                  )}
 
   <section className="rounded-xl border-2 border-primary/20 bg-primary/5 p-5 text-center font-arabic" dir="rtl" aria-labelledby="contact-heading">
   <h3 id="contact-heading" className="font-arabic mb-2 text-xl font-bold text-primary">للتواصل معنا</h3>
@@ -1405,16 +1399,14 @@ export default function HollyJollyPage() {
   </div>
   </section>
 
-  {paymentUnlocked && (
-    <Button
-      type="submit"
-      size="lg"
-      disabled={isSubmitting || isCheckingDuplicate}
-      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg sm:text-xl py-4 sm:py-6 rounded-full shadow-xl hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px] sm:min-h-[56px]"
-    >
-      {isSubmitting ? "Submitting..." : "Submit Registration 🎄"}
-    </Button>
-  )}
+                  <Button
+                    type="submit"
+                    size="lg"
+                    disabled={!paymentUnlocked || isSubmitting || isCheckingDuplicate}
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg sm:text-xl py-4 sm:py-6 rounded-full shadow-xl hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px] sm:min-h-[56px]"
+                  >
+                    {isSubmitting ? "Submitting..." : "Submit Registration 🎄"}
+                  </Button>
                 </form>
               </CardContent>
             </Card>

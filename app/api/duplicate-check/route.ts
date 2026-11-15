@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 
 const GOOGLE_SHEETS_URL =
-  "https://script.google.com/macros/s/AKfycbyiv0cWsYSK4kFGZ2I8GSc5QQfyMNNdK4y48dxnCgxz7UkAXpDX8oFyrAE8pF7vyUDQqg/exec"
+  "https://script.google.com/macros/s/AKfycbzpHYKDqgmH40qLzO3NgZMl0B0Gq87PxOtQ__Ge9V-Pa5oBAWGZ63vX998BNfLXi1LcYA/exec"
 
 const IDENTITY_FIELDS = [
   "question1",
