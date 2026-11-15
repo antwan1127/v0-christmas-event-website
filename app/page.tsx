@@ -336,7 +336,7 @@ export default function HollyJollyPage() {
       const params = new URLSearchParams({
         question2: isServantRegistration ? formData.servantName : formData.fullName,
         question5: isServantRegistration ? formData.servantFamily : formData.email,
-        question6: isServantRegistration ? formData.servantPhone : formData.phone,
+        question6: isServantRegistration ? "" : formData.phone,
         question7: isServantRegistration ? formData.servantPhone : formData.age,
         servantName: formData.servantName,
         servantPhone: formData.servantPhone,
@@ -395,9 +395,9 @@ export default function HollyJollyPage() {
           question2: formData.servantName,
           question3: formData.servantFamily,
           question4: formData.servantPhone,
-          question5: "N/A",
-          question6: "N/A",
-          question7: "N/A",
+          question5: formData.servantFamily,
+          question6: "",
+          question7: formData.servantPhone,
           question8: "N/A",
           question9: formData.emergencyContact,
           question10: paymentInfo,
@@ -1279,7 +1279,7 @@ export default function HollyJollyPage() {
   <p className="font-arabic mb-3 text-[13px] leading-6 text-gray-700">
     <span className="font-arabic block">للمكالمات الهاتفية:</span>
     <span className="font-arabic block">الجمعة والسبت: طوال اليوم.</span>
-    <span className="font-arabic block">من الأحد إلى الخميس: من ٧ مساءً حتى 11 مساءً.</span>
+    <span className="font-arabic block">من الأحد إلى ال��ميس: من ٧ مساءً حتى 11 مساءً.</span>
     <span className="font-arabic block">واتساب: 24/7</span>
   </p>
   <div className="flex flex-col items-center justify-center gap-2 sm:flex-row sm:gap-5" dir="ltr">
