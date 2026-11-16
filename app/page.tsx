@@ -66,7 +66,7 @@ export default function HollyJollyPage() {
     .replace(/[\s\u200f\u200e]+/g, "")
     .toLowerCase()
   const isServantRegistration =
-    normalizeEventName(formData.eventType) === normalizeEventName("اجتماع الخدمه العام مارمرقرس م.الجديده")
+    normalizeEventName(formData.eventType) === normalizeEventName("اجتماع الخدمه العام مارمرقس م.الجديده")
 
   const getIdentityData = (): Record<string, string> => isServantRegistration
     ? {
@@ -223,6 +223,29 @@ export default function HollyJollyPage() {
     return arabicRegex.test(text)
   }
 
+  const isIdentityReady = () => {
+    if (!formData.eventType) return false
+
+    if (isServantRegistration) {
+      const name = formData.servantName.trim()
+      return validateArabicOnly(name)
+        && validateThreeWords(name)
+        && Boolean(formData.servantFamily.trim())
+        && /^\d{11}$/.test(formData.servantPhone)
+    }
+
+    const participantName = formData.fullName.trim()
+    const fatherName = formData.email.trim()
+    const motherName = formData.phone.trim()
+    return validateArabicOnly(participantName)
+      && validateThreeWords(participantName)
+      && validateArabicOnly(fatherName)
+      && validateThreeWords(fatherName)
+      && validateArabicOnly(motherName)
+      && validateThreeWords(motherName)
+      && /^\d{11}$/.test(formData.age)
+  }
+
   const showValidationError = (message: string) => {
     setValidationMessage(message)
     setShowValidationModal(true)
@@ -370,7 +393,7 @@ export default function HollyJollyPage() {
   }
 
   const handleCheckDuplicate = async () => {
-    if (!validateForm(false)) return
+    if (!isIdentityReady() || isCheckingDuplicate || paymentUnlocked) return
 
     const identityData = getIdentityData()
     const requestRevision = identityRevision.current
@@ -392,11 +415,16 @@ export default function HollyJollyPage() {
       }
 
       setPaymentUnlocked(true)
-      document.getElementById("payment-section")?.scrollIntoView({ behavior: "smooth", block: "start" })
     } catch (error) {
       showValidationError(error instanceof Error ? error.message : "تعذر التحقق من التسجيل. حاول مرة أخرى.")
     } finally {
       setIsCheckingDuplicate(false)
+    }
+  }
+
+  const handleIdentityBlur = () => {
+    if (isIdentityReady() && !isCheckingDuplicate && !paymentUnlocked) {
+      void handleCheckDuplicate()
     }
   }
 
@@ -896,9 +924,9 @@ export default function HollyJollyPage() {
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="اجتماع الخدمه العام مارمرقرس م.الجديده" id="church2" />
+                        <RadioGroupItem value="اجتماع الخدمه العام مارمرقس م.الجديده" id="church2" />
                         <Label htmlFor="church2" className="font-normal cursor-pointer text-gray-800 font-arabic">
-                          اجتماع الخدمه العام مارمرقرس م.الجديده
+                          اجتماع الخدمه العام مارمرقس م.الجديده
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
@@ -972,6 +1000,7 @@ export default function HollyJollyPage() {
                           name="servantName"
                           value={formData.servantName}
                           onChange={handleInputChange}
+                          onBlur={handleIdentityBlur}
                           required
                           className="text-lg text-gray-800"
                           placeholder=""
@@ -988,6 +1017,7 @@ export default function HollyJollyPage() {
                           type="text"
                           value={formData.servantFamily}
                           onChange={handleInputChange}
+                          onBlur={handleIdentityBlur}
                           required
                           className="text-lg text-gray-800"
                           placeholder=""
@@ -1005,6 +1035,7 @@ export default function HollyJollyPage() {
                           inputMode="numeric"
                           value={formData.servantPhone}
                           onChange={handleInputChange}
+                          onBlur={handleIdentityBlur}
                           required
                           className="text-lg text-gray-800"
                           placeholder=""
@@ -1024,6 +1055,7 @@ export default function HollyJollyPage() {
                       name="fullName"
                       value={formData.fullName}
                       onChange={handleInputChange}
+                      onBlur={handleIdentityBlur}
                       required
                       className="text-lg text-gray-800"
                       placeholder=""
@@ -1120,6 +1152,7 @@ export default function HollyJollyPage() {
                       type="text"
                       value={formData.email}
                       onChange={handleInputChange}
+                      onBlur={handleIdentityBlur}
                       required
                       className="text-lg text-gray-800"
                       placeholder=""
@@ -1136,6 +1169,7 @@ export default function HollyJollyPage() {
                       type="text"
                       value={formData.phone}
                       onChange={handleInputChange}
+                      onBlur={handleIdentityBlur}
                       required
                       className="text-lg text-gray-800"
                       placeholder=""
@@ -1153,6 +1187,7 @@ export default function HollyJollyPage() {
                       inputMode="numeric"
                       value={formData.age}
                       onChange={handleInputChange}
+                      onBlur={handleIdentityBlur}
                       required
                       className="text-lg text-gray-800"
                       placeholder=""
@@ -1214,17 +1249,6 @@ export default function HollyJollyPage() {
                       </div>
                     )}
                   </div>
-
-                  {!paymentUnlocked && (
-                    <Button
-                      type="button"
-                      onClick={handleCheckDuplicate}
-                      disabled={isCheckingDuplicate || isSubmitting}
-                      className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-                    >
-                      {isCheckingDuplicate ? "جارٍ التحقق من التسجيل..." : "تحقق من التسجيل والمتابعة إلى الدفع"}
-                    </Button>
-                  )}
 
                   <div id="payment-section" className="space-y-3">
                     <Label className="text-base sm:text-lg font-semibold text-gray-800 font-english">10. Payment Method *</Label>                                
