@@ -107,8 +107,12 @@ function doPost(e) {
       throw new Error("Sheet1 was not found");
     }
 
-    sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
-    sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight("bold");
+    const headerRange = sheet.getRange(1, 1, 1, HEADERS.length);
+    const currentHeaders = headerRange.getValues()[0];
+    if (currentHeaders.every(function (value) { return value === ""; })) {
+      headerRange.setValues([HEADERS]);
+      headerRange.setFontWeight("bold");
+    }
 
     if (isDuplicate(data, getExistingRows(sheet))) {
       return ContentService
