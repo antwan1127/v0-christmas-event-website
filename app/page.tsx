@@ -17,6 +17,14 @@ const getDecorationValue = (index: number, seed: number) => {
   return value - Math.floor(value)
 }
 
+const sanitizeArabicName = (value: string) =>
+  Array.from(value)
+    .filter((character) =>
+      character === " " ||
+      (/\p{Script_Extensions=Arabic}/u.test(character) && /[\p{L}\p{M}]/u.test(character)),
+    )
+    .join("")
+
 export default function HollyJollyPage() {
   const [isMusicPlaying, setIsMusicPlaying] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -154,9 +162,12 @@ export default function HollyJollyPage() {
     if (["fullName", "email", "phone", "age", "servantName", "servantFamily", "servantPhone"].includes(name)) {
       invalidateDuplicateCheck()
     }
-    
-        // For numeric fields (age, dietaryRestrictions, emergencyContact, servantPhone), only allow numbers
-    if (name === 'age' || name === 'dietaryRestrictions' || name === 'emergencyContact' || name === 'servantPhone') {
+
+    if (["fullName", "email", "phone", "servantName", "servantFamily"].includes(name)) {
+      setFormData({ ...formData, [name]: sanitizeArabicName(value) })
+    }
+    // For numeric fields (age, dietaryRestrictions, emergencyContact, servantPhone), only allow numbers
+    else if (name === 'age' || name === 'dietaryRestrictions' || name === 'emergencyContact' || name === 'servantPhone') {
       // Only allow numbers and empty string - block all letters and special characters
       if (value === '' || /^\d+$/.test(value)) {
         // For phone number (age, servantPhone), limit to 11 digits
@@ -206,7 +217,6 @@ export default function HollyJollyPage() {
         }
       }
     }
-    // Name fields remain editable; Arabic-only validation runs on submit.
     else {
       setFormData({ ...formData, [name]: value })
     }
@@ -217,11 +227,7 @@ export default function HollyJollyPage() {
     return words.length === 3
   }
 
-  const validateArabicOnly = (text: string) => {
-    // Check if text contains only Arabic letters, spaces, and common Arabic punctuation
-    const arabicRegex = /^[\u0600-\u06FF\s\u064B-\u0652\u0670\u0640]+$/
-    return arabicRegex.test(text)
-  }
+  const validateArabicOnly = (text: string) => text.length > 0 && sanitizeArabicName(text) === text
 
   const isIdentityReady = () => {
     if (!formData.eventType) return false
