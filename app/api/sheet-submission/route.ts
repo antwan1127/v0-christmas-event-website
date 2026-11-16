@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 
 const GOOGLE_SHEETS_URL =
-  "https://script.google.com/macros/s/AKfycbzWg4UlZaXjlSb4auoSoAfjiRnrEPtvQqvUw2mSozMGXPsrgqQJSr-Z2UqAJED_eFjhdA/exec"
+  "https://script.google.com/macros/s/AKfycbwiBDKcxFbbfxi0ah_xIypaZyDPyHgquisBFsqpJtiHre1lmm1L2GK6CZAvK-ykyLY5HQ/exec"
 
 export async function POST(request: Request) {
   try {
@@ -12,19 +12,12 @@ export async function POST(request: Request) {
         { status: 400 },
       )
     }
-    if (!new URLSearchParams(body).get("reservationToken")) {
-      return NextResponse.json(
-        { success: false, error: "Complete the duplicate check before submitting." },
-        { status: 409 },
-      )
-    }
 
-    const versionResponse = await fetch(`${GOOGLE_SHEETS_URL}?action=reservationVersion`, { cache: "no-store" })
-    const version = await versionResponse.json().catch(() => null) as { reservationVersion?: number } | null
-    if (!versionResponse.ok || version?.reservationVersion !== 1) {
+    const formData = new URLSearchParams(body)
+    if (!formData.get("question1") || !formData.get("question2")) {
       return NextResponse.json(
-        { success: false, error: "Duplicate protection is not active yet. Registration is temporarily unavailable." },
-        { status: 503 },
+        { success: false, error: "Event and participant name are required." },
+        { status: 400 },
       )
     }
 
