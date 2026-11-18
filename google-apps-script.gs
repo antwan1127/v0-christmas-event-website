@@ -35,25 +35,34 @@ function getExistingRows(sheet) {
     : [];
 }
 
+function normalizePhone(value) {
+  return normalize(value).replace(/[^0-9]/g, "");
+}
+
+function getIdentity(data) {
+  const name = normalize(data.question2);
+  const phone = [data.question7, data.question4, data.question6]
+    .map(normalizePhone)
+    .find(function (value) { return value.length >= 7; }) || "";
+
+  return name && phone ? JSON.stringify([name, phone]) : "";
+}
+
+function getIdentityFromRow(row) {
+  return getIdentity({
+    question2: row[2],
+    question4: row[4],
+    question6: row[6],
+    question7: row[7]
+  });
+}
+
 function isDuplicate(data, rows) {
-  const submittedValues = [
-    normalize(data.question2),
-    normalize(data.question5),
-    normalize(data.question6),
-    normalize(data.question7)
-  ].filter(Boolean);
+  const identity = getIdentity(data);
+  if (!identity) return false;
 
   return rows.some(function (row) {
-    const existingValues = [
-      normalize(row[2]),
-      normalize(row[5]),
-      normalize(row[6]),
-      normalize(row[7])
-    ].filter(Boolean);
-
-    return submittedValues.some(function (value) {
-      return existingValues.includes(value);
-    });
+    return getIdentityFromRow(row) === identity;
   });
 }
 
