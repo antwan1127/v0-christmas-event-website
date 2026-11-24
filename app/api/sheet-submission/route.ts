@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 
 const GOOGLE_SHEETS_URL =
-  "https://script.google.com/macros/s/AKfycbwZqj_Ax3Enn2wrC_gu6h5VK6MfwpFpBCpLwdA5h2l_dCPBoLDIhXiAcFoFhwXPuOlMRg/exec"
+  "https://script.google.com/macros/s/AKfycbzVQVwjOstD7OiMYNyqgJwgxBEFR5YIA9N2W71wFS_Qy8kOCUtxl9w7W7nKqQGVvG8pBQ/exec"
 
 export async function POST(request: Request) {
   try {
@@ -13,8 +13,8 @@ export async function POST(request: Request) {
       )
     }
 
-    const formData = new URLSearchParams(body)
-    if (!formData.get("question1") || !formData.get("question2")) {
+    const formData = Object.fromEntries(new URLSearchParams(body))
+    if (!formData.question1 || !formData.question2) {
       return NextResponse.json(
         { success: false, error: "Event and participant name are required." },
         { status: 400 },
@@ -24,15 +24,15 @@ export async function POST(request: Request) {
     const upstream = await fetch(GOOGLE_SHEETS_URL, {
       method: "POST",
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+        "Content-Type": "application/json",
       },
-      body,
+      body: JSON.stringify(formData),
       cache: "no-store",
       redirect: "follow",
     })
 
     const responseText = await upstream.text()
-    let result: { success?: boolean; duplicate?: boolean; message?: string; error?: string }
+    let result: { success?: boolean; message?: string; error?: string }
 
     try {
       result = JSON.parse(responseText)
@@ -44,10 +44,6 @@ export async function POST(request: Request) {
         },
         { status: 502 },
       )
-    }
-
-    if (result.duplicate) {
-      return NextResponse.json(result, { status: 409 })
     }
 
     if (!upstream.ok || result.success !== true) {

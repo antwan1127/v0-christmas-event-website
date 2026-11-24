@@ -42,20 +42,14 @@ const sanitizeArabicName = (value: string) =>
 export default function HollyJollyPage() {
   const [isMusicPlaying, setIsMusicPlaying] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isCheckingDuplicate, setIsCheckingDuplicate] = useState(false)
-  const [paymentUnlocked, setPaymentUnlocked] = useState(false)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
   const [showValidationModal, setShowValidationModal] = useState(false)
   const [validationMessage, setValidationMessage] = useState("")
-<<<<<<< HEAD
   const [assignedInstapayUser, setAssignedInstapayUser] = useState("")
   const assignedInstapayAccount = instapayAccounts.find(
     (account) => account.username === assignedInstapayUser,
   )
-=======
->>>>>>> cb2fb226eee94f6fc21cf5d170a885f40057f2cb
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
-  const [selectedInstapayLink, setSelectedInstapayLink] = useState("")
   
   const backgroundOrnaments = Array.from({ length: 15 }, (_, i) => ({
     left: getDecorationValue(i, 1) * 100,
@@ -89,66 +83,18 @@ export default function HollyJollyPage() {
     formData.eventType === "خدام اجتماع الخدمه العام" ||
     formData.eventType === "اجتماع الخدمه العام مارمرقس م. الجديده"
   const audioRef = useRef<HTMLAudioElement>(null)
-  const identityRevision = useRef(0)
-  const normalizeEventName = (value: string) => value
-    .normalize("NFKC")
-    .replace(/[\u064B-\u0652\u0640]/g, "")
-    .replace(/[أإآٱ]/g, "ا")
-    .replace(/ى/g, "ي")
-    .replace(/[\s\u200f\u200e]+/g, "")
-    .toLowerCase()
-  const isServantRegistration =
-    normalizeEventName(formData.eventType) === normalizeEventName("اجتماع الخدمه العام مارمرقس م.الجديده")
 
-<<<<<<< HEAD
-  // Assign Instapay user on component mount
+  // Assign a matching InstaPay account and payment link on page load.
   useEffect(() => {
     const randomIndex = Math.floor(Math.random() * instapayAccounts.length)
-    setAssignedInstapayUser(instapayAccounts[randomIndex].username)
-=======
-  const getIdentityData = (): Record<string, string> => isServantRegistration
-    ? {
-        question1: formData.eventType,
-        question2: formData.servantName,
-        question3: formData.servantFamily,
-        question4: formData.servantPhone,
-        question5: formData.servantFamily,
-        question6: "",
-        question7: formData.servantPhone,
-      }
-    : {
-        question1: formData.eventType,
-        question2: formData.fullName,
-        question5: formData.email,
-        question6: formData.phone,
-        question7: formData.age,
-      }
-
-  const invalidateDuplicateCheck = () => {
-    identityRevision.current += 1
-    setPaymentUnlocked(false)
-  }
-
-  const instapayLinks = [
-    "https://ipn.eg/S/jssss/instapay/92Woym",
-    "https://ipn.eg/S/kerminamagedqnb/instapay/9D20Qo",
-    "https://ipn.eg/S/benyaminghobrial/instapay/05lfiF",
-  ]
-
-  useEffect(() => {
-    const randomLink = instapayLinks[Math.floor(Math.random() * instapayLinks.length)]
-    setSelectedInstapayLink(randomLink)
-    setFormData((current) => ({ ...current, instapayLink: randomLink }))
->>>>>>> cb2fb226eee94f6fc21cf5d170a885f40057f2cb
+    const account = instapayAccounts[randomIndex]
+    setAssignedInstapayUser(account.username)
+    setFormData((current) => ({ ...current, instapayLink: account.paymentUrl }))
   }, [])
 
   // Live countdown timer
   useEffect(() => {
-<<<<<<< HEAD
-    const targetDate = new Date('2026-12-25T00:00:00').getTime()
-=======
     const targetDate = new Date('2026-12-25T00:00:00+02:00').getTime()
->>>>>>> cb2fb226eee94f6fc21cf5d170a885f40057f2cb
     
     const updateCountdown = () => {
       const now = new Date().getTime()
@@ -194,9 +140,6 @@ export default function HollyJollyPage() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
-    if (["fullName", "email", "phone", "age", "servantName", "servantFamily", "servantPhone"].includes(name)) {
-      invalidateDuplicateCheck()
-    }
 
     if (["fullName", "email", "phone", "servantName", "servantFamily"].includes(name)) {
       setFormData({ ...formData, [name]: sanitizeArabicName(value) })
@@ -264,35 +207,12 @@ export default function HollyJollyPage() {
 
   const validateArabicOnly = (text: string) => text.length > 0 && sanitizeArabicName(text) === text
 
-  const isIdentityReady = () => {
-    if (!formData.eventType) return false
-
-    if (isServantRegistration) {
-      const name = formData.servantName.trim()
-      return validateArabicOnly(name)
-        && validateThreeWords(name)
-        && Boolean(formData.servantFamily.trim())
-        && /^\d{11}$/.test(formData.servantPhone)
-    }
-
-    const participantName = formData.fullName.trim()
-    const fatherName = formData.email.trim()
-    const motherName = formData.phone.trim()
-    return validateArabicOnly(participantName)
-      && validateThreeWords(participantName)
-      && validateArabicOnly(fatherName)
-      && validateThreeWords(fatherName)
-      && validateArabicOnly(motherName)
-      && validateThreeWords(motherName)
-      && /^\d{11}$/.test(formData.age)
-  }
-
   const showValidationError = (message: string) => {
     setValidationMessage(message)
     setShowValidationModal(true)
   }
 
-    const validateForm = (requirePayment = true) => {
+    const validateForm = () => {
     // Check required fields - always validate eventType
     if (!formData.eventType) {
       showValidationError("يرجى اختيار اسم الكنيسة")
@@ -396,7 +316,6 @@ export default function HollyJollyPage() {
       return false
     }
 
-    if (!requirePayment) return true
     if (!formData.paymentMethod) {
       showValidationError("يرجى اختيار طريقة الدفع")
       return false
@@ -424,7 +343,6 @@ export default function HollyJollyPage() {
   }
 
   const handleRadioChange = (name: string, value: string) => {
-    if (name === "eventType") invalidateDuplicateCheck()
     setFormData((current) => ({ ...current, [name]: value }))
   }
 
@@ -433,49 +351,8 @@ export default function HollyJollyPage() {
     setFormData((current) => ({ ...current, [name]: value }))
   }
 
-  const handleCheckDuplicate = async () => {
-    if (!isIdentityReady() || isCheckingDuplicate || paymentUnlocked) return
-
-    const identityData = getIdentityData()
-    const requestRevision = identityRevision.current
-    const query = new URLSearchParams(identityData)
-    setIsCheckingDuplicate(true)
-
-    try {
-      const response = await fetch(`/api/duplicate-check?${query.toString()}`, { cache: "no-store" })
-      const result = await response.json()
-
-      if (requestRevision !== identityRevision.current) return
-
-      if (result.duplicate) {
-        showValidationError("أنت سجلت قبل كده، متسجلش تاني.")
-        return
-      }
-      if (!response.ok || result.success !== true) {
-        throw new Error(result.error || result.message || "تعذر التحقق من التسجيل. لن تظهر خيارات الدفع حتى ينجح التحقق.")
-      }
-
-      setPaymentUnlocked(true)
-    } catch (error) {
-      showValidationError(error instanceof Error ? error.message : "تعذر التحقق من التسجيل. حاول مرة أخرى.")
-    } finally {
-      setIsCheckingDuplicate(false)
-    }
-  }
-
-  const handleIdentityBlur = () => {
-    if (isIdentityReady() && !isCheckingDuplicate && !paymentUnlocked) {
-      void handleCheckDuplicate()
-    }
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
-    if (!paymentUnlocked) {
-      showValidationError("تحقق من التسجيل أولاً قبل الانتقال إلى الدفع.")
-      return
-    }
 
     // Validate form before submission
     if (!validateForm()) {
@@ -485,25 +362,11 @@ export default function HollyJollyPage() {
     setIsSubmitting(true)
 
     try {
-<<<<<<< HEAD
-      const GOOGLE_SHEETS_URL =
-        "https://script.google.com/macros/s/AKfycbzVQVwjOstD7OiMYNyqgJwgxBEFR5YIA9N2W71wFS_Qy8kOCUtxl9w7W7nKqQGVvG8pBQ/exec"
-
-      // Prepare the payment info
-      let paymentInfo = ""
-      if (formData.paymentMethod === "instapay") {
-        paymentInfo = `Instapay - ${assignedInstapayUser}`
-      } else {
-        paymentInfo = `Cash - ${formData.cashPickupTime}`
-      }
-=======
-      // Keep payment method, InstaPay link, and reference number in separate sheet fields.
       const paymentInfo = formData.paymentMethod === "instapay"
-        ? "Instapay"
+        ? `Instapay - ${assignedInstapayUser}`
         : `Cash - ${formData.cashPickupTime}`
       const instapayLink = formData.paymentMethod === "instapay" ? formData.instapayLink : ""
       const instapayReference = formData.paymentMethod === "instapay" ? formData.instapayDetails : ""
->>>>>>> cb2fb226eee94f6fc21cf5d170a885f40057f2cb
 
       // Prepare submission data based on form type
       let submissionData
@@ -521,12 +384,8 @@ export default function HollyJollyPage() {
           question9: formData.emergencyContact,
           question10: paymentInfo,
           question11: parseInt(formData.emergencyContact) * 250,
-<<<<<<< HEAD
-          question12: formData.paymentMethod === "instapay" ? formData.instapayDetails : "",
-=======
           question12: instapayReference,
           question13: instapayLink,
->>>>>>> cb2fb226eee94f6fc21cf5d170a885f40057f2cb
         }
       } else {
         // Regular form submission
@@ -542,12 +401,8 @@ export default function HollyJollyPage() {
           question9: formData.emergencyContact,
           question10: paymentInfo,
           question11: parseInt(formData.emergencyContact) * 250,
-<<<<<<< HEAD
-          question12: formData.paymentMethod === "instapay" ? formData.instapayDetails : "",
-=======
           question12: instapayReference,
           question13: instapayLink,
->>>>>>> cb2fb226eee94f6fc21cf5d170a885f40057f2cb
         }
       }
 
@@ -560,18 +415,11 @@ export default function HollyJollyPage() {
       })
       const result = await response.json()
 
-      if (result.duplicate) {
-        invalidateDuplicateCheck()
-        showValidationError("أنت سجلت قبل كده، متسجلش تاني.")
-        return
-      }
-
       if (!response.ok || result.success !== true) {
         throw new Error(result.message || result.error || "Your registration could not be saved. Please try again.")
       }
 
       setShowSuccessModal(true)
-      setPaymentUnlocked(false)
       setFormData({
         eventType: "",
         gender: "",
@@ -583,7 +431,7 @@ export default function HollyJollyPage() {
         dietaryRestrictions: "",
         emergencyContact: "",
         paymentMethod: "",
-        instapayLink: "",
+        instapayLink: assignedInstapayAccount?.paymentUrl ?? "",
         instapayDetails: "",
         cashPickupTime: "",
         servantName: "",
@@ -599,7 +447,6 @@ export default function HollyJollyPage() {
   }
 
   const eventImages = [
-<<<<<<< HEAD
     "/images/design-mode/gallery-01.jpeg",
     "/images/design-mode/gallery-02.jpeg",
     "/images/design-mode/gallery-03.jpeg",
@@ -610,18 +457,6 @@ export default function HollyJollyPage() {
     "/images/design-mode/gallery-08.jpeg",
     "/images/design-mode/gallery-09.jpeg",
     "/images/design-mode/gallery-10.jpeg",
-=======
-    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202026-11-11%20at%202.23.32%20AM%20%281%29-UOIgvRxHuEDeIpPvz4jZSxDLANB2KQ.jpeg",
-    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202026-11-11%20at%202.23.32%20AM%20%282%29-twDKUC0YRWarjfxV6KGq9rGmTnkRDX.jpeg",
-    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202026-11-11%20at%202.23.32%20AM%20%283%29-yfM0v3hEE27BCjWzKd1oDDqEshCGfE.jpeg",
-    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202026-11-11%20at%202.23.32%20AM%20%284%29-NeFZAdspm7IkEWMuvDncwRwwFeGOPF.jpeg",
-    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202026-11-11%20at%202.23.32%20AM%20%285%29-HK5sERkiDEQpQnjqjRBvasMe4jHeee.jpeg",
-    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202026-11-11%20at%202.23.32%20AM%20%286%29-cXWVchAFHPL3LEHUBnFdyeVHwnxNDV.jpeg",
-    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202026-11-11%20at%202.23.32%20AM%20%287%29-qEmP94nlKBgJq7aLI0hu7FkBijDoKB.jpeg",
-    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202026-11-11%20at%202.23.32%20AM%20%288%29-1GeV9aRfBEq9z0GH1aYfdpQjBZoHjK.jpeg",
-    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202026-11-11%20at%202.23.32%20AM%20%289%29-Pr9rZWq34Vgv1dRwmdfFDjB8kNQVx2.jpeg",
-    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202026-11-11%20at%202.23.32%20AM-fR9bqwdK4RgvcVuLuqvqVepSWHd9eO.jpeg",
->>>>>>> cb2fb226eee94f6fc21cf5d170a885f40057f2cb
   ]
 
   return (
@@ -889,19 +724,11 @@ export default function HollyJollyPage() {
   {/* Terms & Conditions */}
   <div className="mt-4 p-4 bg-white/80 rounded-lg border border-primary/30">
     <Image
-<<<<<<< HEAD
       src="/images/design-mode/event-logo.png"
       alt="النور في الظلمة"
       width={260}
       height={120}
       className="mx-auto mb-4 h-auto max-h-28 w-auto object-contain"
-=======
-      src="/images/terms-logo.png"
-      alt="شعار هولي جول��"
-      width={480}
-      height={270}
-      className="mx-auto mb-4 h-auto w-80 object-contain"
->>>>>>> cb2fb226eee94f6fc21cf5d170a885f40057f2cb
     />
     <h4 className="text-lg font-bold text-primary mb-3 text-center font-arabic">
       الشروط والأحكام
@@ -1007,15 +834,9 @@ export default function HollyJollyPage() {
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-<<<<<<< HEAD
                         <RadioGroupItem value="اجتماع الخدمه العام مارمرقس م. الجديده" id="church2" />
                         <Label htmlFor="church2" className="font-normal cursor-pointer text-gray-800 font-arabic">
                           اجتماع الخدمه العام مارمرقس م. الجديده
-=======
-                        <RadioGroupItem value="اجتماع الخدمه العام مارمرقس م.الجديده" id="church2" />
-                        <Label htmlFor="church2" className="font-normal cursor-pointer text-gray-800 font-arabic">
-                          اجتماع الخدمه العام مارمرقس م.الجديده
->>>>>>> cb2fb226eee94f6fc21cf5d170a885f40057f2cb
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
@@ -1031,57 +852,45 @@ export default function HollyJollyPage() {
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="العذارء و الانبا بيشوي التجمع" id="church5" />
+                        <Label htmlFor="church5" className="font-normal cursor-pointer text-gray-800 font-arabic">
+                          العذارء و الانبا بيشوي التجمع
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
                         <RadioGroupItem value="العذارء الرحاب" id="church6" />
                         <Label htmlFor="church6" className="font-normal cursor-pointer text-gray-800 font-arabic">
                           العذارء الرحاب
                         </Label>
                       </div>
-                                            <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="العذارء و مارجرجس مدينتي" id="church7" />                                                                        
-                        <Label htmlFor="church7" className="font-normal cursor-pointer text-gray-800 font-arabic">                                              
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="العذارء و مارجرجس مدينتي" id="church7" />
+                        <Label htmlFor="church7" className="font-normal cursor-pointer text-gray-800 font-arabic">
                           العذارء و مارجرجس مدينتي
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-<<<<<<< HEAD
-                        <RadioGroupItem value="جرجس والانبا انطونيوس" id="church10" />
-                        <Label htmlFor="church10" className="font-normal cursor-pointer text-gray-800 font-arabic">
-                          جرجس والانبا انطونيوس
+                        <RadioGroupItem value="جورجيوس والانبا انطونيوس" id="church8" />
+                        <Label htmlFor="church8" className="font-normal cursor-pointer text-gray-800 font-arabic">
+                          جورجيوس والانبا انطونيوس
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="الانبا بيشوي ارض الجولف" id="church11" />
-                        <Label htmlFor="church11" className="font-normal cursor-pointer text-gray-800 font-arabic">
+                        <RadioGroupItem value="الانبا بيشوي ارض الجولف" id="church9" />
+                        <Label htmlFor="church9" className="font-normal cursor-pointer text-gray-800 font-arabic">
                           الانبا بيشوي ارض الجولف
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="مارجرجس العظمه" id="church12" />
-                        <Label htmlFor="church12" className="font-normal cursor-pointer text-gray-800 font-arabic">
-                          مارجرجس العظمه
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="الملاك شيراتون" id="church13" />
-                        <Label htmlFor="church13" className="font-normal cursor-pointer text-gray-800 font-arabic">
-                          الملاك شيراتون
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="خدام اجتماع الخدمه العام" id="church8" />                                                                        
-                        <Label htmlFor="church8" className="font-normal cursor-pointer text-gray-800 font-arabic">                                              
-                          خدام اجتماع الخدمه العام
-=======
-                        <RadioGroupItem value="جورجيوس والانبا انطونيوس" id="church9" />
-                        <Label htmlFor="church9" className="font-normal cursor-pointer text-gray-800 font-arabic">
-                          جورجيوس والانبا انطونيوس
->>>>>>> cb2fb226eee94f6fc21cf5d170a885f40057f2cb
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="الانبا بولا ارض الجولف" id="church11" />
-                        <Label htmlFor="church11" className="font-normal cursor-pointer text-gray-800 font-arabic">
+                        <RadioGroupItem value="الانبا بولا ارض الجولف" id="church10" />
+                        <Label htmlFor="church10" className="font-normal cursor-pointer text-gray-800 font-arabic">
                           الانبا بولا ارض الجولف
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="مارجرجس العظمه" id="church11" />
+                        <Label htmlFor="church11" className="font-normal cursor-pointer text-gray-800 font-arabic">
+                          مارجرجس العظمه
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
@@ -1096,10 +905,15 @@ export default function HollyJollyPage() {
                           الملاك شيراتون
                         </Label>
                       </div>
-
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="كنائس المهجر" id="church15" />                                                                        
-                        <Label htmlFor="church15" className="font-normal cursor-pointer text-gray-800 font-arabic">                                              
+                        <RadioGroupItem value="خدام اجتماع الخدمه العام" id="church14" />
+                        <Label htmlFor="church14" className="font-normal cursor-pointer text-gray-800 font-arabic">
+                          خدام اجتماع الخدمه العام
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="كنائس المهجر" id="church15" />
+                        <Label htmlFor="church15" className="font-normal cursor-pointer text-gray-800 font-arabic">
                           كنائس المهجر
                         </Label>
                       </div>
@@ -1119,7 +933,6 @@ export default function HollyJollyPage() {
                           name="servantName"
                           value={formData.servantName}
                           onChange={handleInputChange}
-                          onBlur={handleIdentityBlur}
                           required
                           className="text-lg text-gray-800"
                           placeholder=""
@@ -1136,7 +949,6 @@ export default function HollyJollyPage() {
                           type="text"
                           value={formData.servantFamily}
                           onChange={handleInputChange}
-                          onBlur={handleIdentityBlur}
                           required
                           className="text-lg text-gray-800"
                           placeholder=""
@@ -1154,7 +966,6 @@ export default function HollyJollyPage() {
                           inputMode="numeric"
                           value={formData.servantPhone}
                           onChange={handleInputChange}
-                          onBlur={handleIdentityBlur}
                           required
                           className="text-lg text-gray-800"
                           placeholder=""
@@ -1174,7 +985,6 @@ export default function HollyJollyPage() {
                       name="fullName"
                       value={formData.fullName}
                       onChange={handleInputChange}
-                      onBlur={handleIdentityBlur}
                       required
                       className="text-lg text-gray-800"
                       placeholder=""
@@ -1271,7 +1081,6 @@ export default function HollyJollyPage() {
                       type="text"
                       value={formData.email}
                       onChange={handleInputChange}
-                      onBlur={handleIdentityBlur}
                       required
                       className="text-lg text-gray-800"
                       placeholder=""
@@ -1288,7 +1097,6 @@ export default function HollyJollyPage() {
                       type="text"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      onBlur={handleIdentityBlur}
                       required
                       className="text-lg text-gray-800"
                       placeholder=""
@@ -1306,7 +1114,6 @@ export default function HollyJollyPage() {
                       inputMode="numeric"
                       value={formData.age}
                       onChange={handleInputChange}
-                      onBlur={handleIdentityBlur}
                       required
                       className="text-lg text-gray-800"
                       placeholder=""
@@ -1374,7 +1181,6 @@ export default function HollyJollyPage() {
                     <RadioGroup
                       value={formData.paymentMethod}
                       onValueChange={(value) => handleRadioChange("paymentMethod", value)}
-                      disabled={!paymentUnlocked}
                       required
                     >
                       <div className="flex items-center space-x-2">
@@ -1393,17 +1199,10 @@ export default function HollyJollyPage() {
 
                     {formData.paymentMethod === "cash" && (
                       <div className="mt-4 space-y-4 p-4 bg-white/90 rounded-lg border-2 border-primary/30">
-<<<<<<< HEAD
-=======
-                        <p className="text-base text-black font-bold text-center font-arabic">
-                          هنجمع الاشتراكات ابتداء من ١٢ نوفمبر
-                        </p>
->>>>>>> cb2fb226eee94f6fc21cf5d170a885f40057f2cb
                         <p className="text-sm text-black font-semibold font-english">Please select your preferred pickup time:</p>
                         <RadioGroup
                           value={formData.cashPickupTime}
                           onValueChange={(value) => handleRadioChange("cashPickupTime", value)}
-                          disabled={!paymentUnlocked}
                           required
                         >
                           <div className="flex items-center space-x-2 p-3 bg-white rounded border border-primary/20">
@@ -1425,15 +1224,6 @@ export default function HollyJollyPage() {
                             </Label>
                           </div>
                           <div className="flex items-center space-x-2 p-3 bg-white rounded border border-primary/20">
-                            <RadioGroupItem value="saturday" id="saturday" />
-                            <Label
-                              htmlFor="saturday"
-                              className="font-normal cursor-pointer text-black text-sm leading-relaxed font-arabic"
-                            >
-                              السبت من ٧ ل ٩م في المبني الجديد +بين الفليتين في الكنيسة الرئيسية
-                            </Label>
-                          </div>
-                          <div className="flex items-center space-x-2 p-3 bg-white rounded border border-primary/20">
                             <RadioGroupItem value="sunday" id="sunday" />
                             <Label
                               htmlFor="sunday"
@@ -1447,7 +1237,6 @@ export default function HollyJollyPage() {
                     )}
 
                     {formData.paymentMethod === "instapay" && (
-<<<<<<< HEAD
                       <div className="mt-4 space-y-4 rounded-lg border-2 border-primary/30 bg-white/90 p-4" dir="rtl">
                         <div className="space-y-2 text-center">
                           <h3 className="text-lg font-bold text-red-600 font-arabic">
@@ -1461,22 +1250,10 @@ export default function HollyJollyPage() {
                           <Image
                             src="/instapay.jpg"
                             alt="مثال لإيصال InstaPay يوضح رقم المرجع"
-=======
-                      <div className="mt-4 space-y-4 p-4 bg-white/90 rounded-lg border-2 border-primary/30" dir="rtl">
-                        <div className="text-center mb-4">
-                          <p className="text-lg font-semibold text-primary mb-2 font-arabic">خطوات الدفع عند اختيار InstaPay</p>
-                          <p className="text-sm text-gray-700 font-arabic">١. هندوس اللينك، ٢. هنحول، ٣. هنرجع نكتب reference number زي اللي في الصورة</p>
-                        </div>
-                        <div className="relative mx-auto h-80 w-full max-w-lg overflow-hidden rounded-lg border-2 border-primary/50 bg-white">
-                          <Image
-                            src="/instapay.jpg"
-                            alt="InstaPay payment instructions"
->>>>>>> cb2fb226eee94f6fc21cf5d170a885f40057f2cb
                             fill
                             className="object-contain"
                           />
                         </div>
-<<<<<<< HEAD
                         <div className="rounded-lg border border-red-500 bg-red-50 px-4 py-4 text-center">
                           {assignedInstapayAccount ? (
                             <a
@@ -1493,23 +1270,6 @@ export default function HollyJollyPage() {
                             </p>
                           )}
                         </div>
-=======
-                        {selectedInstapayLink && (
-                          <a
-                            href={paymentUnlocked ? selectedInstapayLink : undefined}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            aria-disabled={!paymentUnlocked}
-                            tabIndex={paymentUnlocked ? undefined : -1}
-                            onClick={(event) => {
-                              if (!paymentUnlocked) event.preventDefault()
-                            }}
-                            className={`block rounded-lg border-2 border-primary bg-primary/10 p-4 text-center font-english text-sm break-all text-primary underline underline-offset-4 transition-colors ${paymentUnlocked ? "hover:bg-primary/20" : "cursor-not-allowed opacity-60"}`}
-                          >
-                            {selectedInstapayLink}
-                          </a>
-                        )}
->>>>>>> cb2fb226eee94f6fc21cf5d170a885f40057f2cb
                         <div className="space-y-2">
                           <Label htmlFor="instapayDetails" className="text-base font-semibold text-black font-arabic">
                             اكتب رقم الـ reference number بعد التحويل *
@@ -1521,8 +1281,7 @@ export default function HollyJollyPage() {
                             inputMode="numeric"
                             value={formData.instapayDetails}
                             onChange={handleInputChange}
-                            required={paymentUnlocked && formData.paymentMethod === "instapay"}
-                            disabled={!paymentUnlocked}
+                            required={formData.paymentMethod === "instapay"}
                             className="text-base sm:text-lg text-gray-800 text-left"
                             maxLength={12}
                           />
@@ -1530,20 +1289,6 @@ export default function HollyJollyPage() {
                       </div>
                     )}
                     </div>
-
-  <section className="rounded-xl border-2 border-primary/20 bg-primary/5 p-5 text-center font-arabic" dir="rtl" aria-labelledby="contact-heading">
-  <h3 id="contact-heading" className="font-arabic mb-2 text-xl font-bold text-primary">للتواصل معنا</h3>
-  <p className="font-arabic mb-3 text-[13px] leading-6 text-gray-700">
-    <span className="font-arabic block">للمكالمات الهاتفية:</span>
-    <span className="font-arabic block">الجمعة والسبت: طوال اليوم.</span>
-    <span className="font-arabic block">من الأحد إلى الخميس: من ٧ مساءً حتى 11 مساءً.</span>
-    <span className="font-arabic block">واتساب: 24/7</span>
-  </p>
-  <div className="flex flex-col items-center justify-center gap-2 sm:flex-row sm:gap-5" dir="ltr">
-  <a href="tel:01043436043" className="font-arabic font-semibold text-primary underline underline-offset-4">01043436043</a>
-  <a href="tel:01096447756" className="font-arabic font-semibold text-primary underline underline-offset-4">01096447756</a>
-  </div>
-  </section>
 
                   <div className="rounded-lg border-2 border-red-200 bg-red-50 p-5 text-center">
                     <h3 className="mb-3 text-xl font-bold text-red-600 font-arabic">التواصل معنا</h3>
@@ -1560,7 +1305,7 @@ export default function HollyJollyPage() {
                   <Button
                     type="submit"
                     size="lg"
-                    disabled={!paymentUnlocked || isSubmitting || isCheckingDuplicate}
+                    disabled={isSubmitting}
                     className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg sm:text-xl py-4 sm:py-6 rounded-full shadow-xl hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px] sm:min-h-[56px]"
                   >
                     {isSubmitting ? "Submitting..." : "Submit Registration 🎄"}
