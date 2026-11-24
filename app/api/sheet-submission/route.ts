@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 
 const GOOGLE_SHEETS_URL =
-  "https://script.google.com/macros/s/AKfycbzVQVwjOstD7OiMYNyqgJwgxBEFR5YIA9N2W71wFS_Qy8kOCUtxl9w7W7nKqQGVvG8pBQ/exec"
+  "https://script.google.com/macros/s/AKfycbzBHwgCGydffIRdwMogeKQfsuu021PEwXavGlpcpwOOnYjQk68XJs8N86487UtCGyBMNw/exec"
 
 export async function POST(request: Request) {
   try {
