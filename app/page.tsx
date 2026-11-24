@@ -677,7 +677,7 @@ export default function HollyJollyPage() {
                   </p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+                <form onSubmit={handleSubmit} noValidate className="space-y-4 sm:space-y-6">
                  {/* Event Information */}
 {/* Event Information */}
 <div className="bg-gradient-to-r from-red-50 to-green-50 border-2 border-primary/20 rounded-lg p-4 sm:p-6 mb-4 sm:mb-6">
