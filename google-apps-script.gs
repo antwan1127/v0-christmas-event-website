@@ -18,84 +18,18 @@ const HEADERS = [
   "InstaPay Link"
 ];
 
-function normalize(value) {
-  return String(value || "")
-    .trim()
-    .toLowerCase()
-    .replace(/[\s\u200f\u200e]+/g, "")
-    .replace(/[٠-٩]/g, function (digit) {
-      return "٠١٢٣٤٥٦٧٨٩".indexOf(digit);
-    });
-}
-
-function getExistingRows(sheet) {
-  const lastRow = sheet.getLastRow();
-  return lastRow > 1
-    ? sheet.getRange(2, 1, lastRow - 1, HEADERS.length).getValues()
-    : [];
-}
-
-function normalizePhone(value) {
-  return normalize(value).replace(/[^0-9]/g, "");
-}
-
-function getIdentity(data) {
-  const name = normalize(data.question2);
-  const phone = [data.question7, data.question4, data.question6]
-    .map(normalizePhone)
-    .find(function (value) { return value.length >= 7; }) || "";
-
-  return name && phone ? JSON.stringify([name, phone]) : "";
-}
-
-function getIdentityFromRow(row) {
-  return getIdentity({
-    question2: row[2],
-    question4: row[4],
-    question6: row[6],
-    question7: row[7]
-  });
-}
-
-function isDuplicate(data, rows) {
-  const identity = getIdentity(data);
-  if (!identity) return false;
-
-  return rows.some(function (row) {
-    return getIdentityFromRow(row) === identity;
-  });
-}
-
 function doGet(e) {
   try {
-    const action = e && e.parameter ? e.parameter.action : "";
-
-    if (action !== "checkDuplicate") {
-      return ContentService
-        .createTextOutput("Apps Script web app is working")
-        .setMimeType(ContentService.MimeType.TEXT);
-    }
-
-    const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
-    const sheet = spreadsheet.getSheetByName(SHEET_NAME);
-
-    if (!sheet) {
-      throw new Error("Sheet1 was not found");
-    }
-
-    const duplicate = isDuplicate(e.parameter, getExistingRows(sheet));
-
     return ContentService
       .createTextOutput(JSON.stringify({
         success: true,
-        duplicate: duplicate
+        message: "Registration script is running"
       }))
       .setMimeType(ContentService.MimeType.JSON);
   } catch (error) {
     return ContentService
       .createTextOutput(JSON.stringify({
         success: false,
-        duplicate: false,
         error: String(error)
       }))
       .setMimeType(ContentService.MimeType.JSON);
@@ -104,11 +38,20 @@ function doGet(e) {
 
 function doPost(e) {
   const lock = LockService.getScriptLock();
+  let lockAcquired = false;
 
   try {
     lock.waitLock(30000);
+    lockAcquired = true;
 
-    const data = e && e.parameter ? e.parameter : {};
+    const isJson = e && e.postData && /application\/json/i.test(e.postData.type || "");
+    const data = isJson
+      ? JSON.parse(e.postData.contents || "{}")
+      : e && e.parameter ? e.parameter : {};
+    if (!data.question1 || !data.question2) {
+      throw new Error("Event and participant name are required.");
+    }
+
     const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
     const sheet = spreadsheet.getSheetByName(SHEET_NAME);
 
@@ -121,16 +64,6 @@ function doPost(e) {
     if (currentHeaders.every(function (value) { return value === ""; })) {
       headerRange.setValues([HEADERS]);
       headerRange.setFontWeight("bold");
-    }
-
-    if (isDuplicate(data, getExistingRows(sheet))) {
-      return ContentService
-        .createTextOutput(JSON.stringify({
-          success: false,
-          duplicate: true,
-          message: "This registration has already been submitted."
-        }))
-        .setMimeType(ContentService.MimeType.JSON);
     }
 
     const rowData = [
@@ -166,6 +99,8 @@ function doPost(e) {
       }))
       .setMimeType(ContentService.MimeType.JSON);
   } finally {
-    lock.releaseLock();
+    if (lockAcquired) {
+      lock.releaseLock();
+    }
   }
 }
