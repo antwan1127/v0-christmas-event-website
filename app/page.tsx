@@ -79,9 +79,7 @@ export default function HollyJollyPage() {
     servantFamily: "", // الاسرة
     servantPhone: "", // رقم التليفون
   })
-  const isServantRegistration =
-    formData.eventType === "خدام اجتماع الخدمه العام" ||
-    formData.eventType === "اجتماع الخدمه العام مارمرقس م. الجديده"
+  const isServantRegistration = formData.eventType === "اجتماع الخدمه العام مارمرقس م.الجديده"
   const audioRef = useRef<HTMLAudioElement>(null)
 
   // Assign a matching InstaPay account and payment link on page load.
@@ -828,21 +826,21 @@ export default function HollyJollyPage() {
                       required
                     >
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="مارمرقس م.الجديده مدارس احد" id="church1" />
+                        <RadioGroupItem value="مارمرقس م.الجديده مدارس الاحد" id="church1" />
                         <Label htmlFor="church1" className="font-normal cursor-pointer text-gray-800 font-arabic">
-                          مارمرقس م.الجديده مدارس احد
+                          مارمرقس م.الجديده مدارس الاحد
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="اجتماع الخدمه العام مارمرقس م. الجديده" id="church2" />
+                        <RadioGroupItem value="اجتماع الخدمه العام مارمرقس م.الجديده" id="church2" />
                         <Label htmlFor="church2" className="font-normal cursor-pointer text-gray-800 font-arabic">
-                          اجتماع الخدمه العام مارمرقس م. الجديده
+                          اجتماع الخدمه العام مارمرقس م.الجديده
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="العذارء ارض الجولف" id="church3" />
+                        <RadioGroupItem value="العزراء ارض الجولف" id="church3" />
                         <Label htmlFor="church3" className="font-normal cursor-pointer text-gray-800 font-arabic">
-                          العذارء ارض الجولف
+                          العزراء ارض الجولف
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
@@ -852,68 +850,44 @@ export default function HollyJollyPage() {
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="العذارء و الانبا بيشوي التجمع" id="church5" />
+                        <RadioGroupItem value="العزراء الرحاب" id="church5" />
                         <Label htmlFor="church5" className="font-normal cursor-pointer text-gray-800 font-arabic">
-                          العذارء و الانبا بيشوي التجمع
+                          العزراء الرحاب
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="العذارء الرحاب" id="church6" />
+                        <RadioGroupItem value="العزراء و مارجرجس مدينتي" id="church6" />
                         <Label htmlFor="church6" className="font-normal cursor-pointer text-gray-800 font-arabic">
-                          العذارء الرحاب
+                          العزراء و مارجرجس مدينتي
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="العذارء و مارجرجس مدينتي" id="church7" />
+                        <RadioGroupItem value="جورجيوس و الانبا انطونيوس" id="church7" />
                         <Label htmlFor="church7" className="font-normal cursor-pointer text-gray-800 font-arabic">
-                          العذارء و مارجرجس مدينتي
+                          جورجيوس و الانبا انطونيوس
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="جورجيوس والانبا انطونيوس" id="church8" />
+                        <RadioGroupItem value="الانبا بولا ارض الجولف" id="church8" />
                         <Label htmlFor="church8" className="font-normal cursor-pointer text-gray-800 font-arabic">
-                          جورجيوس والانبا انطونيوس
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="الانبا بيشوي ارض الجولف" id="church9" />
-                        <Label htmlFor="church9" className="font-normal cursor-pointer text-gray-800 font-arabic">
-                          الانبا بيشوي ارض الجولف
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="الانبا بولا ارض الجولف" id="church10" />
-                        <Label htmlFor="church10" className="font-normal cursor-pointer text-gray-800 font-arabic">
                           الانبا بولا ارض الجولف
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="مارجرجس العظمه" id="church11" />
-                        <Label htmlFor="church11" className="font-normal cursor-pointer text-gray-800 font-arabic">
-                          مارجرجس العظمه
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="مارجرجس الماظه" id="church12" />
-                        <Label htmlFor="church12" className="font-normal cursor-pointer text-gray-800 font-arabic">
+                        <RadioGroupItem value="مارجرجس الماظه" id="church9" />
+                        <Label htmlFor="church9" className="font-normal cursor-pointer text-gray-800 font-arabic">
                           مارجرجس الماظه
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="الملاك شيراتون" id="church13" />
-                        <Label htmlFor="church13" className="font-normal cursor-pointer text-gray-800 font-arabic">
+                        <RadioGroupItem value="الملاك شيراتون" id="church10" />
+                        <Label htmlFor="church10" className="font-normal cursor-pointer text-gray-800 font-arabic">
                           الملاك شيراتون
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="خدام اجتماع الخدمه العام" id="church14" />
-                        <Label htmlFor="church14" className="font-normal cursor-pointer text-gray-800 font-arabic">
-                          خدام اجتماع الخدمه العام
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="كنائس المهجر" id="church15" />
-                        <Label htmlFor="church15" className="font-normal cursor-pointer text-gray-800 font-arabic">
+                        <RadioGroupItem value="كنائس المهجر" id="church11" />
+                        <Label htmlFor="church11" className="font-normal cursor-pointer text-gray-800 font-arabic">
                           كنائس المهجر
                         </Label>
                       </div>
